@@ -1,0 +1,84 @@
+/* Styles pour la barre horizontale et l'affichage utilisateur */
+
+/* Animation d'apparition pour la zone utilisateur */
+.user-info-enter {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+.user-info-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: all 0.3s ease;
+}
+
+/* Amélioration du responsive */
+@media (max-width: 768px) {
+  .user-info-wrapper {
+    gap: 8px;
+    padding: 6px 12px;
+  }
+  
+  .user-photo {
+    width: 45px;
+    height: 45px;
+  }
+  
+  .user-name {
+    font-size: 1em;
+  }
+}
+
+@media (max-width: 480px) {
+  .user-info-wrapper {
+    gap: 6px;
+    padding: 4px 8px;
+  }
+  
+  .user-photo {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .user-name {
+    font-size: 0.9em;
+  }
+}
+
+/* Amélioration de l'accessibilité */
+.user-photo:focus {
+  outline: 2px solid #4141ff;
+  outline-offset: 2px;
+}
+
+/* Animation de pulsation pour les notifications */
+@keyframes notification-pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.user-photo.has-notification {
+  animation: notification-pulse 2s infinite;
+}
+
+/* Effet de brillance au survol */
+.user-photo::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.user-photo:hover::before {
+  left: 100%;
+} 

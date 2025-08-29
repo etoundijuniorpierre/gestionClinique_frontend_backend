@@ -1,0 +1,629 @@
+.zonedaffichage{
+    height: 70vh;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    background-color: #EFEFFF;
+    border-radius: 25px;
+    padding: 25px;
+    overflow-y: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+
+.affichetableau{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    overflow-x: auto;
+}
+
+.numero{
+  
+  height: 8%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-left: 25px;
+}
+
+.nomtable{
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-size: 1.8em;
+    color: #333333;
+}
+
+.divbutton{
+    display: flex;
+    gap: 15px;
+}
+
+.buttonPS{
+    font-family: 'Roboto', sans-serif;
+    font-weight: 300;
+    font-size: 1em;
+    color: #333333;
+}
+
+.buttonPS:hover{
+    cursor: pointer;
+}
+
+.conteneurbarre{
+    margin: 0px 16px;
+}
+
+.barre{
+    width: 100%;
+    height: 5px;
+    border-radius: 2.5px;
+    background-color: #667eea;
+    margin-top: -10px;
+}
+
+
+.element-barre{
+    display: flex;
+    gap: 8px;
+    font-family: 'Roboto', sans-serif;
+    color: #ffffff;
+    font-weight: 400;
+    font-size: 16px;
+}
+
+.image-barre{
+    height: 16px;
+    filter: brightness(0) invert(1);
+}
+
+.grid-title{
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-size: 1.5em;
+    color: #333333;
+    margin-bottom: 16px;
+}
+
+.grid-title.chart{
+    font-size: 1.2em;
+}
+
+.grid-4{
+    grid-column: 1 / -1;
+    grid-row: 2;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    height: auto;
+    min-height: 400px;
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.line-chart{
+    height: 350px;
+    width: 100%;
+    position: relative;
+    flex: 1;
+    min-height: 300px;
+}
+
+
+.grid-image{
+    /* width: 40px;
+    height: 40px;
+    border-radius: 50%; */
+    height: 60px;
+    border-radius: 16px;
+}
+
+.grid-1-content-image{
+    /* display: flex;
+    flex-direction: column;
+    gap: 16px; */
+    height: 11vh;
+    border-radius: 16px;
+    overflow: hidden;
+}
+
+.grid-01{
+    /* display: flex;
+    flex-direction: column;
+    gap: 16px; */
+
+    width: 100%;
+    height: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 9px;
+    padding: 8px;
+    overflow: auto;
+}
+
+.grid-11{
+    display: flex;
+    /* align-items: center; */
+    gap: 9px;
+}
+
+.grid-11-content{
+    display: flex;
+    /* align-items: center; */
+    flex-direction: column;
+    width: 100%;
+    gap: 16px;
+}
+
+.grid-13{
+    display: flex;
+    /* flex-direction: column; */
+    gap: 9px;
+}
+
+.grid-12{
+    margin-top: 16px;
+}
+
+.grid-14{
+    /* margin-top: 16px; */
+}
+
+.grid-11-date{
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    font-size: 0.9em;
+    color: #333333;
+}
+
+.grid-11-date-heure{
+    font-weight: 400;
+    color: #667eea;
+}
+
+.grid-01 > div{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    border-radius: 24px
+}
+
+.sous-grid-title{
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-size: 1em;
+    color: #333333;
+}
+
+.sous-grid-liste{
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    color: #333333;
+}
+
+.grid-2{
+    height: 300px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 0px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    grid-row-start: 1;
+    grid-row-end: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.grid-2-title{
+    height: 10%;
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-size: 1.2em;
+    color: #333333;
+    margin: 0px;
+    padding: 12px 24px;
+}
+
+.grid-2-content{
+    height: 90%;
+    /* background-color: rgb(209, 51, 51); */
+    overflow-y: scroll;
+    scrollbar-width: none;
+    padding: 10px 0px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+}
+
+.grid-2-content-chid{
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: center;
+    width: 100%;
+    height: 22%;
+    border: 1px solid rgb(230, 230, 236);
+    padding: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.grid-2-content-chid-text{
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    font-size: 0.8em;
+    color: #333333;
+    margin-bottom: -2px;
+}
+
+.grid-2-content-chid-chiffre{
+    font-family: "Roboto", sans-serif;
+    font-weight: 600;
+    font-size: 2em;
+    color: #667eea;
+    margin-top: -5px;
+}
+
+.grid-3{
+    background-color: #ffffff;
+    border-radius: 10px;
+    padding: 24px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.grid-3-title{
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-size: 1.2em;
+    color: #333333;
+    margin: 0px;
+    padding: 12px 24px 12px 0px;
+    flex-shrink: 0;
+}
+
+.grid-3-content{
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    overflow-y: auto;
+    flex: 1;
+    max-height: calc(100% - 60px);
+    padding-right: 8px;
+}
+
+.grid-3-content::-webkit-scrollbar {
+    width: 6px;
+}
+
+.grid-3-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 3px;
+}
+
+.grid-3-content::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 3px;
+}
+
+.grid-3-content::-webkit-scrollbar-thumb:hover {
+    background: #a8a8a8;
+}
+
+/* Pour Firefox */
+.grid-3-content {
+    scrollbar-width: thin;
+    scrollbar-color: #c1c1c1 #f1f1f1;
+}
+
+.grid-31{
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 12px;
+    border-radius: 8px;
+    background-color: #f8f9fa;
+    transition: background-color 0.3s ease;
+    min-height: 60px;
+    flex-shrink: 0;
+}
+
+.grid-31:hover{
+    background-color: #e9ecef;
+}
+
+.grid-31.disconnect{
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+}
+
+.grid-31-content{
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+.sous-grid-3-title{
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    font-size: 0.8em;
+    color: #333333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grid-31-date{
+    font-family: "Roboto", sans-serif;
+    font-weight: 300;
+    font-size: 0.9em;
+    color: #333333;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.grid-31-date-heure{
+    font-weight: 400;
+    color: #667eea;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.content-image{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.grid-31-nom{
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
+    font-size: 0.9em;
+    color: #333333;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 80px;
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+    .sous-grid-liste{
+        font-size: 0.9em;
+    }
+    
+    .sous-grid-title{
+        font-size: 1em;
+    }
+    
+    .grid-image{
+        width: 35px;
+        height: 35px;
+    }
+    
+    .grid-11-date{
+        font-size: 0.8em;
+    }
+    
+    .grid-11-date-heure{
+        font-size: 0.8em;
+    }
+    
+    .grid-2-title{
+        font-size: 1.1em;
+    }
+    
+    .grid-2-content-chid{
+        gap: 6px;
+    }
+    
+    .grid-2-content-chid-text{
+        font-size: 0.8em;
+    }
+    
+    .grid-2-content-chid-chiffre{
+        font-size: 1.8em;
+    }
+    
+    .grid-3-title{
+        font-size: 1.1em;
+    }
+    
+    .sous-grid-3-title{
+        font-size: 0.7em;
+    }
+    
+    .grid-31-date{
+        font-size: 0.8em;
+    }
+    
+    .grid-31-date-heure{
+        font-size: 0.8em;
+    }
+    
+    .grid-31-nom{
+        font-size: 0.8em;
+    }
+    
+    .grid-image{
+        width: 32px;
+        height: 32px;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto auto;
+        gap: 16px;
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    
+    .grid-4 {
+        grid-column: 1;
+        grid-row: 4;
+        margin-top: 16px;
+        min-height: 300px;
+    }
+    
+    .grid-3 {
+        grid-row: 3;
+    }
+    
+    .grid-3-content {
+        max-height: 200px;
+    }
+    
+    .numero {
+        padding: 16px 16px 0px 16px;
+    }
+    
+    .nomtable {
+        font-size: 1.2em;
+    }
+    
+    .content-barre-dashboard {
+        padding-left: 16px;
+        padding-right: 16px;
+    }
+    
+    .barre-dashboard {
+        padding-left: 16px;
+    }
+    
+    .grid-01 {
+        gap: 12px;
+    }
+    
+    .grid-2-content {
+        gap: 12px;
+    }
+    
+    .grid-3-content {
+        gap: 12px;
+    }
+    
+    .content-image {
+        gap: 6px;
+    }
+    
+    .line-chart {
+        height: 250px;
+        min-height: 250px;
+    }
+}
+
+@media (max-width: 480px) {
+    .zonedaffichage-dashboad {
+        height: auto;
+        min-height: 70vh;
+        padding: 16px;
+    }
+    
+    .dashboard-grid {
+        gap: 12px;
+        padding-left: 12px;
+        padding-right: 12px;
+        min-height: auto;
+        max-height: none;
+    }
+    
+    .grid-3 {
+        max-height: 350px;
+    }
+    
+    .grid-3-content {
+        max-height: 250px;
+    }
+    
+    .numero {
+        padding: 12px 12px 0px 12px;
+    }
+    
+    .nomtable {
+        font-size: 1.1em;
+    }
+    
+    .content-barre-dashboard {
+        padding-left: 12px;
+        padding-right: 12px;
+    }
+    
+    .barre-dashboard {
+        padding-left: 12px;
+    }
+    
+    .grid-title {
+        font-size: 1.2em;
+    }
+    
+    .grid-2-title,
+    .grid-3-title {
+        font-size: 1em;
+    }
+    
+    .grid-2-content-chid,
+    .grid-2-content-chid-text {
+        gap: 4px;
+    }
+    
+    .grid-2-content-chid-text {
+        font-size: 0.8em;
+    }
+    
+    .grid-2-content-chid-chiffre {
+        font-size: 1.5em;
+    }
+    
+    .sous-grid-title,
+    .sous-grid-3-title {
+        font-size: 0.9em;
+    }
+    
+    .sous-grid-liste {
+        font-size: 0.8em;
+    }
+    
+    .grid-11-date,
+    .grid-31-date {
+        font-size: 0.7em;
+    }
+    
+    .grid-11-date-heure,
+    .grid-31-date-heure {
+        font-size: 0.7em;
+    }
+    
+    .content-image {
+        gap: 4px;
+    }
+    
+    .grid-31-nom {
+        font-size: 0.7em;
+        max-width: 60px;
+    }
+    
+    .line-chart {
+        height: 200px;
+        min-height: 200px;
+    }
+    
+    .grid-4 {
+        min-height: 250px;
+    }
+}

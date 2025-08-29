@@ -1,0 +1,31 @@
+.toggle-button {
+  width: 14px;
+  height: 20px;
+  border-radius: 30px;
+  border: 2px solid #4a59de;
+  padding: 3px;
+  display: flex;
+  align-items: flex-start;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.toggle-button.on {
+   /*background-color: #4a59de; green */
+  /*justify-content: flex-end;*/
+  border: 2px solid black;
+  align-items: flex-end;
+}
+
+.toggle-button .circle {
+  width: 4px;
+  height: 4px;
+  background-color: #4a59de;
+  border-radius: 50%;
+}
+.toggle-button .active{
+  width: 4px;
+  height: 4px;
+  background-color: black;
+  border-radius: 50%;
+}

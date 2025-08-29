@@ -1,0 +1,205 @@
+================================================================================
+                    MODE D'EMPLOI - SYSTÈME DE GESTION CLINIQUE
+================================================================================
+
+📱 ACCÈS ET CONNEXION
+=====================
+
+🔑 Première connexion
+---------------------
+1. Ouvrez votre navigateur (Chrome, Firefox, Edge)
+2. Allez à l'adresse : http://localhost:5173
+3. Sur la page de connexion, entrez :
+   - Email : votre adresse email professionnelle
+   - Mot de passe : votre mot de passe fourni par l'administrateur
+4. Cliquez sur "Se connecter"
+
+🔒 Sécurité
+-----------
+- ✅ Cochez "Se souvenir de moi" pour éviter de retaper vos identifiants
+- ❌ Ne partagez jamais votre mot de passe
+- 🚪 Déconnectez-vous en fermant le navigateur ou en cliquant sur le bouton déconnexion
+
+================================================================================
+
+👥 VOS RÔLES ET FONCTIONNALITÉS
+================================
+
+👨‍💼 ADMINISTRATEUR (Accès complet au système)
+-----------------------------------------------
+
+Tableau de bord 📊
+- Voir les statistiques de la clinique
+- Surveiller les utilisateurs connectés
+- Consulter les revenus mensuels/annuels
+
+Gestion des utilisateurs 👥
+- Créer de nouveaux comptes (médecins, secrétaires)
+- Modifier les informations des utilisateurs
+- Désactiver/réactiver des comptes
+
+Gestion des patients 🏥
+- Enregistrer de nouveaux patients
+- Consulter les dossiers médicaux
+- Modifier les informations patient
+
+👨‍⚕️ MÉDECIN (Gestion des consultations et dossiers)
+----------------------------------------------------
+
+Consultations 📋
+- Créer des consultations pour vos patients
+- Remplir les formulaires de consultation
+- Consulter l'historique des consultations
+
+Dossiers médicaux 🏥
+- Accéder aux dossiers de vos patients
+- Consulter l'historique médical
+- Mettre à jour les informations
+
+Prescriptions 💊
+- Créer des prescriptions médicales
+- Générer des PDF de prescriptions
+- Consulter l'historique des prescriptions
+
+Calendrier 📅
+- Voir vos rendez-vous du jour
+- Consulter votre planning
+- Gérer votre disponibilité
+
+👩‍💼 SECRÉTAIRE (Gestion administrative et rendez-vous)
+-------------------------------------------------------
+
+Rendez-vous 📅
+- Planifier des rendez-vous pour les patients
+- Modifier ou annuler des rendez-vous
+- Voir le calendrier des rendez-vous
+
+Patients 👤
+- Enregistrer de nouveaux patients
+- Mettre à jour les informations
+- Consulter les dossiers
+
+Facturation 💰
+- Créer des factures pour les consultations
+- Générer des PDF de factures
+- Gérer les paiements
+
+================================================================================
+
+🎯 FONCTIONNALITÉS COMMUNES
+============================
+
+💬 Messagerie interne
+---------------------
+- Onglet "Conversations" : voir vos discussions
+- Onglet "Utilisateurs" : contacter vos collègues
+- Créer des groupes pour les équipes
+- Notifications en temps réel
+
+🔔 Notifications
+----------------
+- Cloche en haut à droite : voir vos alertes
+- Messages importants s'affichent automatiquement
+- Historique de toutes vos notifications
+
+🔍 Recherche
+------------
+- Barre de recherche en haut de chaque page
+- Filtres par date, nom, statut
+- Recherche rapide dans les listes
+
+================================================================================
+
+📱 NAVIGATION SIMPLE
+====================
+
+📋 Menu principal (barre latérale gauche)
+----------------------------------------
+- Tableau de bord : vue d'ensemble
+- Patients : liste et gestion des patients
+- Rendez-vous : calendrier et planning
+- Consultations : formulaires et historique
+- Factures : gestion financière
+- Utilisateurs : gestion des comptes (admin uniquement)
+
+🔝 Barre supérieure
+-------------------
+- Logo : retour à l'accueil
+- Notifications : cloche pour les alertes
+- Profil : votre photo et nom
+- Déconnexion : bouton pour se déconnecter
+
+================================================================================
+
+⚡ ASTUCES PRATIQUES
+====================
+
+🚀 Navigation rapide
+--------------------
+- Raccourci clavier : Ctrl + F pour rechercher
+- Retour en arrière : flèche ← du navigateur
+- Actualiser : F5 pour recharger la page
+
+📱 Responsive design
+---------------------
+- Mobile : interface adaptée aux petits écrans
+- Tablette : navigation optimisée
+- Desktop : vue complète avec toutes les fonctionnalités
+
+💾 Sauvegarde automatique
+--------------------------
+- Formulaires : sauvegarde automatique des données
+- Données : synchronisation en temps réel
+- Sécurité : sauvegarde des informations importantes
+
+================================================================================
+
+🆘 AIDE ET SUPPORT
+===================
+
+❓ Problèmes courants
+---------------------
+- Connexion impossible : vérifiez email/mot de passe
+- Page qui ne charge pas : actualisez avec F5
+- Données manquantes : vérifiez votre connexion internet
+
+📞 Contact support
+------------------
+- Téléphone : +237 677 850 000
+- Email : admin@gmail.com
+- Horaires : Lundi - Dimanche, 8h - 18h
+
+🔧 Maintenance
+--------------
+- Mises à jour : automatiques et transparentes
+- Sauvegardes : quotidiennes et sécurisées
+- Support technique : disponible 24h/24
+
+================================================================================
+
+✅ CHECKLIST DÉMARRAGE
+======================
+
+- [ ] Connexion réussie à l'application
+- [ ] Profil vérifié (nom et photo corrects)
+- [ ] Notifications activées (cloche visible)
+- [ ] Menu accessible (barre latérale visible)
+- [ ] Première fonction testée selon votre rôle
+- [ ] Support contacté si problème
+
+================================================================================
+
+🎉 FÉLICITATIONS ! 
+Vous êtes maintenant prêt à utiliser le système de gestion clinique.
+
+💡 CONSEIL : 
+Commencez par explorer votre tableau de bord pour vous familiariser 
+avec l'interface avant d'utiliser les fonctionnalités avancées.
+
+🔄 MISE À JOUR : 
+Ce guide est régulièrement mis à jour. Consultez-le en cas de 
+nouvelles fonctionnalités.
+
+================================================================================
+                    FIN DU MODE D'EMPLOI
+================================================================================

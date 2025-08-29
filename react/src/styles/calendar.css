@@ -1,0 +1,70 @@
+:root{
+  --fc-button-text-color: #fff;
+  --fc-button-bg-color: rgba(159, 159, 255, 1);
+  --fc-button-border-color: rgba(159, 159, 255, 1);
+  --fc-button-hover-bg-color: rgba(65, 65, 255, 1);
+  --fc-button-hover-border-color: rgba(65, 65, 255, 1);
+  --fc-button-active-bg-color: rgba(65, 65, 255, 1);
+  --fc-button-active-border-color: rgba(65, 65, 255, 1);
+
+  --fc-border-color: #ddd;
+
+  --fc-today-bg-color: rgba(159, 159, 255, 0.2);
+}
+
+.fc {
+  background-color: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin: 20px;
+  
+}
+
+.fc-daygrid-day-frame {
+    position: relative;
+    font-size: .85em;
+    min-height: 100%;
+     /* seems to work better than `height` because sets height after rows/cells naturally do it*/
+  }
+.fc .fc-toolbar-title {
+  color: #333;
+  font-weight: bold;
+  font-size: 1.5em;
+  font-family: "Inter", sans-serif;
+}
+ .fc-button-primary:focus {
+    box-shadow: 0 0 0 0rem rgba(76, 91, 106, 0.5);
+  }
+.fc .fc-button {
+  font-family: "Inter", sans-serif;
+  font-size: 1em;
+  border: none;
+  
+}
+
+.fc-button-primary:hover {
+  background-color: #6b50d3;
+}
+
+.fc-event {
+  background-color: #a59df4;
+  border: none;
+  color: black;
+  font-size: 0.85rem;
+  padding: 2px;
+  border-radius: 5px;
+}
+
+.fc-daygrid-dot-event {
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+}
+.fc-event-title {
+    flex-grow: 1;
+    flex-shrink: 1;
+    min-width: 0; /* important for allowing to shrink all the way*/
+    /*overflow: hidden;*/
+    font-weight: bold;
+    font-family: "Inter", sans-serif;
+  }
