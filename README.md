@@ -26,7 +26,7 @@ Le Système de Gestion Clinique est une application web moderne développée en 
 🧰 Pile technologique
 
 Frontend
-• React 18, Vite, React Router, Axios, CSS Modules
+• React 18, React Router, Axios, CSS Modules
 
 Backend
 • Spring Boot 3, JDK 21, Maven
@@ -64,8 +64,8 @@ mvn spring-boot:run
 
 🔧 Configuration
 Frontend — .env
-VITE_API_BASE_URL=http://localhost:8080/api
-VITE_APP_NAME=Gestion Clinique
+API_BASE_URL=http://localhost:8080/api
+APP_NAME=Gestion Clinique
 
 Backend — application.properties (JDK 21, pas YAML)
 # Port de l'application
@@ -155,7 +155,7 @@ java -jar target/clinique-*.jar
 
 
 🔗 Références techniques
-• Frontend : React + Vite
+• Frontend : React
 • Backend : Spring Boot 3 + JWT + Spring Security (JDK 21) — configuration en application.properties
 • Base de données : PostgreSQL
 • Temps réel : WebSockets STOMP
