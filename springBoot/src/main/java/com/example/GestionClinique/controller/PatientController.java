@@ -31,7 +31,7 @@ import java.util.List;
 
 @Tag(name = "Gestion des Patients", description = "API pour la gestion des patients de la clinique")
 @RequestMapping(Constants.API_NAME + "/patients")
-@RestController // This annotation is crucial for Spring to recognize it as a controller
+@RestController
 public class PatientController {
 
     private final PatientService patientService;

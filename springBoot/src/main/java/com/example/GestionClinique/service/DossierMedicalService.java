@@ -13,7 +13,7 @@ public interface DossierMedicalService {
     DossierMedical updateDossierMedical(Long id, DossierMedical dossierMedicalDetails);
     DossierMedical findDossierMedicalById(Long id);
     List<DossierMedical> findAllDossierMedical();
-    Patient findPatientByDossierMedicalId(Long id); // Returns Patient entity
+    Patient findPatientByDossierMedicalId(Long id);
     void deleteDossierMedicalById(Long id);
     DossierMedical findDossierMedicalByPatientId(Long patientId);
 }

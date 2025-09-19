@@ -51,14 +51,12 @@ public class UtilisateurController {
 
     private final UtilisateurService utilisateurService;
     private final UtilisateurMapper utilisateurMapper;
-    private final PasswordEncoder passwordEncoder;
     private final RendezVousMapper rendezVousMapper;
     private final FileStorageService fileStorageService;
 
     public UtilisateurController(UtilisateurService utilisateurService, UtilisateurMapper utilisateurMapper, PasswordEncoder passwordEncoder, RendezVousMapper rendezVousMapper, FileStorageService fileStorageService) {
         this.utilisateurService = utilisateurService;
         this.utilisateurMapper = utilisateurMapper;
-        this.passwordEncoder = passwordEncoder;
         this.rendezVousMapper = rendezVousMapper;
         this.fileStorageService = fileStorageService;
     }
@@ -119,8 +117,7 @@ public ResponseEntity<UtilisateurResponseDto> createUtilisateur(
     public ResponseEntity<List<UtilisateurResponseDto>> findUtilisateurByNom( // Renamed method
                                                                               @Parameter(description = "Nom à rechercher", required = true, example = "Dupont")
                                                                               @PathVariable("nomUtilisateur") String nom) {
-        List<Utilisateur> utilisateurs = utilisateurService.findUtilisateurByNom(nom); // Call service
-        // Consider returning 204 No Content if list is empty for GET requests
+        List<Utilisateur> utilisateurs = utilisateurService.findUtilisateurByNom(nom);
         if (utilisateurs.isEmpty()) {
             return ResponseEntity.noContent().build(); // 204 No Content
         }
@@ -324,9 +321,6 @@ public ResponseEntity<UtilisateurResponseDto> createUtilisateur(
         return ResponseEntity.ok(rendezVousDtos);
     }
 
-
-
-
     @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")
     @GetMapping("/{medecinId}/rendez-vous/confirmed/{date}")
     @Operation(summary = "Récupérer les rendez-vous confirmés d'un médecin pour aujourd'hui",
@@ -353,8 +347,6 @@ public ResponseEntity<UtilisateurResponseDto> createUtilisateur(
 
         return ResponseEntity.ok(rendezVousMapper.toDtoList(rendezVous));
     }
-
-
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")
     @GetMapping("/search")

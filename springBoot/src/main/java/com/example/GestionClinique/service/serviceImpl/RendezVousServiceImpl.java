@@ -9,6 +9,7 @@ import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
 import com.example.GestionClinique.repository.*;
 import com.example.GestionClinique.service.FactureService;
 import com.example.GestionClinique.service.HistoriqueActionService;
+import com.example.GestionClinique.service.NotificationService;
 import com.example.GestionClinique.service.RendezVousService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
@@ -32,7 +33,7 @@ public class RendezVousServiceImpl implements RendezVousService {
     private final HistoriqueActionService historiqueActionService;
     private final LoggingAspect loggingAspect;
     private final FactureRepository factureRepository;
-
+    private final NotificationService notificationService;
 
     @Override
     @Transactional
@@ -62,6 +63,7 @@ public class RendezVousServiceImpl implements RendezVousService {
         }
 
         RendezVous saveRendezVous = rendezVousRepository.save(rendezVous);
+        notificationService.creerNotificationPourRendezVous(saveRendezVous, saveRendezVous.getMedecin());
         factureService.generateInvoiceForRendesVous(saveRendezVous.getId());
 
         historiqueActionService.enregistrerAction(

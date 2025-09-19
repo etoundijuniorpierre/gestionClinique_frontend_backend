@@ -14,6 +14,7 @@ import com.example.GestionClinique.model.entity.Groupe;
 import com.example.GestionClinique.model.entity.Message;
 import com.example.GestionClinique.service.authService.MonUserDetailsCustom;
 import com.example.GestionClinique.service.serviceImpl.ChatService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,6 +29,7 @@ import java.util.List;
 
 import static com.example.GestionClinique.configuration.utils.Constants.API_NAME;
 
+@Tag(name = "Gestion du chat", description = "API pour la gestion du chat de la clinique")
 @RestController
 @RequestMapping( API_NAME+"/chat")
 @RequiredArgsConstructor

@@ -6,6 +6,7 @@ import com.example.GestionClinique.model.entity.RendezVous;
 import com.example.GestionClinique.model.entity.enumElem.ServiceMedical;
 import com.example.GestionClinique.model.entity.enumElem.StatusConnect;
 import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
+import jakarta.transaction.Transactional;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -17,11 +18,10 @@ import java.util.List;
 
 
 public interface UtilisateurService {
-
     Utilisateur createUtilisateur(Utilisateur utilisateur);
-
     Utilisateur updatePhotoProfil(Long userId, MultipartFile photoProfil);
 
+    @Transactional
     Resource getPhotoProfil(Long userId);
 
     Utilisateur findUtilisateurById(Long id);
@@ -38,20 +38,13 @@ public interface UtilisateurService {
     List<Utilisateur> searchUsers(String searchTerm);
     List<Utilisateur> findUsersWithStatusConnected();
     List<Utilisateur> findUsersWithStatusDisconnected();
-
-// ajout
-    List<RendezVous> findAllRendezVousCONFIRMEInBeginByToday(Long medecinId); //afficher tous les rendezVous d'un medecin en commençant par aujourd'hui
+    List<RendezVous> findAllRendezVousCONFIRMEInBeginByToday(Long medecinId);
     List<RendezVous> findAllRendezVousCONFIRMEByMedecin(Long medecinId);
     Utilisateur updatePassword(Long utilisateurId, String newPassword, String confirmPassword);
     List<Utilisateur> findUsersWithStatusConnectedByOrderLastConnected();
     List<Utilisateur> findUsersWithStatusDisconnectedByOrderLastDeConnected();
-
     List<Utilisateur> getMedecinsByServiceMedical(ServiceMedical serviceMedical);
     List<Utilisateur> getAvailableMedecinsByServiceAndTime(ServiceMedical serviceMedical, LocalDate date, LocalTime heure);
-
-
-    // endpoint depannage
     Utilisateur updateUserConnectStatus(Long utilisateurId, StatusConnect statusConnect);
-
     List<Utilisateur> findAllByIds(List<Long> participantIds);
 }

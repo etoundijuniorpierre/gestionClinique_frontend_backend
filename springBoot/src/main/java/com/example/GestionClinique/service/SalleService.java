@@ -11,18 +11,10 @@ import java.util.List;
 
 public interface SalleService {
     Salle createSalle(Salle salle);
-
     Salle findSalleById(Long id);
-
     List<Salle> findAllSalle();
-
     Salle updateSalle(Long id, Salle salleDetails);
-
     void deleteSalle(Long id);
-
     List<Salle> findSallesByStatut(StatutSalle statutSalle);
-    
-//    List<Salle> findAvailableSalles(LocalDateTime dateHeureDebut, Long dureeMinutes);
-
     Salle findSallesByServiceMedical(ServiceMedical serviceMedical);
 }

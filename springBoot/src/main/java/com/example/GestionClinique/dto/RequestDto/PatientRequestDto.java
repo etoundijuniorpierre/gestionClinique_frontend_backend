@@ -1,4 +1,3 @@
-// PatientDto.java (updated)
 package com.example.GestionClinique.dto.RequestDto;
 
 import jakarta.validation.Valid;

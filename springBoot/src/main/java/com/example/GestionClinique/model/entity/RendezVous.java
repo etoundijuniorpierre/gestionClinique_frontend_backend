@@ -6,6 +6,8 @@ import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import lombok.AllArgsConstructor;
@@ -61,4 +63,7 @@ public class RendezVous extends BaseEntity {
 
     @OneToOne(mappedBy = "rendezVous", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private Consultation consultation;
+
+    @OneToMany(mappedBy = "rendezVous", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Notification> notifications = new ArrayList<>();
 }

@@ -7,6 +7,7 @@ import com.example.GestionClinique.model.entity.*;
 import com.example.GestionClinique.model.entity.enumElem.Action;
 import com.example.GestionClinique.model.entity.enumElem.TypeConversation;
 import com.example.GestionClinique.repository.*;
+import com.example.GestionClinique.service.NotificationService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -29,6 +30,7 @@ public class ChatService {
     private final HistoriqueMessageRepository historiqueMessageRepository;
     private final GroupeRepository groupeRepository;
     private final UtilisateurRepository utilisateurRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public Message sendMessage(MessageRequestDto messageDto, Long senderId) {
@@ -61,6 +63,15 @@ public class ChatService {
             if (!participant.getUtilisateur().getId().equals(expediteur.getId())) {
                 participant.setUnreadCount(participant.getUnreadCount() + 1);
                 conversationParticipantRepository.save(participant);
+            }
+        }
+
+        for (ConversationParticipant participant : participants) {
+            if (!participant.getUtilisateur().getId().equals(expediteur.getId())) {
+                participant.setUnreadCount(participant.getUnreadCount() + 1);
+                conversationParticipantRepository.save(participant);
+
+                notificationService.creerNotificationPourMessage(savedMessage, participant.getUtilisateur());
             }
         }
 
