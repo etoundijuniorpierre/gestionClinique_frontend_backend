@@ -2,7 +2,6 @@ package com.example.GestionClinique.dto.ResponseDto;
 
 import lombok.*;
 
-import java.time.LocalDate;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)

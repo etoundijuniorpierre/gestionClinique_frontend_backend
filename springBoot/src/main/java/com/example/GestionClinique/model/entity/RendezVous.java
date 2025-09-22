@@ -16,34 +16,32 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-
-
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "rendez_vous", uniqueConstraints = { // Changed table name to snake_case for convention
-        @UniqueConstraint(columnNames = {"jour", "heure", "medecin_id"}), // Corrected: user_id -> medecin_id
-        @UniqueConstraint(columnNames = {"jour", "heure", "salle_id"}) // Correct: jour + heure + salle = unique
+@Table(uniqueConstraints = {
+        @UniqueConstraint(columnNames = {"jour", "heure", "medecin_id"}),
+        @UniqueConstraint(columnNames = {"jour", "heure", "salle_id"})
 })
 public class RendezVous extends BaseEntity {
 
-    @Column(name = "heure", nullable = false)
+    @Column(nullable = false)
     private LocalTime heure;
 
-    @Column(name = "jour", nullable = false)
+    @Column(nullable = false)
     private LocalDate jour;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "statut", nullable = false)
+    @Column(nullable = false)
     private StatutRDV statut = StatutRDV.EN_ATTENTE;
 
-    @Column(name = "notes", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String notes;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "service_medical", nullable = false)
+    @Column(nullable = false)
     private ServiceMedical serviceMedical;
 
     @ManyToOne(fetch = FetchType.LAZY)

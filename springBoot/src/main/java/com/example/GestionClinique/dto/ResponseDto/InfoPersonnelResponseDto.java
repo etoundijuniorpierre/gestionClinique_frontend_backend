@@ -5,7 +5,6 @@ import lombok.EqualsAndHashCode;
 
 import java.time.LocalDate;
 
-
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class InfoPersonnelResponseDto extends BaseResponseDto {

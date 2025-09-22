@@ -1,10 +1,8 @@
 package com.example.GestionClinique.dto.RequestDto.messageRequestDto;
 
-
 import com.example.GestionClinique.model.entity.enumElem.TypeConversation;
 import lombok.*;
 import java.util.List;
-
 
 @Data @NoArgsConstructor @AllArgsConstructor
 public class ConversationRequestDto {

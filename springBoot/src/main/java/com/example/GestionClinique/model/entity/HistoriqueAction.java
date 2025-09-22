@@ -1,6 +1,5 @@
 package com.example.GestionClinique.model.entity;
 
-
 import com.example.GestionClinique.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,13 +11,13 @@ import java.time.LocalDate;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "historiqueAction")
-public class HistoriqueAction extends BaseEntity { // Assuming BaseEntity provides 'id', 'creationDate', 'lastModifiedDate'
+@Table
+public class HistoriqueAction extends BaseEntity {
 
-    @Column(name = "date_action", nullable = false) // Renamed column for clarity
+    @Column(name = "date_action", nullable = false)
     private LocalDate date;
 
-    @Column(name= "action_description", nullable = false, columnDefinition = "TEXT") // Renamed column for clarity
+    @Column(name= "action_description", nullable = false, columnDefinition = "TEXT")
     private String action;
 
     @ManyToOne(fetch = FetchType.LAZY)

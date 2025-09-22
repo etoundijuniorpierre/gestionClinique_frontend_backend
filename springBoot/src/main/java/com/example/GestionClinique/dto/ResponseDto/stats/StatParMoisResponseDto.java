@@ -4,7 +4,6 @@ import com.example.GestionClinique.model.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class StatParMoisResponseDto extends BaseEntity {

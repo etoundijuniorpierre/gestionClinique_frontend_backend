@@ -1,12 +1,8 @@
 package com.example.GestionClinique.mapper;
 
-import com.example.GestionClinique.dto.RequestDto.RoleRequestDto;
 import com.example.GestionClinique.dto.RequestDto.UtilisateurRequestDto;
-import com.example.GestionClinique.dto.ResponseDto.RoleResponseDto;
 import com.example.GestionClinique.dto.ResponseDto.UtilisateurResponseDto;
-import com.example.GestionClinique.model.entity.Role;
 import com.example.GestionClinique.model.entity.Utilisateur;
-import com.example.GestionClinique.model.entity.enumElem.RoleType;
 import org.mapstruct.*;
 
 import java.util.List;

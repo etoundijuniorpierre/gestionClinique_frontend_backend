@@ -9,27 +9,23 @@ import java.time.LocalDate;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
-@NoArgsConstructor // Add @NoArgsConstructor for JPA and Builder
-@AllArgsConstructor // Add @AllArgsConstructor for Builder
-@Table(name = "prescription") // Snake_case table name is good.
+@NoArgsConstructor
+@AllArgsConstructor
 public class Prescription extends BaseEntity {
 
-//    @Column(name = "date_prescription", nullable = false) // Add date_prescription as a column
-//    private LocalDate datePrescription;
-
-    @Column(name = "type_prescription", nullable = false) // Changed to snake_case
+    @Column(nullable = false)
     private String typePrescription;
 
-    @Column(name = "medicaments", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String medicaments;
 
-    @Column(name = "instructions", columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String instructions;
 
-    @Column(name = "duree_prescription") // Changed to snake_case
+    @Column
     private String dureePrescription;
 
-    @Column(name = "quantite", nullable = false) // Quantité should probably be non-nullable
+    @Column(nullable = false)
     private Integer quantite;
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -38,14 +34,14 @@ public class Prescription extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medecin_id", nullable = false)
-    private Utilisateur medecin; // This is a Utilisateur acting as a doctor
+    private Utilisateur medecin;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "patient_id")
     private Patient patient;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dossier_medical_id") // Changed to snake_case
+    @JoinColumn(name = "dossier_medical_id")
     private DossierMedical dossierMedical;
 }
 

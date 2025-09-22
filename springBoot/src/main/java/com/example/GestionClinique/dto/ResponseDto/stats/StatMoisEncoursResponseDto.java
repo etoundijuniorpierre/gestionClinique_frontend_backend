@@ -4,11 +4,10 @@ import com.example.GestionClinique.model.BaseEntity;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class StatMoisEncoursResponseDto extends BaseEntity {
-    private String moisEncours; // Format like "2025-07" or "Juillet 2025"
+    private String moisEncours;
     private Long nbrRendezVousCONFIRME;
     private Long nbrRendezANNULE;
     private Long nbrPatientEnrg;

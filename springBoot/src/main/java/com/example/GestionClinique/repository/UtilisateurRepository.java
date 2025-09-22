@@ -9,22 +9,16 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
-
 public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> {
-
-     Optional<Utilisateur> findByEmail(String email);
-
+    Optional<Utilisateur> findByEmail(String email);
     List<Utilisateur> findByRole_RoleType(RoleType roleType);
-
     List<Utilisateur> findByNom(String nom);
-
     List<Utilisateur> findByStatusConnect(StatusConnect status);
 
     @Query("SELECT u FROM Utilisateur u WHERE " +
@@ -38,7 +32,6 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
 
     List<Utilisateur> findByStatusConnectOrderByLastLoginDateDesc(StatusConnect status);
     List<Utilisateur> findByStatusConnectOrderByLastLogoutDateDesc(StatusConnect status);
-
     List<Utilisateur> findByServiceMedical(ServiceMedical serviceMedical);
 
     @Query("SELECT u FROM Utilisateur u WHERE " +
@@ -51,10 +44,6 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
             @Param("serviceMedical") ServiceMedical serviceMedical,
             @Param("date") LocalDate date,
             @Param("heure") LocalTime heure);
-
-    @Modifying
-    @Query("UPDATE Utilisateur u SET u.statusConnect = :status, u.lastLoginDate = :loginDate, u.lastLogoutDate = :logoutDate WHERE u.id = :id")
-    void updateStatusAndDates(@Param("id") Long id, @Param("status") StatusConnect status, @Param("loginDate") LocalDateTime loginDate, @Param("logoutDate") LocalDateTime logoutDate);
 
     @Modifying
     @Query("UPDATE Utilisateur u SET u.photoProfil = :photoPath WHERE u.id = :id")
@@ -75,6 +64,4 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
     void updateLogout(@Param("id") Long id,
                       @Param("status") StatusConnect status,
                       @Param("logoutDate") LocalDateTime logoutDate);
-
-
 }

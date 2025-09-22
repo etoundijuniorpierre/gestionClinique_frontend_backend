@@ -1,13 +1,11 @@
 package com.example.GestionClinique.service;
 
-
 import com.example.GestionClinique.model.entity.Facture;
 import com.example.GestionClinique.model.entity.Patient;
 import com.example.GestionClinique.model.entity.enumElem.ModePaiement;
 import com.example.GestionClinique.model.entity.enumElem.StatutPaiement;
 
 import java.util.List;
-
 
 public interface FactureService {
     void generateInvoiceForRendesVous(Long rendezVousId);

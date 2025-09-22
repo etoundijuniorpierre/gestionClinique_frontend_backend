@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "notifications")
+@Table
 public class Notification extends BaseEntity {
 
     @Enumerated(EnumType.STRING)

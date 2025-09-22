@@ -1,13 +1,11 @@
 package com.example.GestionClinique.service;
 
-
 import com.example.GestionClinique.model.entity.RendezVous;
 import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-
 
 public interface RendezVousService {
     RendezVous createRendezVous(RendezVous rendezVous);

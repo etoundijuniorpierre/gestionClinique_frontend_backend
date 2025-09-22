@@ -1,6 +1,5 @@
 package com.example.GestionClinique.mapper;
 
-
 import com.example.GestionClinique.dto.ResponseDto.stats.*;
 import com.example.GestionClinique.model.entity.stats.*;
 import org.mapstruct.Mapper;

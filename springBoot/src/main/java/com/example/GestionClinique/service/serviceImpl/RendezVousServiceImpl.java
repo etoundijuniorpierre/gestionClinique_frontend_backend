@@ -6,11 +6,11 @@ import com.example.GestionClinique.model.entity.Salle;
 import com.example.GestionClinique.model.entity.Utilisateur;
 import com.example.GestionClinique.model.entity.enumElem.StatutPaiement;
 import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
-import com.example.GestionClinique.repository.*;
-import com.example.GestionClinique.service.FactureService;
-import com.example.GestionClinique.service.HistoriqueActionService;
-import com.example.GestionClinique.service.NotificationService;
-import com.example.GestionClinique.service.RendezVousService;
+import com.example.GestionClinique.repository.FactureRepository;
+import com.example.GestionClinique.repository.RendezVousRepository;
+import com.example.GestionClinique.repository.SalleRepository;
+import com.example.GestionClinique.repository.UtilisateurRepository;
+import com.example.GestionClinique.service.*;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -27,29 +27,27 @@ import java.util.Optional;
 public class RendezVousServiceImpl implements RendezVousService {
 
     private final RendezVousRepository rendezVousRepository;
-    private final UtilisateurRepository utilisateurRepository; // For doctors
+    private final UtilisateurRepository utilisateurRepository;
     private final SalleRepository salleRepository;
     private final FactureService factureService;
     private final HistoriqueActionService historiqueActionService;
     private final LoggingAspect loggingAspect;
     private final FactureRepository factureRepository;
     private final NotificationService notificationService;
+    private final StatService statService;
 
     @Override
     @Transactional
     public RendezVous createRendezVous(RendezVous rendezVous) {
-        // Définir la salle en premier si serviceMedical est spécifié
         if (rendezVous.getServiceMedical() != null) {
             Salle salle = salleRepository.findByServiceMedical(rendezVous.getServiceMedical());
             rendezVous.setSalle(salle);
         }
 
-        // Vérifier que la salle est bien définie
         if (rendezVous.getSalle() == null) {
             throw new IllegalArgumentException("La salle doit être spécifiée directement ou via le service médical");
         }
 
-        // Maintenant vérifier la disponibilité
         if (!isRendezVousAvailable(
                 rendezVous.getJour(),
                 rendezVous.getHeure(),
@@ -72,9 +70,12 @@ public class RendezVousServiceImpl implements RendezVousService {
                 loggingAspect.currentUserId()
         );
 
+        statService.refreshStatDuJour(LocalDate.now());
+        statService.refreshStatParMois(LocalDate.now().getMonthValue());
+        statService.refreshStatsSurLannee(LocalDate.now().getYear());
+
         return saveRendezVous;
     }
-
 
     @Override
     @Transactional
@@ -88,12 +89,10 @@ public class RendezVousServiceImpl implements RendezVousService {
         RendezVous existingRendezVous = rendezVousRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Rendez-vous non trouvé avec l'ID: " + id));
 
-        // Valider que le rendez-vous peut être modifié
         if (existingRendezVous.getStatut() == StatutRDV.TERMINE || existingRendezVous.getStatut() == StatutRDV.ANNULE) {
             throw new IllegalStateException("Impossible de modifier un rendez-vous " + existingRendezVous.getStatut().name().toLowerCase());
         }
 
-        // Mise à jour des champs modifiables
         if (rendezVous.getHeure() != null) {
             existingRendezVous.setHeure(rendezVous.getHeure());
         }
@@ -104,21 +103,18 @@ public class RendezVousServiceImpl implements RendezVousService {
             existingRendezVous.setNotes(rendezVous.getNotes());
         }
 
-        // Mise à jour du médecin si nécessaire
         if (rendezVous.getMedecin() != null && !rendezVous.getMedecin().equals(existingRendezVous.getMedecin().getId())) {
             Utilisateur newMedecin = utilisateurRepository.findById(rendezVous.getMedecin().getId())
                     .orElseThrow(() -> new EntityNotFoundException("Médecin non trouvé avec l'ID: " + rendezVous.getMedecin()));
             existingRendezVous.setMedecin(newMedecin);
         }
 
-        // Mise à jour du service médical et de la salle associée
         if (rendezVous.getServiceMedical() != null && !rendezVous.getServiceMedical().equals(existingRendezVous.getServiceMedical())) {
             existingRendezVous.setServiceMedical(rendezVous.getServiceMedical());
             Salle nouvelleSalle = salleRepository.findByServiceMedical(rendezVous.getServiceMedical());
             existingRendezVous.setSalle(nouvelleSalle);
         }
 
-        // Vérification des conflits de planning
         if (!isRendezVousAvailableForUpdate(
                 existingRendezVous.getId(),
                 existingRendezVous.getJour(),
@@ -136,13 +132,10 @@ public class RendezVousServiceImpl implements RendezVousService {
         return rendezVousRepository.save(existingRendezVous);
     }
 
-
-
     @Override
     public void deleteRendezVous(Long id) {
         RendezVous rendezVous = rendezVousRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("RendezVous not found with ID: " + id));
-        // Business rule: Prevent deletion if consultation is already linked or if already occurred
         if (rendezVous.getConsultation() != null) {
             throw new IllegalStateException("Cannot delete a rendez-vous that already has an associated consultation.");
         }
@@ -174,26 +167,20 @@ public class RendezVousServiceImpl implements RendezVousService {
         return rendezVousRepository.findBySalleId(salleId);
     }
 
-
-    // Helper method to check availability for creation
     @Override
     @Transactional
     public boolean isRendezVousAvailable(LocalDate jour, LocalTime heure, Long medecinId, Long salleId) {
-        // Check if doctor is busy
         Optional<RendezVous> existingMedecinRv = rendezVousRepository.findByJourAndHeureAndMedecinId(jour, heure, medecinId);
         if (existingMedecinRv.isPresent()) {
-            return false; // Doctor is busy
+            return false;
         }
 
-        // Check if room is busy
         Optional<RendezVous> existingSalleRv = rendezVousRepository.findByJourAndHeureAndSalleId(jour, heure, salleId);
         if (existingSalleRv.isPresent()) {
-            return false; // Room is busy
+            return false;
         }
-        return true; // Both are available
+        return true;
     }
-
-
 
     @Transactional
     @Override
@@ -209,7 +196,6 @@ public class RendezVousServiceImpl implements RendezVousService {
         }
         return true;
     }
-
 
     @Override
     public RendezVous cancelRendezVous(Long rendezVousId) {
@@ -231,9 +217,12 @@ public class RendezVousServiceImpl implements RendezVousService {
                 loggingAspect.currentUserId()
         );
 
+        statService.refreshStatDuJour(LocalDate.now());
+        statService.refreshStatParMois(LocalDate.now().getMonthValue());
+        statService.refreshStatsSurLannee(LocalDate.now().getYear());
+
         return updatedRendezVous;
     }
-
 
     @Override
     @Transactional
@@ -253,9 +242,8 @@ public class RendezVousServiceImpl implements RendezVousService {
 
         for (RendezVous rendezVous : rendezVousList) {
             if (rendezVous.getStatut() == StatutRDV.EN_ATTENTE) {
-                // New logic to handle cancellation for past appointments
-                rendezVous.setStatut(StatutRDV.ANNULE); // Set the status to 'canceled'
-                rendezVousRepository.save(rendezVous); // Save the updated appointment
+                rendezVous.setStatut(StatutRDV.ANNULE);
+                rendezVousRepository.save(rendezVous);
 
                 Optional<Facture> factureOptional = factureRepository.findByRendezVousId(rendezVous.getId());
                 factureOptional.ifPresent(facture -> {
@@ -265,6 +253,10 @@ public class RendezVousServiceImpl implements RendezVousService {
                 });
             }
         }
+
+        statService.refreshStatDuJour(LocalDate.now());
+        statService.refreshStatParMois(LocalDate.now().getMonthValue());
+        statService.refreshStatsSurLannee(LocalDate.now().getYear());
     }
 
     @Override
@@ -280,5 +272,4 @@ public class RendezVousServiceImpl implements RendezVousService {
         LocalDate endDate = startDate.plusMonths(1).minusDays(1);
         return rendezVousRepository.findByJourBetween(startDate, endDate);
     }
-
 }

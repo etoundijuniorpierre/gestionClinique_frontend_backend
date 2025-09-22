@@ -10,10 +10,9 @@ import lombok.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "role")
+@Table
 public class Role extends BaseEntity {
     @Enumerated(EnumType.STRING)
-    @Column(name = "roleType", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private RoleType roleType;
-
 }

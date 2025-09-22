@@ -1,4 +1,3 @@
-// FactureDto.java (updated)
 package com.example.GestionClinique.dto.RequestDto;
 
 import com.example.GestionClinique.model.entity.enumElem.ModePaiement;
@@ -15,15 +14,15 @@ public class FactureRequestDto {
     @NotNull
     private Long rendezVousId;
 
-    @NotNull(message = "Le montant est requis.")
-    @Positive(message = "Le montant doit être positif.")
+    @NotNull
+    @Positive
     private Double montant;
 
     private LocalDate dateEmission;
 
-    @NotNull(message = "Le statut de paiement est requis.")
+    @NotNull
     private StatutPaiement statutPaiement = StatutPaiement.IMPAYEE;
 
-    @NotNull(message = "Le mode de paiement est requis.")
+    @NotNull
     private ModePaiement modePaiement = ModePaiement.ESPECES;
 }

@@ -12,7 +12,6 @@ import java.util.List;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface PatientMapper {
 
-
         @Mapping(target = "nom", source = "nom")
         @Mapping(target = "prenom", source = "prenom")
         @Mapping(target = "email", source = "email")
@@ -22,7 +21,6 @@ public interface PatientMapper {
         @Mapping(target = "genre", source = "genre")
         @Mapping(target = "dossierMedical", source = "dossierMedical") // Map the nested DTO to entity
         Patient toEntity(PatientRequestDto patientRequestDto);
-
 
         PatientResponseDto toDto(Patient patient);
 

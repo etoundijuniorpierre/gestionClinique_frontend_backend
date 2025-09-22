@@ -18,7 +18,7 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "utilisateurs")
+@Table
 public class Utilisateur extends InfoPersonnel {
 
     @Column(nullable = false, name = "mot_de_passe")
@@ -32,9 +32,8 @@ public class Utilisateur extends InfoPersonnel {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column(name = "photo_profil")
+    @Column
     private String photoProfil;
-
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
         if (this.role == null) {
@@ -43,18 +42,18 @@ public class Utilisateur extends InfoPersonnel {
         return Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + this.role.getRoleType().name()));
     }
 
-    @Column(name = "last_login_date")
+    @Column
     private LocalDateTime lastLoginDate;
 
-    @Column(name = "last_logout_date")
+    @Column
     private LocalDateTime lastLogoutDate;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "ServiceMedical")
+    @Column
     private ServiceMedical serviceMedical = ServiceMedical.MEDECINE_GENERALE;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "status_connect", nullable = false)
+    @Column(nullable = false)
     private StatusConnect statusConnect = StatusConnect.DECONNECTE;
 
     @OneToMany(mappedBy = "medecin", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)

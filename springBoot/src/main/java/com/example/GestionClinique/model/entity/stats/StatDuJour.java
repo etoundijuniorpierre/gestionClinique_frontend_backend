@@ -11,16 +11,10 @@ import java.time.LocalDate;
 @Entity
 @Data
 public class StatDuJour extends BaseEntity {
-
     private String jour = LocalDate.now().toString();
-
     private Long nbrRendezVousCONFIRME;
-
     private Long nbrRendezANNULE;
-
     private Long nbrPatientEnrg;
-
     private Long nbrConsultation;
-
     private Double revenu;
 }

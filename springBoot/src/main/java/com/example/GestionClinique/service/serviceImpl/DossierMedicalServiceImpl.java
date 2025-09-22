@@ -1,21 +1,16 @@
 package com.example.GestionClinique.service.serviceImpl;
 
-
 import com.example.GestionClinique.model.entity.DossierMedical;
 import com.example.GestionClinique.model.entity.Patient;
-
 import com.example.GestionClinique.repository.DossierMedicalRepository;
 import com.example.GestionClinique.repository.PatientRepository;
-
 import com.example.GestionClinique.service.DossierMedicalService;
-
 import com.example.GestionClinique.service.HistoriqueActionService;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 
 @Service
 @AllArgsConstructor
@@ -26,26 +21,20 @@ public class DossierMedicalServiceImpl implements DossierMedicalService {
     private final HistoriqueActionService historiqueActionService;
     private final LoggingAspect loggingAspect;
 
-
-
     @Override
     public DossierMedical createDossierMedicalForPatient(Long patientId, DossierMedical dossierMedical) {
-        // Find the patient first
         Patient patient = patientRepository.findById(patientId)
                 .orElseThrow(() -> new IllegalArgumentException("Patient not found with ID: " + patientId));
 
-        // Check if the patient already has a medical record
         if (patient.getDossierMedical() != null) {
             throw new RuntimeException("Patient with ID " + patientId + " already has a medical record.");
         }
 
-        // Link the dossier medical to the patient
         dossierMedical.setPatient(patient);
         DossierMedical savedDossier = dossierMedicalRepository.save(dossierMedical);
 
-        // Also update the patient to link to the new dossier (for bi-directional relationship management)
         patient.setDossierMedical(savedDossier);
-        patientRepository.save(patient); // Save updated patient
+        patientRepository.save(patient);
 
         historiqueActionService.enregistrerAction(
                 String.format("Création dossier médical ID: %d pour patient ID: %d",
@@ -61,7 +50,6 @@ public class DossierMedicalServiceImpl implements DossierMedicalService {
         DossierMedical existingDossier = dossierMedicalRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Dossier Medical not found with ID: " + id));
 
-        // Update fields that can be modified
         existingDossier.setGroupeSanguin(dossierMedicalDetails.getGroupeSanguin());
         existingDossier.setAntecedentsMedicaux(dossierMedicalDetails.getAntecedentsMedicaux());
         existingDossier.setAllergies(dossierMedicalDetails.getAllergies());
@@ -101,11 +89,10 @@ public class DossierMedicalServiceImpl implements DossierMedicalService {
         DossierMedical dossierMedical = dossierMedicalRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Dossier Medical not found with ID: " + id));
 
-        // Before deleting the dossier, disconnect it from the patient (if bi-directional)
         if (dossierMedical.getPatient() != null) {
             Patient patient = dossierMedical.getPatient();
-            patient.setDossierMedical(null); // Unlink the dossier from the patient
-            patientRepository.save(patient); // Save the updated patient
+            patient.setDossierMedical(null);
+            patientRepository.save(patient);
         }
 
         historiqueActionService.enregistrerAction(

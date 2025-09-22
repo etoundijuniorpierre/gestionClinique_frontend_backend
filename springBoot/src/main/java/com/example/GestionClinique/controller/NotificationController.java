@@ -1,6 +1,5 @@
 package com.example.GestionClinique.controller;
 
-
 import com.example.GestionClinique.dto.ResponseDto.NotificationResponseDto;
 import com.example.GestionClinique.mapper.NotificationMapper;
 import com.example.GestionClinique.model.entity.Utilisateur;

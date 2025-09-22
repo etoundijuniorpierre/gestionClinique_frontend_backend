@@ -67,15 +67,12 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorize -> authorize
-                        // Permettre l'accès public
                         .requestMatchers("/Api/V1/clinique/login").permitAll()
                         .requestMatchers("/Api/V1/clinique/historiqueActions").permitAll()
                         .requestMatchers("/Api/V1/clinique/historiqueActions/**").permitAll()
                         .requestMatchers("/Api/V1/clinique/rendezvous/cancel-old").permitAll()
                         .requestMatchers("/Api/V1/clinique/ws/**").permitAll()
-                        // Permettre l'accès aux endpoints Swagger UI
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                        // Permettre l'accès en POST à l'inscription seulement pour un rôle
                         .requestMatchers(HttpMethod.POST, "/Api/V1/clinique/utilisateurs").hasRole("ADMIN")
                         .anyRequest().authenticated()
                 )

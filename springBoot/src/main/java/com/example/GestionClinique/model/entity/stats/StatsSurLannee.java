@@ -12,16 +12,10 @@ import java.time.Year;
 @Entity
 @Data
 public class StatsSurLannee extends BaseEntity {
-
     private String annee = Year.now().toString();
-
     private Long nbrRendezVousCONFIRME;
-
     private Long nbrRendezANNULE;
-
     private Long nbrPatientEnrg;
-
     private Long nbrConsultation;
-
     private Double revenu;
 }

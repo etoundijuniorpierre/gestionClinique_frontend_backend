@@ -1,6 +1,5 @@
 package com.example.GestionClinique.model.entity;
 
-
 import com.example.GestionClinique.model.InfoPersonnel;
 import jakarta.persistence.*;
 import lombok.*;
@@ -12,7 +11,7 @@ import java.util.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "patient")
+@Table
 public class Patient extends InfoPersonnel {
 
     @OneToOne(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = true)

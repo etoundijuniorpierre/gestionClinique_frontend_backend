@@ -48,16 +48,14 @@ public class ChatService {
         message.setContenu(messageDto.getContenu());
         message.setExpediteur(expediteur);
         message.setConversation(conversation);
-        message.setLu(false); // Un message est initialement non lu par les autres
+        message.setLu(false);
 
         Message savedMessage = messageRepository.save(message);
 
-        // Mise à jour de la conversation
         conversation.setLastMessageAt(LocalDateTime.now());
         conversation.setLastMessageSender(expediteur);
         conversationRepository.save(conversation);
 
-        // Mettre à jour les compteurs de messages non lus pour tous les participants, sauf l'expéditeur
         List<ConversationParticipant> participants = conversation.getParticipants();
         for (ConversationParticipant participant : participants) {
             if (!participant.getUtilisateur().getId().equals(expediteur.getId())) {
@@ -182,14 +180,12 @@ public class ChatService {
         groupe.getMembres().addAll(membres);
         Groupe savedGroupe = groupeRepository.save(groupe);
 
-        // Crée une conversation associée au groupe
         Conversation conversation = new Conversation();
         conversation.setTypeConversation(TypeConversation.GROUP);
         conversation.setTitre(groupe.getNom());
         conversation.setGroupe(savedGroupe);
         conversationRepository.save(conversation);
 
-        // Ajoute tous les membres du groupe comme participants de la conversation
         for (Utilisateur membre : groupe.getMembres()) {
             ConversationParticipant cp = new ConversationParticipant();
             cp.setConversation(conversation);
@@ -208,7 +204,6 @@ public class ChatService {
         List<Utilisateur> newMembers = utilisateurRepository.findAllById(memberIds);
         groupe.getMembres().addAll(newMembers);
 
-        // Ajoute les nouveaux membres à la conversation du groupe
         Conversation conversation = conversationRepository.findByGroupeId(groupeId)
                 .orElseThrow(() -> new EntityNotFoundException("Conversation associée au groupe non trouvée."));
 

@@ -11,7 +11,6 @@ import java.util.List;
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface DossierMedicalMapper {
 
-
     @Mapping(target = "patient", ignore = true)
     @Mapping(target = "consultations", ignore = true)
     @Mapping(target = "prescriptions", ignore = true)
@@ -20,10 +19,7 @@ public interface DossierMedicalMapper {
     @Mapping(source = "patient", target = "patient")
     DossierMedicalResponseDto toDto(DossierMedical entity);
 
-
     void updateEntityFromDto(DossierMedicalRequestDto dto, @MappingTarget DossierMedical entity);
 
-
     List<DossierMedicalResponseDto> toDtoList(List<DossierMedical> entities);
-
 }

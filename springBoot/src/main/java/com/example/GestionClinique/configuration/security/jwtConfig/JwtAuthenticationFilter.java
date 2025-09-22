@@ -3,8 +3,6 @@ package com.example.GestionClinique.configuration.security.jwtConfig;
 import com.example.GestionClinique.model.entity.Utilisateur;
 import com.example.GestionClinique.service.UtilisateurService;
 import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,9 +19,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.time.LocalDateTime;
 
-import static com.example.GestionClinique.model.entity.enumElem.StatusConnect.CONNECTE;
 import static com.example.GestionClinique.model.entity.enumElem.StatusConnect.DECONNECTE;
 
 @Component
@@ -49,7 +45,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
-        String userEmail = null; // Initialiser userEmail à null
+        String userEmail = null;
 
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             filterChain.doFilter(request, response);
@@ -63,15 +59,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            // Extrait le nom d'utilisateur, et cette méthode lance une exception si le token est invalide ou expiré.
             userEmail = jwtUtil.extractUsername(jwt);
 
-            // Si le nom d'utilisateur est extrait avec succès et qu'il n'y a pas d'authentification dans le contexte
             if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 
-                // Une fois les détails de l'utilisateur chargés, on valide le token.
-                // Cela vérifie que le nom d'utilisateur correspond et que le token n'a pas expiré (même si l'exception est déjà gérée plus haut).
                 if (jwtUtil.validateToken(jwt, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken =
                             new UsernamePasswordAuthenticationToken(
@@ -97,7 +89,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        // Si tout est correct, on passe au filtre suivant.
         filterChain.doFilter(request, response);
     }
 }

@@ -12,9 +12,6 @@ import java.util.Optional;
 
 
 public interface RoleRepository extends JpaRepository<Role, Long> {
-    List<Role> findByRoleType(RoleType roleType);
-
     @Query("SELECT r FROM Role r WHERE r.roleType = :roleType")
     Optional<Role> findFirstByRoleType(@Param("roleType") RoleType roleType);
-
 }

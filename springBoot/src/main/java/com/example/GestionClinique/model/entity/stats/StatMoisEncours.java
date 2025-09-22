@@ -10,16 +10,10 @@ import lombok.EqualsAndHashCode;
 @Entity
 @Data
 public class StatMoisEncours extends BaseEntity {
-
     private String moisEncours;
-
     private Long nbrRendezVousCONFIRME;
-
     private Long nbrRendezANNULE;
-
     private Long nbrPatientEnrg;
-
     private Long nbrConsultation;
-
     private Double revenu;
 }

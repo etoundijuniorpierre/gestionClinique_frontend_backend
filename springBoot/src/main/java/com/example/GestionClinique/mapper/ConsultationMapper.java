@@ -14,7 +14,6 @@ import java.util.List;
         uses = {PrescriptionMapper.class})
 public interface ConsultationMapper {
 
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dossierMedical", ignore = true)
     @Mapping(target = "medecin", ignore = true)
@@ -23,17 +22,13 @@ public interface ConsultationMapper {
     @Mapping(target = "facture", ignore = true)
     Consultation toEntity(ConsultationRequestDto dto);
 
-
-    // @Mapping(target = "dossierMedicalId", source = "dossierMedical.id")
     @Mapping(target = "medecinNomComplet", expression = "java(entity.getMedecin() != null ? entity.getMedecin().getNom() + \" \" + entity.getMedecin().getPrenom() : null)")
-    // @Mapping(target = "rendezVousId", source = "rendezVous.id")
     @Mapping(target = "patientNomComplet", expression = "java(entity.getDossierMedical() != null && entity.getDossierMedical().getPatient() != null ? entity.getDossierMedical().getPatient().getNom() + \" \" + entity.getDossierMedical().getPatient().getPrenom() : null)")
     @Mapping(target = "serviceMedecin", expression = "java(entity.getMedecin() != null && entity.getMedecin().getServiceMedical() != null ? entity.getMedecin().getServiceMedical().name() : null)")
     @Mapping(target = "prescriptions", source = "prescriptions")
     ConsultationResponseDto toDto(Consultation entity);
 
     List<ConsultationResponseDto> toDtoList(List<Consultation> entities);
-
 
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "dossierMedical", ignore = true)

@@ -12,12 +12,13 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "messages")
+@Table
 public class Message extends BaseEntity {
-    @Column(name = "contenu", nullable = false, columnDefinition = "TEXT")
+
+    @Column(nullable = false, columnDefinition = "TEXT")
     private String contenu;
 
-    @Column(name = "lu", nullable = false)
+    @Column(nullable = false)
     private boolean lu;
 
     @ManyToOne(fetch = FetchType.LAZY)

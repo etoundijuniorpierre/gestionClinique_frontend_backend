@@ -1,9 +1,7 @@
 package com.example.GestionClinique.dto.ResponseDto;
 
-
 import lombok.*;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
@@ -16,9 +14,6 @@ public class  ConsultationResponseDto extends BaseResponseDto {
     private String motifs;
     private String diagnostic;
     private String compteRendu;
-//    private LocalDateTime dateHeureDebut;
-//    private Long dureeMinutes;
-//    private Long rendezVousId;
     private String medecinNomComplet;
     private String patientNomComplet;
     private String serviceMedecin;

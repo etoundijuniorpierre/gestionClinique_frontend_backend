@@ -1,6 +1,5 @@
 package com.example.GestionClinique.service.serviceImpl;
 
-
 import com.example.GestionClinique.model.entity.RendezVous;
 import com.example.GestionClinique.model.entity.Role;
 import com.example.GestionClinique.model.entity.Utilisateur;
@@ -17,11 +16,11 @@ import com.example.GestionClinique.service.photoService.FileStorageServiceImpl;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
+import lombok.AllArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
-
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -31,35 +30,17 @@ import java.util.*;
 
 import static com.example.GestionClinique.model.entity.enumElem.RoleType.*;
 
-
 @Service
+@AllArgsConstructor
 public class UtilisateurServiceImpl implements UtilisateurService {
 
     private final UtilisateurRepository utilisateurRepository;
-    private final RoleRepository roleRepository; // Inject RoleRepository
-    private final PasswordEncoder passwordEncoder; // Inject PasswordEncoder
+    private final RoleRepository roleRepository;
+    private final PasswordEncoder passwordEncoder;
     private final RendezVousRepository rendezVousRepository;
     private final FileStorageServiceImpl fileStorageService;
     private final HistoriqueActionService historiqueActionService;
     private final LoggingAspect loggingAspect;
-
-    public UtilisateurServiceImpl(UtilisateurRepository utilisateurRepository,
-                                  RoleRepository roleRepository,
-                                  PasswordEncoder passwordEncoder,
-                                  RendezVousRepository rendezVousRepository,
-                                  FileStorageServiceImpl fileStorageService1,
-                                  HistoriqueActionService historiqueActionService,
-                                  LoggingAspect loggingAspect) {
-        this.utilisateurRepository = utilisateurRepository;
-        this.roleRepository = roleRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.rendezVousRepository = rendezVousRepository;
-        this.fileStorageService = fileStorageService1;
-        this.historiqueActionService = historiqueActionService;
-        this.loggingAspect = loggingAspect;
-    }
-
-    
 
     @PostConstruct
     public void init() {
@@ -72,7 +53,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         if (findUtilisateurByEmail(utilisateur.getEmail()) != null) {
             throw new IllegalArgumentException("A user with this email address already exists.");
         }
-
         if (utilisateur.getPassword() == null || utilisateur.getPassword().isBlank()) {
             throw new IllegalArgumentException("Le mot de passe ne peut pas être vide.");
         }
@@ -80,24 +60,20 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             throw new IllegalArgumentException("Le mot de passe doit contenir au moins 8 caractères.");
         }
         utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
-
         if (utilisateur.getServiceMedical() == null || utilisateur.getServiceMedical().describeConstable().isEmpty()) {
             utilisateur.setServiceMedical(null);
         }
-
         if (utilisateur.getActif() == null) {
             utilisateur.setActif(true);
         }
 
-
         Role role = roleRepository.findById(utilisateur.getRole().getId())
                 .orElseThrow(() -> new IllegalArgumentException("Rôle non trouvé avec ID: " + utilisateur.getRole().getId()));
 
-        if(role.getRoleType()==SECRETAIRE || role.getRoleType()==ADMIN){
+        if (role.getRoleType() == SECRETAIRE || role.getRoleType() == ADMIN) {
             utilisateur.setServiceMedical(null);
         }
-
-        if(role.getRoleType()==MEDECIN) {
+        if (role.getRoleType() == MEDECIN) {
             utilisateur.setServiceMedical(utilisateur.getServiceMedical());
         }
 
@@ -115,7 +91,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         return savedUser;
     }
 
-
     @Override
     @Transactional
     public Utilisateur updatePhotoProfil(Long userId, MultipartFile photoProfil) {
@@ -127,8 +102,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                 fileStorageService.delete(utilisateur.getPhotoProfil());
             }
             String newPhotoPath = fileStorageService.save(photoProfil, userId);
-
-            // Appel de la nouvelle méthode de mise à jour partielle
             utilisateurRepository.updatePhotoProfil(userId, newPhotoPath);
 
             historiqueActionService.enregistrerAction(
@@ -136,10 +109,8 @@ public class UtilisateurServiceImpl implements UtilisateurService {
                     loggingAspect.currentUserId()
             );
         }
-        // Recharger l'utilisateur pour renvoyer l'objet complet mis à jour
         return utilisateurRepository.findById(userId).orElse(null);
     }
-
 
     @Transactional
     @Override
@@ -152,7 +123,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         }
         return fileStorageService.load(utilisateur.getPhotoProfil());
     }
-
 
     @Override
     @Transactional
@@ -179,15 +149,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         if (utilisateurDetails.getPrenom() != null) {
             existingUtilisateur.setPrenom(utilisateurDetails.getPrenom());
         }
-
         if (utilisateurDetails.getEmail() != null) {
             existingUtilisateur.setEmail(utilisateurDetails.getEmail());
         }
-
         if (utilisateurDetails.getAdresse() != null) {
             existingUtilisateur.setAdresse(utilisateurDetails.getAdresse());
         }
-        // ... et ainsi de suite pour tous les autres champs
         if (utilisateurDetails.getTelephone() != null) {
             existingUtilisateur.setTelephone(utilisateurDetails.getTelephone());
         }
@@ -203,7 +170,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         if (utilisateurDetails.getActif() != null) {
             existingUtilisateur.setActif(utilisateurDetails.getActif());
         }
-
         if (utilisateurDetails.getRole() != null && utilisateurDetails.getRole().getId() != null) {
             Role newRole = roleRepository.findById(utilisateurDetails.getRole().getId())
                     .orElseThrow(() -> new IllegalArgumentException("Rôle non trouvé avec ID: " + utilisateurDetails.getRole().getId()));
@@ -232,7 +198,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         utilisateurRepository.delete(utilisateur);
     }
 
-    @Transactional
+    @Override
     public Utilisateur findUtilisateurByEmail(String email) {
         return utilisateurRepository.findByEmail(email).orElse(null);
     }
@@ -249,7 +215,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         return utilisateurRepository.findByRole_RoleType(roleType);
     }
 
-    // ...
     @Override
     @Transactional
     public Utilisateur updateUtilisateurStatus(Long id, boolean isActive) {
@@ -265,7 +230,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         );
         return utilisateurRepository.findById(id).orElse(null);
     }
-
 
     @Override
     public List<RendezVous> findRendezVousByMedecinSearchTerm(String medecinSearchTerm) {
@@ -291,13 +255,11 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         return utilisateurRepository.searchByTerm(searchTerm);
     }
 
-
     @Override
     @Transactional
     public List<Utilisateur> findUsersWithStatusConnected() {
         return utilisateurRepository.findByStatusConnect(StatusConnect.CONNECTE);
     }
-
 
     @Override
     @Transactional
@@ -349,12 +311,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         return utilisateurRepository.findByStatusConnectOrderByLastLogoutDateDesc(StatusConnect.DECONNECTE);
     }
 
-
     public List<Utilisateur> getMedecinsByServiceMedical(ServiceMedical serviceMedical) {
         return utilisateurRepository.findByServiceMedical(serviceMedical);
     }
 
-    // 2. Liste des médecins disponibles par service à une heure précise
     public List<Utilisateur> getAvailableMedecinsByServiceAndTime(
             ServiceMedical serviceMedical,
             LocalDate date,
@@ -362,7 +322,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         return utilisateurRepository.findMedecinsByServiceMedicalWithoutRendezVousAt(
                 serviceMedical, date, heure);
     }
-
 
     @Transactional
     public Utilisateur updateUserConnectStatus(Long utilisateurId, StatusConnect statusConnect) {
@@ -381,5 +340,4 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         }
         return utilisateurRepository.findAllById(participantIds);
     }
-
 }

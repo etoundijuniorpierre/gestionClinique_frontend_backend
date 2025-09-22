@@ -7,7 +7,6 @@ import com.example.GestionClinique.model.entity.RendezVous;
 
 import java.util.List;
 
-
 public interface ConsultationService {
     Consultation createConsultation(Consultation consultation, Long medecinId);
     Consultation updateConsultation(Long id, Consultation consultationDetails);

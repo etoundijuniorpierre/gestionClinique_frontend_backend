@@ -1,4 +1,4 @@
-package com.example.GestionClinique.dto.RequestDto;// package com.example.GestionClinique.dto; // Make sure this is in the correct DTO package
+package com.example.GestionClinique.dto.RequestDto;
 
 import com.example.GestionClinique.model.entity.enumElem.ServiceMedical;
 import jakarta.validation.constraints.FutureOrPresent;
@@ -14,23 +14,21 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class RendezVousRequestDto {
-
-    @NotNull(message = "L'ID du patient est requis.")
+    @NotNull
     private Long patientId;
 
-    @NotNull(message = "L'heure du rendez-vous est requise.")
+    @NotNull
     private LocalTime heure;
 
-    @NotNull(message = "La date du rendez-vous est requise.")
-    @FutureOrPresent(message = "La date du rendez-vous doit être aujourd'hui ou dans le futur.")
+    @NotNull
+    @FutureOrPresent
     private LocalDate jour;
 
     private String notes;
 
-    @NotNull(message = "Le service médical est requis.")
+    @NotNull
     private ServiceMedical serviceMedical;
 
-    @NotNull(message = "L'ID du médecin est requis.")
+    @NotNull
     private Long medecinId;
-
 }

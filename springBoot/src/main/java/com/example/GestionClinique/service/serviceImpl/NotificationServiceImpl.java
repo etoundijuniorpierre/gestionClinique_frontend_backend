@@ -1,6 +1,5 @@
 package com.example.GestionClinique.service.serviceImpl;
 
-
 import com.example.GestionClinique.model.entity.Message;
 import com.example.GestionClinique.model.entity.Notification;
 import com.example.GestionClinique.model.entity.RendezVous;

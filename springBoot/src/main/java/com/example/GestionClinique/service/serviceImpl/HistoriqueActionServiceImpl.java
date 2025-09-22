@@ -1,6 +1,5 @@
 package com.example.GestionClinique.service.serviceImpl;
 
-
 import com.example.GestionClinique.model.entity.HistoriqueAction;
 import com.example.GestionClinique.model.entity.Utilisateur;
 import com.example.GestionClinique.repository.HistoriqueActionRepository;
@@ -42,34 +41,34 @@ HistoriqueActionServiceImpl implements HistoriqueActionService {
 
     @Override
     public HistoriqueAction enregistrerAction(String actionDescription, Utilisateur utilisateur) {
-        HistoriqueAction action = new HistoriqueAction(); // Create new instance
-        action.setDate(LocalDate.now());                  // Set date
-        action.setAction(actionDescription);              // Set action description
-        action.setUtilisateur(utilisateur);               // Set associated user
+        HistoriqueAction action = new HistoriqueAction();
+        action.setDate(LocalDate.now());
+        action.setAction(actionDescription);
+        action.setUtilisateur(utilisateur);
         return historiqueActionRepository.save(action);
     }
 
     @Override
     public HistoriqueAction enregistrerAction(String actionDescription) {
-        HistoriqueAction action = new HistoriqueAction(); // Create new instance
-        action.setDate(LocalDate.now());                  // Set date
-        action.setAction(actionDescription);              // Set action description
-        action.setUtilisateur(null);                      // No specific user associated
+        HistoriqueAction action = new HistoriqueAction();
+        action.setDate(LocalDate.now());
+        action.setAction(actionDescription);
+        action.setUtilisateur(null);
         return historiqueActionRepository.save(action);
     }
 
-    @Override// Use Spring's Transactional
+    @Override
     public List<HistoriqueAction> findAllHistoriqueActionsDesc() {
         return historiqueActionRepository.findAllByOrderByIdDesc();
     }
 
-    @Override// Use Spring's Transactional
+    @Override
     public HistoriqueAction findHistoriqueActionById(Long id) {
         return historiqueActionRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("HistoriqueAction non trouvé avec ID: " + id));
     }
 
-    @Override// Use Spring's Transactional
+    @Override
     public List<HistoriqueAction> findHistoriqueActionsByUtilisateurId(Long utilisateurId) {
         if (!utilisateurRepository.existsById(utilisateurId)) {
             throw new IllegalArgumentException("Utilisateur non trouvé avec ID: " + utilisateurId);
@@ -77,7 +76,7 @@ HistoriqueActionServiceImpl implements HistoriqueActionService {
         return historiqueActionRepository.findByUtilisateurId(utilisateurId);
     }
 
-    @Override// Use Spring's Transactional
+    @Override
     public List<HistoriqueAction> findHistoriqueActionsByUtilisateurName(String utilisateurName) {
         return historiqueActionRepository.findByNomCompletUtilisateur(utilisateurName);
     }
@@ -96,5 +95,4 @@ HistoriqueActionServiceImpl implements HistoriqueActionService {
                 (motCle != null && !motCle.isEmpty()) ? motCle : null
         );
     }
-
 }

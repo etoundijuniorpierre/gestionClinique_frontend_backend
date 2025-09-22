@@ -1,6 +1,5 @@
 package com.example.GestionClinique.dto.RequestDto.messageRequestDto;
 
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

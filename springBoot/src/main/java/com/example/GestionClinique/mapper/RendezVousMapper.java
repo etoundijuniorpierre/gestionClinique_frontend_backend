@@ -5,9 +5,7 @@ import com.example.GestionClinique.dto.ResponseDto.RendezVousResponseDto;
 import com.example.GestionClinique.model.entity.Patient;
 import com.example.GestionClinique.model.entity.RendezVous;
 import com.example.GestionClinique.model.entity.Utilisateur;
-import com.example.GestionClinique.repository.FactureRepository;
 import com.example.GestionClinique.repository.PatientRepository;
-import com.example.GestionClinique.repository.RendezVousRepository;
 import com.example.GestionClinique.repository.UtilisateurRepository;
 import com.example.GestionClinique.service.RendezVousService;
 import org.mapstruct.*;
@@ -26,18 +24,16 @@ public abstract class RendezVousMapper {
     @Autowired
     private RendezVousService rendezVousRepository;
 
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "patient", source = "patientId", qualifiedByName = "mapPatientIdToPatient")
     @Mapping(target = "medecin", source = "medecinId", qualifiedByName = "mapMedecinIdToMedecin")
-    @Mapping(target = "salle", ignore = true) // <-- IMPORTANT CHANGE: Salle will be set by the service based on serviceMedical
+    @Mapping(target = "salle", ignore = true)
     @Mapping(target = "statut", ignore = true)
     @Mapping(target = "facture", ignore = true)
     @Mapping(target = "consultation", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modificationDate", ignore = true)
     public abstract RendezVous toEntity(RendezVousRequestDto dto);
-
 
     @Mapping(source = "patient.id", target = "patientId")
     @Mapping(source = "medecin.id", target = "medecinId")
@@ -54,7 +50,6 @@ public abstract class RendezVousMapper {
 
     public abstract List<RendezVousResponseDto> toDtoList(List<RendezVous> entities);
 
-
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "patient", ignore = true)
     @Mapping(target = "medecin", ignore = true)
@@ -69,8 +64,6 @@ public abstract class RendezVousMapper {
     @Mapping(target = "notes", source = "notes")
     @Mapping(target = "serviceMedical", source = "serviceMedical")
     public abstract void updateEntityFromDto(RendezVousRequestDto dto, @MappingTarget RendezVous entity);
-
-
 
     @Named("mapPatientIdToPatient")
     public Patient mapPatientIdToPatient(Long patientId) {
@@ -89,13 +82,4 @@ public abstract class RendezVousMapper {
         return utilisateurRepository.findById(medecinId)
                 .orElseThrow(() -> new IllegalArgumentException("Medecin not found with ID: " + medecinId));
     }
-
-//    @Named("mapFactureId")
-//    public RendezVous mapFactureId(Long rendezVousId) {
-//        if (rendezVousId == null) {
-//            return null;
-//        }
-//        return rendezVousRepository.findRendezVousById(rendezVousId);
-//    }
-
 }

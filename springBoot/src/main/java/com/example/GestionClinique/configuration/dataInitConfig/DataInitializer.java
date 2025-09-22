@@ -17,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.Period;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Optional;
 
 import static com.example.GestionClinique.model.entity.enumElem.RoleType.*;
@@ -33,13 +32,8 @@ public class DataInitializer {
                                             SalleRepository salleRepository,
                                             PasswordEncoder passwordEncoder) {
         return args -> {
-            // 1. Initialize all roles if they don't exist
             initializeRoles(roleRepository);
-
-            // 2. Initialize admin user if none exists
             initializeAdminUser(utilisateurRepository, roleRepository, passwordEncoder);
-
-            // 3. Initialize salles if they don't exist
             initializeSalles(salleRepository);
         };
     }

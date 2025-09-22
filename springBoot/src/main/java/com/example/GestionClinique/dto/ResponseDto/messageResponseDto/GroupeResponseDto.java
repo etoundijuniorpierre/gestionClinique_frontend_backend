@@ -1,6 +1,5 @@
 package com.example.GestionClinique.dto.ResponseDto.messageResponseDto;
 
-
 import com.example.GestionClinique.dto.ResponseDto.BaseResponseDto;
 import com.example.GestionClinique.dto.ResponseDto.UtilisateurResponseDto;
 import lombok.Data;

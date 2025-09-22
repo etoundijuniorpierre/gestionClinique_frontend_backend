@@ -40,7 +40,6 @@ public abstract class ConversationMapper {
 
     public abstract List<ConversationResponseDto> toDtoList(List<Conversation> entities);
 
-
     @Named("mapParticipantIdsToParticipants")
     public List<ConversationParticipant> mapParticipantIdsToParticipants(List<Long> participantIds) {
         if (participantIds == null || participantIds.isEmpty()) {

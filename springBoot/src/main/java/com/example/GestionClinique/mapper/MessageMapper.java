@@ -1,13 +1,11 @@
 package com.example.GestionClinique.mapper;
 
-
 import com.example.GestionClinique.dto.RequestDto.messageRequestDto.MessageRequestDto;
 import com.example.GestionClinique.dto.ResponseDto.messageResponseDto.MessageResponseDto;
 import com.example.GestionClinique.model.entity.Message;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.Mapping;
-
 
 @Mapper(componentModel = "spring", uses = {UtilisateurMapper.class, GroupeMapper.class})
 public interface MessageMapper {

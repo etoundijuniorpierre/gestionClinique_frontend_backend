@@ -4,7 +4,6 @@ import com.example.GestionClinique.dto.ResponseDto.BaseResponseDto;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class StatDuJourResponseDto extends BaseResponseDto {

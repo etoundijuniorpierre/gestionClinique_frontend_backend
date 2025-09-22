@@ -8,6 +8,6 @@ import lombok.*;
 @Data
 public class PatientRequestDto extends InfoPersonnelRequestDto {
     @Valid
-    @NotNull(message = "Les informations du dossier médical sont requises.")
+    @NotNull
     private DossierMedicalRequestDto dossierMedical;
 }

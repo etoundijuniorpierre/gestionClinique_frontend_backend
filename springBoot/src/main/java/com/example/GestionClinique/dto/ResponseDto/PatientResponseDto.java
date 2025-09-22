@@ -6,5 +6,4 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class PatientResponseDto extends InfoPersonnelResponseDto {
-
 }

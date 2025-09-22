@@ -10,20 +10,14 @@ import jakarta.transaction.Transactional;
 import org.springframework.core.io.Resource;
 import org.springframework.web.multipart.MultipartFile;
 
-
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
-
 
 public interface UtilisateurService {
     Utilisateur createUtilisateur(Utilisateur utilisateur);
     Utilisateur updatePhotoProfil(Long userId, MultipartFile photoProfil);
-
-    @Transactional
     Resource getPhotoProfil(Long userId);
-
     Utilisateur findUtilisateurById(Long id);
     List<Utilisateur> findAllUtilisateur();
     Utilisateur updateUtilisateur(Long id, Utilisateur utilisateur);

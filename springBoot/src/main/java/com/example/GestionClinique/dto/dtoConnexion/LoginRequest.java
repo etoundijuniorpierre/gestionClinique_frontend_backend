@@ -1,6 +1,6 @@
 package com.example.GestionClinique.dto.dtoConnexion;
 
-import lombok.Data; // Nécessite Lombok
+import lombok.Data;
 
 @Data
 public class LoginRequest {

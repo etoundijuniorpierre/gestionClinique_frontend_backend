@@ -18,10 +18,10 @@ import java.util.List;
 @Table(name = "groupes")
 public class Groupe extends BaseEntity {
 
-    @Column(name = "nom")
+    @Column
     private String nom;
 
-    @Column(name = "description")
+    @Column
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY)

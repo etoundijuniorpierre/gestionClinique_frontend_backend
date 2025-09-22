@@ -4,10 +4,8 @@ import com.example.GestionClinique.model.entity.Message;
 import com.example.GestionClinique.model.entity.Notification;
 import com.example.GestionClinique.model.entity.RendezVous;
 import com.example.GestionClinique.model.entity.Utilisateur;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
-
 
 public interface NotificationService {
     Notification creerNotificationPourMessage(Message message, Utilisateur destinataire);

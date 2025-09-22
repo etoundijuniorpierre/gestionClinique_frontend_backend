@@ -11,20 +11,13 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
-
 public interface FactureRepository extends JpaRepository<Facture, Long> {
     List<Facture> findByStatutPaiement(StatutPaiement statutPaiement);
     List<Facture> findByModePaiement(ModePaiement modePaiement);
     Optional<Facture> findByRendezVousId(Long id);
 
-
-    // Utilise la fonction DATE() ou TRUNC() selon ta base de données pour extraire la partie date
     @Query("SELECT COALESCE(SUM(f.montant), 0.0) FROM Facture f WHERE DATE(f.dateEmission) = :date")
     Double sumMontantTotalByDateFacture(@Param("date") LocalDate date);
-
-//    // Ces méthodes sont déjà OK car elles extraient YEAR et MONTH
-//    @Query("SELECT COALESCE(SUM(f.montant), 0.0) FROM Facture f WHERE YEAR(f.dateEmission) = :year AND MONTH(f.dateEmission) = :month")
-//    Double sumMontantTotalByMonthFacture(@Param("year") int year, @Param("month") int month);
 
     @Query("SELECT COALESCE(SUM(f.montant), 0.0) FROM Facture f WHERE YEAR(f.dateEmission) = :year")
     Double sumMontantTotalByYearFacture(@Param("year") int year);

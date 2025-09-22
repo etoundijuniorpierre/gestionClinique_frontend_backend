@@ -1,10 +1,8 @@
-// PrescriptionDto.java (updated)
 package com.example.GestionClinique.dto.ResponseDto;
 
 import lombok.*;
 
 import java.time.LocalDate;
-
 
 @EqualsAndHashCode(callSuper = true)
 @Data
@@ -22,6 +20,4 @@ public class PrescriptionResponseDto extends BaseResponseDto {
     private Long quantite;
     private String motifConsultation;
     private Long consultationId;
-//    private Long dossierMedicalId;
-//    private String dossierMedicalReference;
 }

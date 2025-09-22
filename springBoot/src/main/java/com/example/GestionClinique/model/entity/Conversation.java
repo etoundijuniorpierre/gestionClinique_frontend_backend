@@ -4,6 +4,7 @@ import com.example.GestionClinique.model.BaseEntity;
 import com.example.GestionClinique.model.entity.enumElem.TypeConversation;
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 import java.util.*;
 
@@ -11,7 +12,7 @@ import java.util.*;
 @Data
 @NoArgsConstructor @AllArgsConstructor
 @Entity
-@Table(name = "conversations")
+@Table
 public class Conversation extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
@@ -27,7 +28,7 @@ public class Conversation extends BaseEntity {
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ConversationParticipant> participants = new ArrayList<>();
 
-    @Column(name = "last_message_at")
+    @Column
     private LocalDateTime lastMessageAt;
 
     @ManyToOne(fetch = FetchType.LAZY)

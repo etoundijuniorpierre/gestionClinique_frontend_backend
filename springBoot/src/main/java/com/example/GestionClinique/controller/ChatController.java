@@ -48,7 +48,6 @@ public class ChatController {
         throw new IllegalStateException("Authenticated user (Medecin) ID not found in security context or not an Utilisateur instance.");
     }
 
-
     @PreAuthorize("hasAnyRole('ADMIN', 'SECRETAIRE', 'MEDECIN')")
     @PostMapping("/messages")
     public ResponseEntity<MessageResponseDto> sendMessage(@Valid @RequestBody MessageRequestDto messageDto, Authentication authentication) {
@@ -81,7 +80,6 @@ public class ChatController {
             @RequestParam(defaultValue = "20") int size,
             Authentication authentication) {
         Long userId = getAuthenticatedUserId();
-        // Assurez-vous que l'utilisateur est bien un participant de la conversation
         if (!chatService.isUserInConversation(conversationId, userId)) {
             return new ResponseEntity<>(HttpStatus.FORBIDDEN);
         }

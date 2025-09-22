@@ -1,13 +1,10 @@
 package com.example.GestionClinique.service;
 
-
 import com.example.GestionClinique.model.entity.Patient;
 import com.example.GestionClinique.model.entity.RendezVous;
 import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
-import jakarta.transaction.Transactional;
 
 import java.util.List;
-
 
 public interface PatientService {
     Patient createPatient(Patient patient);
