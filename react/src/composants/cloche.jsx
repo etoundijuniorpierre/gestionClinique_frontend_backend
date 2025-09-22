@@ -72,20 +72,18 @@ const NotificationBadge = Styled.div`
     }
 `;
 
-function Cloche({ notificationCount = 0 }){
-    // Ne pas afficher la cloche s'il n'y a pas de notifications non lues
-    if (notificationCount === 0) {
-        return null;
-    }
 
+function Cloche({ notificationCount = 0 }){
     return(
         <ClocheContainer>
             <ImgprofilStyle src={cloche} alt="Notifications" />
-            <NotificationBadge count={notificationCount}>
-                {notificationCount > 99 ? '99+' : notificationCount}
-            </NotificationBadge>
+            {notificationCount > 0 && (
+                <NotificationBadge count={notificationCount}>
+                    {notificationCount > 99 ? '99+' : notificationCount}
+                </NotificationBadge>
+            )}
         </ClocheContainer>
     )
-} 
+}
 
 export default Cloche

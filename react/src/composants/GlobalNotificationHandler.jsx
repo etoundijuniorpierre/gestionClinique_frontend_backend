@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import notificationService from '../services/notificationService';
+import notificationApi from '../services/notificationApi';
 import { connectWebSocket, disconnectWebSocket } from '../services/messagerieService';
 
 const NotificationContainer = styled.div`
@@ -93,33 +93,28 @@ const CloseButton = styled.button`
 const GlobalNotificationHandler = () => {
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Initialiser le service de notifications
-    const initializeNotifications = async () => {
+    // Récupérer les notifications non lues depuis l'API
+    const fetchNotifications = async () => {
+      setLoading(true);
       try {
-        await notificationService.requestNotificationPermission();
-        console.log('🔔 Service de notifications globales initialisé');
+        const userId = localStorage.getItem('id');
+        if (userId) {
+          const apiNotifications = await notificationApi.getUnreadNotifications(userId);
+          // Filtrer types MESSAGE et RENDEZVOUS
+          const filtered = apiNotifications.filter(n => n.type === 'MESSAGE' || n.type === 'RENDEZVOUS');
+          setNotifications(filtered);
+          setUnreadCount(filtered.length);
+        }
       } catch (error) {
-        console.error('❌ Erreur lors de l\'initialisation des notifications:', error);
+        console.error('Erreur lors de la récupération des notifications:', error);
+      } finally {
+        setLoading(false);
       }
     };
-
-    initializeNotifications();
-
-    // Écouter les changements de notifications
-    const removeListener = notificationService.addListener(({ notifications, unreadCount }) => {
-      setNotifications(notifications);
-      setUnreadCount(unreadCount);
-    });
-
-    // Initialiser les notifications existantes
-    setNotifications(notificationService.getNotifications());
-    setUnreadCount(notificationService.getUnreadCount());
-
-    return () => {
-      removeListener();
-    };
+    fetchNotifications();
   }, []);
 
   // Effet pour surveiller les changements de route et gérer le WebSocket global
@@ -197,57 +192,67 @@ const GlobalNotificationHandler = () => {
     }
   }, [window.location.pathname]); // Dépendance sur le pathname pour détecter les changements de route
 
-  const handleNotificationClick = (notification) => {
-    // Marquer comme lue
-    if (!notification.isTemporary) {
-      notificationService.markAsRead(notification.id);
-    }
-    
-    // Rediriger vers la page chat selon le rôle de l'utilisateur
-    const userRole = localStorage.getItem('user');
-    let chatPath = '/chat'; // fallback
-    
-    if (userRole) {
+  const handleNotificationClick = async (notification) => {
+    // Marquer comme lue côté API
+    if (!notification.isTemporary && notification.id) {
       try {
-        const role = JSON.parse(userRole);
-        switch (role) {
-          case 'ROLE_ADMIN':
-            chatPath = '/admin/chat';
-            break;
-          case 'ROLE_MEDECIN':
-            chatPath = '/medecin/chat';
-            break;
-          case 'ROLE_SECRETAIRE':
-            chatPath = '/secretaire/chat';
-            break;
-          default:
-            chatPath = '/chat';
-        }
+        await notificationApi.markAsRead(notification.id);
+        setNotifications(prev => prev.filter(n => n.id !== notification.id));
+        setUnreadCount(prev => Math.max(0, prev - 1));
       } catch (error) {
-        console.error('Erreur lors du parsing du rôle:', error);
-        chatPath = '/chat';
+        console.error('Erreur lors du marquage comme lue:', error);
       }
     }
-    
-    window.location.href = chatPath;
+    // Rediriger selon le type
+    if (notification.type === 'MESSAGE') {
+      // Rediriger vers la page chat selon le rôle de l'utilisateur
+      const userRole = localStorage.getItem('user');
+      let chatPath = '/chat'; // fallback
+      if (userRole) {
+        try {
+          const role = JSON.parse(userRole);
+          switch (role) {
+            case 'ROLE_ADMIN':
+              chatPath = '/admin/chat';
+              break;
+            case 'ROLE_MEDECIN':
+              chatPath = '/medecin/chat';
+              break;
+            case 'ROLE_SECRETAIRE':
+              chatPath = '/secretaire/chat';
+              break;
+            default:
+              chatPath = '/chat';
+          }
+        } catch (error) {
+          console.error('Erreur lors du parsing du rôle:', error);
+          chatPath = '/chat';
+        }
+      }
+      window.location.href = chatPath;
+    } else if (notification.type === 'RENDEZVOUS') {
+      // Rediriger vers la page de rendez-vous (à adapter selon votre routing)
+      window.location.href = '/rendezvous';
+    }
   };
 
   const handleCloseNotification = (notificationId, event) => {
     event.stopPropagation();
-    
-    if (!notification.isTemporary) {
-      notificationService.dismissNotification(notificationId);
-    } else {
-      setNotifications(prev => prev.filter(n => n.id !== notificationId));
-    }
+    setNotifications(prev => prev.filter(n => n.id !== notificationId));
+    setUnreadCount(prev => Math.max(0, prev - 1));
   };
 
-  // Afficher les 10 notifications les plus récentes (sans filtrage)
-  const recentNotifications = notifications.slice(0, 10);
+  // Afficher les 10 notifications les plus récentes (types MESSAGE et RENDEZVOUS)
+  const recentNotifications = notifications
+    .filter(n => n.type === 'MESSAGE' || n.type === 'RENDEZVOUS')
+    .slice(0, 10);
+
+  if (loading) {
+    return <NotificationContainer>Chargement des notifications...</NotificationContainer>;
+  }
 
   return (
     <NotificationContainer>
-      {/* Notifications réelles */}
       {recentNotifications.map((notification) => (
         <NotificationToast
           key={notification.id}
@@ -256,10 +261,10 @@ const GlobalNotificationHandler = () => {
           <NotificationHeader>
             <div>
               <NotificationTitle>
-                {notification.conversationName}
+                {notification.type === 'MESSAGE' ? notification.conversationName : 'Notification Rendez-vous'}
               </NotificationTitle>
               <NotificationSender>
-                {notification.senderName}
+                {notification.senderName || ''}
               </NotificationSender>
             </div>
             <CloseButton
@@ -268,13 +273,11 @@ const GlobalNotificationHandler = () => {
               ×
             </CloseButton>
           </NotificationHeader>
-          
           <NotificationMessage>
-            {notification.messagePreview}
+            {notification.messagePreview || notification.contenu}
           </NotificationMessage>
-          
           <NotificationTime>
-            {notification.timeAgo}
+            {notification.timeAgo || ''}
           </NotificationTime>
         </NotificationToast>
       ))}

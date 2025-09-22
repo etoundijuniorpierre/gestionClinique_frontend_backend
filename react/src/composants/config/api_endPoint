@@ -21,24 +21,32 @@
       "description": "API pour la gestion et le suivi des actions dans le système"
     },
     {
-      "name": "Gestion des Dossiers Médicaux",
-      "description": "API pour la gestion des dossiers médicaux des patients"
-    },
-    {
       "name": "Gestion des Utilisateurs",
       "description": "API pour la gestion des utilisateurs du système"
-    },
-    {
-      "name": "Gestion des Prescriptions",
-      "description": "API pour la gestion des prescriptions médicales"
     },
     {
       "name": "Gestion des Salles",
       "description": "API pour la gestion des salles d'hôpital"
     },
     {
-      "name": "Gestion des Messages",
-      "description": "API pour la gestion des messages entre utilisateurs"
+      "name": "Gestion du chat",
+      "description": "API pour la gestion du chat de la clinique"
+    },
+    {
+      "name": "Notifications",
+      "description": "Gestion des notifications utilisateurs"
+    },
+    {
+      "name": "Gestion des Factures",
+      "description": "API pour la gestion des factures et des paiements"
+    },
+    {
+      "name": "Gestion des Dossiers Médicaux",
+      "description": "API pour la gestion des dossiers médicaux des patients"
+    },
+    {
+      "name": "Gestion des Prescriptions",
+      "description": "API pour la gestion des prescriptions médicales"
     },
     {
       "name": "AUTHENTIFICATION",
@@ -51,10 +59,6 @@
     {
       "name": "STATISTIQUES",
       "description": "API pour la récupération des statistiques (jour, mois, année)"
-    },
-    {
-      "name": "Gestion des Factures",
-      "description": "API pour la gestion des factures et des paiements"
     },
     {
       "name": "Gestion des Patients",
@@ -1407,6 +1411,69 @@
         }
       }
     },
+    "/Api/V1/clinique/chat/messages/{id}": {
+      "put": {
+        "tags": [
+          "Gestion du chat"
+        ],
+        "operationId": "updateMessage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "string"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Gestion du chat"
+        ],
+        "operationId": "deleteMessage",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
     "/Api/V1/clinique/utilisateurs": {
       "get": {
         "tags": [
@@ -1856,32 +1923,27 @@
         }
       }
     },
-    "/Api/V1/clinique/messagerie/groupes": {
+    "/Api/V1/clinique/notifications/{notificationId}/marquer-lue": {
       "post": {
         "tags": [
-          "groupe-controller"
+          "Notifications"
         ],
-        "operationId": "creerGroupe",
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/GroupeRequestDto"
-              }
+        "summary": "Marquer une notification comme lue",
+        "operationId": "markAsRead",
+        "parameters": [
+          {
+            "name": "notificationId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
             }
-          },
-          "required": true
-        },
+          }
+        ],
         "responses": {
           "200": {
-            "description": "OK",
-            "content": {
-              "*/*": {
-                "schema": {
-                  "$ref": "#/components/schemas/GroupeResponseDto"
-                }
-              }
-            }
+            "description": "OK"
           }
         }
       }
@@ -2292,6 +2354,117 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ConsultationResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Api/V1/clinique/chat/messages": {
+      "post": {
+        "tags": [
+          "Gestion du chat"
+        ],
+        "operationId": "sendMessage",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MessageRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/MessageResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Api/V1/clinique/chat/groups": {
+      "post": {
+        "tags": [
+          "Gestion du chat"
+        ],
+        "operationId": "createGroup",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GroupeRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/GroupeResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Api/V1/clinique/chat/conversations": {
+      "get": {
+        "tags": [
+          "Gestion du chat"
+        ],
+        "operationId": "getUserConversations",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ConversationResponseDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Gestion du chat"
+        ],
+        "operationId": "startConversation",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ConversationRequestDto"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ConversationResponseDto"
                 }
               }
             }
@@ -4876,44 +5049,69 @@
         }
       }
     },
-    "/Api/V1/clinique/messagerie/chat.{id}": {
+    "/Api/V1/clinique/notifications/utilisateur/{userId}": {
       "get": {
         "tags": [
-          "Gestion des Messages"
+          "Notifications"
         ],
-        "summary": "Récupérer un message par ID",
-        "description": "Endpoint REST pour récupérer un message spécifique",
-        "operationId": "getMessageById",
+        "summary": "Récupérer toutes les notifications d'un utilisateur",
+        "operationId": "getAllNotifications",
         "parameters": [
           {
-            "name": "id",
+            "name": "userId",
             "in": "path",
-            "description": "ID du message",
             "required": true,
             "schema": {
               "type": "integer",
               "format": "int64"
-            },
-            "example": 1
+            }
           }
         ],
         "responses": {
           "200": {
-            "description": "Message trouvé",
+            "description": "OK",
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageResponseDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationResponseDto"
+                  }
                 }
               }
             }
-          },
-          "404": {
-            "description": "Message non trouvé",
+          }
+        }
+      }
+    },
+    "/Api/V1/clinique/notifications/utilisateur/{userId}/non-lues": {
+      "get": {
+        "tags": [
+          "Notifications"
+        ],
+        "summary": "Récupérer les notifications non lues d'un utilisateur",
+        "operationId": "getUnreadNotifications",
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
             "content": {
               "*/*": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageResponseDto"
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/NotificationResponseDto"
+                  }
                 }
               }
             }
@@ -5780,6 +5978,57 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DossierMedicalResponseDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Api/V1/clinique/chat/conversations/{id}/messages": {
+      "get": {
+        "tags": [
+          "Gestion du chat"
+        ],
+        "operationId": "getMessagesByConversation",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/PageMessageResponseDto"
                 }
               }
             }
@@ -6738,29 +6987,7 @@
           "temperature"
         ]
       },
-      "GroupeRequestDto": {
-        "type": "object",
-        "properties": {
-          "nom": {
-            "type": "string"
-          },
-          "description": {
-            "type": "string"
-          },
-          "idCreateur": {
-            "type": "integer",
-            "format": "int64"
-          },
-          "idsMembres": {
-            "type": "array",
-            "items": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        }
-      },
-      "GroupeResponseDto": {
+      "MessageResponseDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -6775,20 +7002,18 @@
             "type": "string",
             "format": "date-time"
           },
-          "nom": {
+          "contenu": {
             "type": "string"
           },
-          "description": {
-            "type": "string"
+          "lu": {
+            "type": "boolean"
           },
-          "createur": {
+          "expediteur": {
             "$ref": "#/components/schemas/UtilisateurResponseDto"
           },
-          "membres": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/UtilisateurResponseDto"
-            }
+          "conversationId": {
+            "type": "integer",
+            "format": "int64"
           }
         }
       },
@@ -6884,6 +7109,157 @@
           }
         }
       },
+      "MessageRequestDto": {
+        "type": "object",
+        "properties": {
+          "contenu": {
+            "type": "string",
+            "minLength": 1
+          },
+          "lu": {
+            "type": "boolean"
+          },
+          "expediteurId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "groupeId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "conversationId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        },
+        "required": [
+          "expediteurId"
+        ]
+      },
+      "GroupeRequestDto": {
+        "type": "object",
+        "properties": {
+          "nom": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "idCreateur": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "idsMembres": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "GroupeResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modificationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "nom": {
+            "type": "string"
+          },
+          "description": {
+            "type": "string"
+          },
+          "createur": {
+            "$ref": "#/components/schemas/UtilisateurResponseDto"
+          },
+          "membres": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UtilisateurResponseDto"
+            }
+          }
+        }
+      },
+      "ConversationRequestDto": {
+        "type": "object",
+        "properties": {
+          "typeConversation": {
+            "type": "string",
+            "enum": [
+              "DIRECT",
+              "GROUP"
+            ]
+          },
+          "groupeId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "participantIds": {
+            "type": "array",
+            "items": {
+              "type": "integer",
+              "format": "int64"
+            }
+          },
+          "titre": {
+            "type": "string"
+          }
+        }
+      },
+      "ConversationResponseDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modificationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "typeConversation": {
+            "type": "string",
+            "enum": [
+              "DIRECT",
+              "GROUP"
+            ]
+          },
+          "titre": {
+            "type": "string"
+          },
+          "groupe": {
+            "$ref": "#/components/schemas/GroupeResponseDto"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/UtilisateurResponseDto"
+            }
+          },
+          "lastMessageAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "unreadCount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      },
       "Consultation": {
         "type": "object",
         "properties": {
@@ -6940,6 +7316,80 @@
           },
           "rendezVous": {
             "$ref": "#/components/schemas/RendezVous"
+          }
+        }
+      },
+      "Conversation": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modificationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "typeConversation": {
+            "type": "string",
+            "enum": [
+              "DIRECT",
+              "GROUP"
+            ]
+          },
+          "titre": {
+            "type": "string"
+          },
+          "groupe": {
+            "$ref": "#/components/schemas/Groupe"
+          },
+          "participants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ConversationParticipant"
+            }
+          },
+          "lastMessageAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "lastMessageSender": {
+            "$ref": "#/components/schemas/Utilisateur"
+          }
+        }
+      },
+      "ConversationParticipant": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modificationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "conversation": {
+            "$ref": "#/components/schemas/Conversation"
+          },
+          "utilisateur": {
+            "$ref": "#/components/schemas/Utilisateur"
+          },
+          "lastReadAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "unreadCount": {
+            "type": "integer",
+            "format": "int32"
           }
         }
       },
@@ -7123,14 +7573,60 @@
           "lu": {
             "type": "boolean"
           },
+          "conversation": {
+            "$ref": "#/components/schemas/Conversation"
+          },
           "expediteur": {
             "$ref": "#/components/schemas/Utilisateur"
           },
-          "destinataire": {
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Notification"
+            }
+          }
+        }
+      },
+      "Notification": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "creationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "modificationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "MESSAGE",
+              "RENDEZVOUS"
+            ]
+          },
+          "contenu": {
+            "type": "string"
+          },
+          "lu": {
+            "type": "boolean"
+          },
+          "dateCreation": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "utilisateur": {
             "$ref": "#/components/schemas/Utilisateur"
           },
-          "groupe": {
-            "$ref": "#/components/schemas/Groupe"
+          "message": {
+            "$ref": "#/components/schemas/Message"
+          },
+          "rendezVous": {
+            "$ref": "#/components/schemas/RendezVous"
           }
         }
       },
@@ -7316,6 +7812,12 @@
           },
           "consultation": {
             "$ref": "#/components/schemas/Consultation"
+          },
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Notification"
+            }
           }
         }
       },
@@ -7511,22 +8013,16 @@
               "$ref": "#/components/schemas/Prescription"
             }
           },
-          "messagesEnvoyes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Message"
-            }
-          },
-          "messagesRecus": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Message"
-            }
-          },
           "historiqueActions": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/HistoriqueAction"
+            }
+          },
+          "notifications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Notification"
             }
           },
           "authorities": {
@@ -7657,7 +8153,7 @@
           }
         }
       },
-      "MessageResponseDto": {
+      "NotificationResponseDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -7675,17 +8171,117 @@
           "contenu": {
             "type": "string"
           },
+          "type": {
+            "type": "string",
+            "enum": [
+              "MESSAGE",
+              "RENDEZVOUS"
+            ]
+          },
           "lu": {
             "type": "boolean"
           },
-          "expediteur": {
-            "$ref": "#/components/schemas/UtilisateurResponseDto"
+          "dateCreation": {
+            "type": "string",
+            "format": "date-time"
           },
-          "destinataire": {
-            "$ref": "#/components/schemas/UtilisateurResponseDto"
+          "utilisateurId": {
+            "type": "integer",
+            "format": "int64"
           },
-          "groupe": {
-            "$ref": "#/components/schemas/GroupeResponseDto"
+          "messageId": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "rendezVousId": {
+            "type": "integer",
+            "format": "int64"
+          }
+        }
+      },
+      "PageMessageResponseDto": {
+        "type": "object",
+        "properties": {
+          "totalElements": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "totalPages": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "size": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "content": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageResponseDto"
+            }
+          },
+          "number": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "first": {
+            "type": "boolean"
+          },
+          "last": {
+            "type": "boolean"
+          },
+          "numberOfElements": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageable": {
+            "$ref": "#/components/schemas/PageableObject"
+          },
+          "empty": {
+            "type": "boolean"
+          }
+        }
+      },
+      "PageableObject": {
+        "type": "object",
+        "properties": {
+          "offset": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "sort": {
+            "$ref": "#/components/schemas/SortObject"
+          },
+          "pageSize": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pageNumber": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "unpaged": {
+            "type": "boolean"
+          },
+          "paged": {
+            "type": "boolean"
+          }
+        }
+      },
+      "SortObject": {
+        "type": "object",
+        "properties": {
+          "empty": {
+            "type": "boolean"
+          },
+          "sorted": {
+            "type": "boolean"
+          },
+          "unsorted": {
+            "type": "boolean"
           }
         }
       }

@@ -160,24 +160,27 @@ function Utilisateur() {
     }, []);
 
     useEffect(() => {
-        if (!valeurrecherche.trim()) {
-            setutilisateursFiltres(utilisateurs); // Si rien à chercher, on affiche tout
+        const recherche = valeurrecherche.trim().toLowerCase();
+        if (!recherche) {
+            setutilisateursFiltres(utilisateurs);
             return;
         }
-
-        const recherche = valeurrecherche.toLowerCase();
-
         const resultats = utilisateurs.filter((u) => {
-            const serviceMedical = getServiceMedicalName(u);
-            const serviceMedicalText = typeof serviceMedical === 'string' ? serviceMedical : serviceMedical.props?.children || '';
-            
-            return u.nom.toLowerCase().includes(recherche) ||
-                   u.prenom.toLowerCase().includes(recherche) ||
-                   u.email.toLowerCase().includes(recherche) ||
-                   u.role.roleType.toLowerCase().includes(recherche) ||
-                   serviceMedicalText.toLowerCase().includes(recherche);
+            const nom = (u.nom || '').toLowerCase();
+            const prenom = (u.prenom || '').toLowerCase();
+            const email = (u.email || '').toLowerCase();
+            const role = (u.role?.roleType || '').toLowerCase();
+            const serviceMedical = (getServiceMedicalName(u) || '').toLowerCase();
+            const serviceMedicalName = (u.serviceMedicalName || '').toLowerCase();
+            return (
+                nom.includes(recherche) ||
+                prenom.includes(recherche) ||
+                email.includes(recherche) ||
+                role.includes(recherche) ||
+                serviceMedical.includes(recherche) ||
+                serviceMedicalName.includes(recherche)
+            );
         });
-
         setutilisateursFiltres(resultats);
     }, [valeurrecherche, utilisateurs]);
 
@@ -207,15 +210,18 @@ function Utilisateur() {
         startLoading('toggleStatus');
         try {
             const response = await axiosInstance.patch(`/utilisateurs/${userId}/status/${!currentStatus}`, { utilisateurs });
-            const user = response.data
+            const user = response.data;
             setutilisateurs((prevData) =>
                 prevData.map((item) =>
                     item.id === userId ? user : item
                 )
-            )
-
+            );
+            // La mise à jour de utilisateurs déclenchera le useEffect du filtre
             window.showNotification('Statut modifié avec succès', 'success');
             console.log(response.data);
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
         } catch (error) {
             console.log(error)
             window.showNotification('Erreur lors de la modification du statut', 'error');

@@ -31,7 +31,7 @@ function Dashboard() {
     const [statsError, setStatsError] = useState(null)
     const [statsSuccess, setStatsSuccess] = useState(false)
     const [selectedStatsType, setSelectedStatsType] = useState('daily') // 'daily', 'monthly', 'lastMonth', 'yearly'
-
+    const [datejour, setDatejour] = useState(new Date().toISOString().split('T')[0])
     // Récupération du nom et de la photo de profil de l'utilisateur connecté
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -75,28 +75,35 @@ function Dashboard() {
         fetchUserProfile()
     }, [idUser]);
 
+    // Récupération des statistiques journalières
     useEffect(() => {
         const token = localStorage.getItem('token');
+    
         const statjournalier = async () => {
             try {
-                const response = await axios.get(`${API_BASE}${STATS_ENDPOINTS.DAILY}`,
-                    {
-                        headers: {
-                            accept: 'application/json',
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        }
-                    });
+                const url = datejour
+                    ? `${API_BASE}${STATS_ENDPOINTS.DAILY}?date=${datejour}`
+                    : `${API_BASE}${STATS_ENDPOINTS.DAILY}`;
+    
+                const response = await axios.get(url, {
+                    headers: {
+                        accept: 'application/json',
+                        Authorization: `Bearer ${token}`,
+                        'Content-Type': 'application/json',
+                    },
+                });
+    
                 if (response && response.data) {
-                    setstatjour(response.data || {})
+                    setstatjour(response.data || {});
                 }
             } catch (error) {
                 console.error('Erreur lors de la récupération des statistiques:', error);
-                setstatjour({})
+                setstatjour({});
             }
-        }
-        statjournalier()
-    }, []);
+        };
+    
+        statjournalier();
+    }, [datejour]);    
 
     // Récupération des revenus mensuels
     useEffect(() => {

@@ -32,7 +32,6 @@ function App() {
               <Route path="/calendar" element={<Calendrier />} />
               <Route path="/pagemedecin" element={<PageMedecin />} />
               <Route element={<ProtectedRoute />}>
-                {/* Routes protégées avec contrôle de rôle */}
                 <Route element={<RoleBasedRoute allowedRoles={['ROLE_ADMIN']} />}>
                   <Route path='/admin/*' element={<Adminroute />} />
                 </Route>

@@ -494,8 +494,8 @@ function Photoprofil({ imgprofil, onPhotoUpload, onChangePassword, userId }) {
     
     if (!newPassword) {
       newErrors.newPassword = 'Le nouveau mot de passe est requis';
-    } else if (newPassword.length < 6) {
-      newErrors.newPassword = 'Le nouveau mot de passe doit contenir au moins 6 caractères';
+    } else if (newPassword.length < 8) {
+      newErrors.newPassword = 'Le nouveau mot de passe doit contenir au moins 8 caractères';
     }
     
     if (!confirmPassword) {

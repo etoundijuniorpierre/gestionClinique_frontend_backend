@@ -3,6 +3,8 @@ import React, { useEffect, useState } from 'react';
 import { API_BASE } from './config/apiconfig'
 import axiosInstance from './config/axiosConfig';
 import Cloche from './cloche'
+import notificationApi from '../services/notificationApi';
+import styled from 'styled-components';
 import Photoprofil from './photoprofil'
 import notificationService from '../services/notificationService';
 
@@ -172,6 +174,8 @@ const Chemin = Styled.div`
 `
 
 function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificationCount = 0, userRole = 'USER'}){
+    const [notifications, setNotifications] = useState([]);
+    const [dropdownOpen, setDropdownOpen] = useState(false);
     const [currentPhotoUrl, setCurrentPhotoUrl] = useState(imgprofil1);
     const [globalNotificationCount, setGlobalNotificationCount] = useState(0);
     const userId = localStorage.getItem('id');
@@ -231,18 +235,34 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
 
     // Effet pour écouter les notifications globales
     useEffect(() => {
-        // Initialiser le compteur de notifications
-        setGlobalNotificationCount(notificationService.getUnreadCount());
-
-        // Écouter les changements de notifications
-        const removeListener = notificationService.addListener(({ unreadCount }) => {
-            setGlobalNotificationCount(unreadCount);
-        });
-
-        return () => {
-            removeListener();
+        // Récupérer toutes les notifications non lues depuis l'API (sans filtrer le type)
+        const fetchNotifications = async () => {
+            try {
+                const userId = localStorage.getItem('id');
+                if (userId) {
+                    const apiNotifications = await notificationApi.getUnreadNotifications(userId);
+                    setNotifications(apiNotifications);
+                    setGlobalNotificationCount(apiNotifications.length);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la récupération des notifications:', error);
+            }
         };
-    }, []);
+        fetchNotifications();
+    }, [dropdownOpen]); // refresh à chaque ouverture
+
+    // Marquer toutes les notifications comme lues à la fermeture du menu
+    const handleDropdownClose = async () => {
+        setDropdownOpen(false);
+        try {
+            // Marquer toutes comme lues côté API
+            await Promise.all(notifications.map(n => notificationApi.markAsRead(n.id)));
+            setNotifications([]);
+            setGlobalNotificationCount(0);
+        } catch (error) {
+            console.error('Erreur lors du marquage comme lues:', error);
+        }
+    };
     
 
     const handlePhotoUpload = async (file) => {
@@ -394,14 +414,52 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
         }
     };
 
+    // Menu déroulant notifications
+    const DropdownMenu = styled.div`
+        position: absolute;
+        top: 60px;
+        right: 0;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.15);
+        min-width: 320px;
+        z-index: 10000;
+        padding: 0.5rem 0;
+    `;
+    const DropdownItem = styled.div`
+        padding: 12px 18px;
+        border-bottom: 1px solid #f3f4f6;
+        cursor: pointer;
+        &:last-child { border-bottom: none; }
+        &:hover { background: #f3f4f6; }
+    `;
+
     return(<>
         <Barrehorizontal1Style>
             <Contenu>
                 <TitreStyle>
                     {titrepage}
                 </TitreStyle>
-                <DivStyle>
-                    <Cloche notificationCount={globalNotificationCount || notificationCount}/>
+                <DivStyle style={{position:'relative'}}>
+                    <div style={{position:'relative'}}>
+                        <span onClick={() => setDropdownOpen(!dropdownOpen)}>
+                            <Cloche notificationCount={globalNotificationCount || notificationCount}/>
+                        </span>
+                        {dropdownOpen && (
+                            <DropdownMenu onMouseLeave={handleDropdownClose}>
+                                {notifications.length === 0 ? (
+                                    <DropdownItem>Aucune notification</DropdownItem>
+                                ) : notifications.map((n) => (
+                                    <DropdownItem key={n.id}>
+                                        <div style={{fontWeight:'bold'}}>{n.type || 'Notification'}</div>
+                                        <div style={{fontSize:'13px',color:'#374151'}}>{n.contenu || 'Nouvelle notification'}</div>
+                                        <div style={{fontSize:'11px',color:'#9ca3af'}}>{n.timeAgo || ''}</div>
+                                    </DropdownItem>
+                                ))}
+                            </DropdownMenu>
+                        )}
+                    </div>
                     <Photoprofil 
                         imgprofil={currentPhotoUrl}
                         onPhotoUpload={handlePhotoUpload}
@@ -416,9 +474,7 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
            <Chemin>
                 {children}
            </Chemin>
-            
         </Barrehorizontal1Style>
-            
     </>)
 }
 

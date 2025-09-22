@@ -391,8 +391,8 @@ const FormulaireUtilisateur = () => {
           <FormGroup>
             <Label htmlFor="genre">Genre</Label>
             <Select id="genre" name="genre" value={formData.genre} onChange={handleChange}>
-              <option value="F">Femme</option>
-              <option value="H">Homme</option>
+              <option value="FEMME">Femme</option>
+              <option value="HOMME">Homme</option>
             </Select>
           </FormGroup>
           <FormGroup>

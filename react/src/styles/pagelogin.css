@@ -26,6 +26,10 @@ html, body {
   --warning-color: #ffa502;
 }
 
+.accueil {
+  background: var(--secondaire-applat);
+}
+
 .image-container {
   width: 55%;
   min-width: 55%;
