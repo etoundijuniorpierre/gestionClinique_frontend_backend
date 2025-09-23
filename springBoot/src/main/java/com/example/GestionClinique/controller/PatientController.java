@@ -3,12 +3,9 @@ package com.example.GestionClinique.controller;
 import com.example.GestionClinique.configuration.utils.Constants;
 import com.example.GestionClinique.dto.RequestDto.PatientRequestDto;
 import com.example.GestionClinique.dto.ResponseDto.PatientResponseDto;
-import com.example.GestionClinique.dto.ResponseDto.RendezVousResponseDto;
 import com.example.GestionClinique.mapper.PatientMapper;
 import com.example.GestionClinique.mapper.RendezVousMapper;
 import com.example.GestionClinique.model.entity.Patient;
-import com.example.GestionClinique.model.entity.RendezVous;
-import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
 import com.example.GestionClinique.service.PatientService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -41,9 +38,7 @@ public class PatientController {
             @Parameter(description = "Détails du patient et de son dossier médical à créer", required = true)
             @Valid @RequestBody PatientRequestDto patientRequestDto) {
         Patient patientToCreate = patientMapper.toEntity(patientRequestDto);
-
         Patient createdPatient = patientService.createPatient(patientToCreate);
-
         PatientResponseDto responseDto = patientMapper.toDto(createdPatient);
         return new ResponseEntity<>(responseDto, HttpStatus.CREATED);
     }
@@ -99,20 +94,6 @@ public class PatientController {
     }
 
     @PreAuthorize("hasAnyRole('SECRETAIRE', 'ADMIN', 'MEDECIN')")
-    @GetMapping(path = "/search/{searchTerm}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Rechercher des patients",
-            description = "Recherche des patients par terme (nom, prénom, email, téléphone, etc.)")
-    public ResponseEntity<List<PatientResponseDto>> searchPatients(
-            @Parameter(description = "Terme de recherche (minimum 3 caractères)", required = true, example = "ateba")
-            @PathVariable("searchTerm") String searchTerm) {
-        List<Patient> patients = patientService.searchPatients(searchTerm);
-        if (patients.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(patientMapper.toDtoList(patients));
-    }
-
-    @PreAuthorize("hasAnyRole('SECRETAIRE', 'ADMIN', 'MEDECIN')")
     @GetMapping(path = "/nom/{nom}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Rechercher par nom exact",
             description = "Trouve tous les patients portant exactement le nom spécifié")
@@ -124,49 +105,5 @@ public class PatientController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(patientMapper.toDtoList(patients));
-    }
-
-    @PreAuthorize("hasAnyRole('SECRETAIRE', 'ADMIN', 'MEDECIN')")
-    @GetMapping(path = "/email/{email}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Rechercher par email exact",
-            description = "Trouve un patient unique par son adresse email exacte")
-    public ResponseEntity<PatientResponseDto> findPatientByEmail(
-            @Parameter(description = "Email exact du patient", required = true, example = "patient@example.com")
-            @PathVariable("email") String email) {
-        Patient patient = patientService.findPatientByEmail(email);
-        return ResponseEntity.ok(patientMapper.toDto(patient));
-    }
-
-    @PreAuthorize("hasAnyRole('SECRETAIRE', 'ADMIN', 'MEDECIN')")
-    @GetMapping("/rendezvous/search")
-    @Operation(summary = "Rechercher les rendez-vous d'un patient par terme",
-            description = "Recherche les rendez-vous d'un patient en utilisant un terme qui peut correspondre à son nom, prénom, email ou ID.")
-    public ResponseEntity<List<RendezVousResponseDto>> getRendezVousByPatientSearchTerm(
-            @Parameter(description = "Terme de recherche (nom, prénom, email ou ID du patient)", required = true, example = "Doe")
-            @RequestParam String patientSearchTerm) {
-        List<RendezVous> rendezVousEntities = patientService.findRendezVousByPatientSearchTerm(patientSearchTerm);
-        List<RendezVousResponseDto> rendezVousDtos = rendezVousMapper.toDtoList(rendezVousEntities);
-
-        if (rendezVousDtos.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(rendezVousDtos);
-    }
-
-    @PreAuthorize("hasAnyRole('SECRETAIRE', 'ADMIN', 'MEDECIN')")
-    @GetMapping("/rendezvous/status")
-    @Operation(summary = "Récupérer les rendez-vous d'un patient par son nom et statut",
-            description = "Permet de filtrer les rendez-vous d'un patient en spécifiant une partie de son nom (nom ou prénom) et un statut de rendez-vous.")
-    public ResponseEntity<List<RendezVousResponseDto>> getRendezVousForPatientByStatus(
-            @Parameter(description = "Nom ou prénom du patient (recherche partielle)", required = true, example = "Jean")
-            @RequestParam String patientName,
-            @Parameter(description = "Statut du rendez-vous (ex: CONFIRME, ANNULE, TERMINE)", required = true, example = "CONFIRME")
-            @RequestParam StatutRDV statut) {
-        List<RendezVous> rendezVousEntities = patientService.findRendezVousForPatientByStatus(patientName, statut);
-        List<RendezVousResponseDto> rendezVousDtos = rendezVousMapper.toDtoList(rendezVousEntities);
-        if (rendezVousDtos.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(rendezVousDtos);
     }
 }

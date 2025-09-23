@@ -7,7 +7,6 @@ import lombok.Data;
 import java.time.LocalDate;
 
 @Data
-
 public class HistoriqueActionRequestDto {
 
     @NotBlank(message = "L'action ne peut pas être vide.")

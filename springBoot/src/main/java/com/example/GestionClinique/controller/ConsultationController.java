@@ -2,12 +2,10 @@ package com.example.GestionClinique.controller;
 
 import com.example.GestionClinique.service.authService.MonUserDetailsCustom;
 import com.example.GestionClinique.dto.RequestDto.ConsultationRequestDto;
-import com.example.GestionClinique.dto.ResponseDto.DossierMedicalResponseDto;
 import com.example.GestionClinique.dto.RequestDto.PrescriptionRequestDto;
 import com.example.GestionClinique.dto.ResponseDto.ConsultationResponseDto;
 
 import com.example.GestionClinique.dto.ResponseDto.PrescriptionResponseDto;
-import com.example.GestionClinique.dto.ResponseDto.RendezVousResponseDto;
 import com.example.GestionClinique.mapper.ConsultationMapper;
 import com.example.GestionClinique.mapper.DossierMedicalMapper;
 import com.example.GestionClinique.mapper.PrescriptionMapper;
@@ -102,7 +100,6 @@ public class ConsultationController {
     public ResponseEntity<ConsultationResponseDto> findById(
             @Parameter(description = "ID de la consultation à récupérer", required = true, example = "1")
             @PathVariable("id") Long id) {
-
         Consultation consultation = consultationService.findById(id);
         return ResponseEntity.ok(consultationMapper.toDto(consultation));
     }
@@ -117,29 +114,6 @@ public class ConsultationController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(consultationMapper.toDtoList(consultations));
-    }
-
-    @PreAuthorize("hasAnyRole('MEDECIN')")
-    @GetMapping(path = "/{idConsultation}/dossier-medical", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Obtenir le dossier médical lié",
-            description = "Récupère le dossier médical associé à une consultation spécifique")
-    public ResponseEntity<DossierMedicalResponseDto> findDossierMedicalByConsultationId(
-            @Parameter(description = "ID de la consultation", required = true, example = "1")
-            @PathVariable("idConsultation") Long idConsultation) {
-
-        DossierMedical dossierMedical = consultationService.findDossierMedicalByConsultationId(idConsultation);
-        return ResponseEntity.ok(dossierMedicalMapper.toDto(dossierMedical));
-    }
-
-    @PreAuthorize("hasAnyRole('MEDECIN', 'ADMIN')")
-    @GetMapping(path = "/{idConsultation}/rendez-vous", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Obtenir le rendez-vous lié",
-            description = "Récupère le rendez-vous associé à une consultation spécifique")
-    public ResponseEntity<RendezVousResponseDto> findRendezVousByConsultationId(
-            @Parameter(description = "ID de la consultation", required = true, example = "1")
-            @PathVariable("idConsultation") Long idConsultation) {
-        RendezVous rendezVous = consultationService.findRendezVousByConsultationId(idConsultation);
-        return ResponseEntity.ok(rendezVousMapper.toDto(rendezVous));
     }
 
     @PreAuthorize("hasAnyRole('MEDECIN')")
@@ -163,7 +137,7 @@ public class ConsultationController {
             @Parameter(description = "Détails de la prescription", required = true)
             @Valid @RequestBody PrescriptionRequestDto prescriptionRequestDto) {
         Prescription prescriptionToAdd = prescriptionMapper.toEntity(prescriptionRequestDto);
-        Prescription addedPrescription = consultationService.addPrescriptionToConsultation(idConsultation, prescriptionToAdd);
+        consultationService.addPrescriptionToConsultation(idConsultation, prescriptionToAdd);
         Consultation updatedConsultation = consultationService.findById(idConsultation);
         return new ResponseEntity<>(consultationMapper.toDto(updatedConsultation), HttpStatus.CREATED);
     }

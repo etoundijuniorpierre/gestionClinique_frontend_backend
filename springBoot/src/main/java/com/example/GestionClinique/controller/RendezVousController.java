@@ -4,11 +4,9 @@ import com.example.GestionClinique.dto.RequestDto.RendezVousRequestDto;
 import com.example.GestionClinique.dto.ResponseDto.RendezVousResponseDto;
 import com.example.GestionClinique.mapper.RendezVousMapper;
 import com.example.GestionClinique.model.entity.RendezVous;
-import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
 import com.example.GestionClinique.service.RendezVousService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
@@ -20,7 +18,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalTime;
 import java.util.List;
 
 import static com.example.GestionClinique.configuration.utils.Constants.API_NAME;
@@ -94,52 +91,6 @@ public class RendezVousController {
             return ResponseEntity.noContent().build();
         }
         return ResponseEntity.ok(rendezVousMapper.toDtoList(rendezvousList));
-    }
-
-    @PreAuthorize("hasAnyRole('SECRETAIRE', 'MEDECIN')")
-    @GetMapping(path = "/statut/{statut}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Rechercher des rendez-vous par statut",
-            description = "Filtre les rendez-vous selon leur statut (confirmé, annulé, etc.)")
-    public ResponseEntity<List<RendezVousResponseDto>> findRendezVousByStatut(
-            @Parameter(description = "Statut pour filtrer", required = true, schema = @Schema(implementation = StatutRDV.class))
-            @PathVariable("statut") StatutRDV statut) {
-        List<RendezVous> rendezvousList = rendezVousService.findRendezVousByStatut(statut);
-        if (rendezvousList.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(rendezVousMapper.toDtoList(rendezvousList));
-    }
-
-    @PreAuthorize("hasAnyRole('SECRETAIRE', 'MEDECIN')")
-    @GetMapping(path = "/salle/{idSalle}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Rechercher des rendez-vous par salle",
-            description = "Liste tous les rendez-vous programmés dans une salle spécifique")
-    public ResponseEntity<List<RendezVousResponseDto>> findRendezVousBySalleId(
-            @Parameter(description = "ID de la salle à rechercher", required = true, example = "5")
-            @PathVariable("idSalle") Long id) {
-        List<RendezVous> rendezvousList = rendezVousService.findRendezVousBySalleId(id);
-        if (rendezvousList.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(rendezVousMapper.toDtoList(rendezvousList));
-    }
-
-    @PreAuthorize("hasAnyRole('SECRETAIRE', 'MEDECIN')")
-    @GetMapping(path = "/available", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Vérifier la disponibilité d'un créneau",
-            description = "Vérifie si un créneau horaire est disponible pour un médecin et une salle spécifiques.")
-    public ResponseEntity<Boolean> isRendezVousAvailable(
-            @Parameter(description = "Date du rendez-vous (yyyy-MM-dd)", required = true, example = "2025-06-28")
-            @RequestParam("jour") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate jour,
-            @Parameter(description = "Heure du rendez-vous (HH:mm:ss)", required = true, example = "14:30:00")
-            @RequestParam("heure") @DateTimeFormat(iso = DateTimeFormat.ISO.TIME) LocalTime heure,
-            @Parameter(description = "ID du médecin", required = true, example = "3")
-            @RequestParam("medecinId") Long medecinId,
-            @Parameter(description = "ID de la salle", required = true, example = "2")
-            @RequestParam("salleId") Long salleId) {
-
-        boolean available = rendezVousService.isRendezVousAvailable(jour, heure, medecinId, salleId);
-        return ResponseEntity.ok(available);
     }
 
     @PreAuthorize("hasAnyRole('SECRETAIRE', 'MEDECIN')")

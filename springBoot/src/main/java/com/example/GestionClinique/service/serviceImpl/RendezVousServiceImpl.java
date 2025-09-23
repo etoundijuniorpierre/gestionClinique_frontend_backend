@@ -157,18 +157,6 @@ public class RendezVousServiceImpl implements RendezVousService {
 
     @Override
     @Transactional
-    public List<RendezVous> findRendezVousByStatut(StatutRDV statut) {
-        return rendezVousRepository.findByStatut(statut);
-    }
-
-    @Override
-    @Transactional
-    public List<RendezVous> findRendezVousBySalleId(Long salleId) {
-        return rendezVousRepository.findBySalleId(salleId);
-    }
-
-    @Override
-    @Transactional
     public boolean isRendezVousAvailable(LocalDate jour, LocalTime heure, Long medecinId, Long salleId) {
         Optional<RendezVous> existingMedecinRv = rendezVousRepository.findByJourAndHeureAndMedecinId(jour, heure, medecinId);
         if (existingMedecinRv.isPresent()) {

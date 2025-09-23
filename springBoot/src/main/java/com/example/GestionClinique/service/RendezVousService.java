@@ -13,8 +13,6 @@ public interface RendezVousService {
     RendezVous updateRendezVous(Long id, RendezVous rendezVousDetails);
     void deleteRendezVous(Long id);
     List<RendezVous> findAllRendezVous();
-    List<RendezVous> findRendezVousByStatut(StatutRDV statut);
-    List<RendezVous> findRendezVousBySalleId(Long salleId);
     boolean isRendezVousAvailable(LocalDate jour, LocalTime heure, Long medecinId, Long salleId);
     boolean isRendezVousAvailableForUpdate(Long rendezVousId, LocalDate jour, LocalTime heure, Long medecinId, Long salleId);
     RendezVous cancelRendezVous(Long rendezVousId);

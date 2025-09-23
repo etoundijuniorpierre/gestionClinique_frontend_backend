@@ -14,10 +14,7 @@ public class SecurityUtil {
         if (authentication == null || !authentication.isAuthenticated() || "anonymousUser".equals(authentication.getPrincipal())) {
             return null;
         }
-
         Object principal = authentication.getPrincipal();
-
-
         if (principal instanceof MonUserDetailsCustom) {
             return ((MonUserDetailsCustom) principal).getId();
         } else if (principal instanceof UserDetails) {

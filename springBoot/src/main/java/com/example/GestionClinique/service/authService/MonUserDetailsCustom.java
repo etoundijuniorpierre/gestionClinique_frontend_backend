@@ -1,16 +1,15 @@
 package com.example.GestionClinique.service.authService;
 
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.User; // Important: import Spring Security's User class
+import org.springframework.security.core.userdetails.User;
 import java.util.Collection;
 
 @Getter
 public class MonUserDetailsCustom extends User {
 
     private final Long id;
-    private final String photoProfilPath; // Ajout du champ pour la photo
+    private final String photoProfilPath;
 
     public MonUserDetailsCustom(Long id, String username, String password, String photoProfilPath,
                                 Collection<? extends GrantedAuthority> authorities) {

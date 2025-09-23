@@ -196,39 +196,6 @@ public class ChatService {
         return savedGroupe;
     }
 
-    @Transactional
-    public Groupe addMemberToGroup(Long groupeId, List<Long> memberIds) {
-        Groupe groupe = groupeRepository.findById(groupeId)
-                .orElseThrow(() -> new EntityNotFoundException("Groupe non trouvé avec l'ID: " + groupeId));
-
-        List<Utilisateur> newMembers = utilisateurRepository.findAllById(memberIds);
-        groupe.getMembres().addAll(newMembers);
-
-        Conversation conversation = conversationRepository.findByGroupeId(groupeId)
-                .orElseThrow(() -> new EntityNotFoundException("Conversation associée au groupe non trouvée."));
-
-        for (Utilisateur newMember : newMembers) {
-            Optional<ConversationParticipant> existingParticipant = conversationParticipantRepository.findByConversationIdAndUtilisateurId(conversation.getId(), newMember.getId());
-            if (existingParticipant.isEmpty()) {
-                ConversationParticipant cp = new ConversationParticipant();
-                cp.setConversation(conversation);
-                cp.setUtilisateur(newMember);
-                conversationParticipantRepository.save(cp);
-            }
-        }
-        return groupeRepository.save(groupe);
-    }
-
-    @Transactional
-    public void markConversationAsRead(Long conversationId, Long userId) {
-        ConversationParticipant participant = conversationParticipantRepository.findByConversationIdAndUtilisateurId(conversationId, userId)
-                .orElseThrow(() -> new EntityNotFoundException("Participant non trouvé dans cette conversation."));
-
-        participant.setLastReadAt(LocalDateTime.now());
-        participant.setUnreadCount(0);
-        conversationParticipantRepository.save(participant);
-    }
-
     public boolean isUserInConversation(Long conversationId, Long userId) {
         return conversationParticipantRepository.findByConversationIdAndUtilisateurId(conversationId, userId).isPresent();
     }

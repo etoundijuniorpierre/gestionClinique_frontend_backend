@@ -1,8 +1,6 @@
 package com.example.GestionClinique.service.photoService;
 
 import com.example.GestionClinique.model.entity.Utilisateur;
-import com.example.GestionClinique.repository.UtilisateurRepository;
-import com.example.GestionClinique.service.UtilisateurService;
 import com.example.GestionClinique.service.serviceImpl.UtilisateurServiceImpl;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +18,6 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.stream.Stream;
-
 
 @Service
 public class FileStorageServiceImpl implements FileStorageService {
@@ -44,8 +41,6 @@ public class FileStorageServiceImpl implements FileStorageService {
                 .map(String::trim)
                 .map(String::toLowerCase)
                 .toList();
-
-
         this.utilisateurService = utilisateurService;
     }
 
@@ -81,12 +76,9 @@ public class FileStorageServiceImpl implements FileStorageService {
             }
 
             Utilisateur existingUtilisateur = utilisateurService.findUtilisateurById(userId);
-
             String newFilename = "user_" + userId + "_" + existingUtilisateur.getNom()+"_"+existingUtilisateur.getPrenom()+ extension;
             Path destinationFile = rootLocation.resolve(newFilename).normalize().toAbsolutePath();
-
             Files.copy(file.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
-
             existingUtilisateur.setPhotoProfil(newFilename);
             utilisateurService.updateUtilisateur(existingUtilisateur.getId(), existingUtilisateur);
 

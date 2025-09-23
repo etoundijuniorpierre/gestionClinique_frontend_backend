@@ -169,26 +169,6 @@ public class ConsultationServiceImpl implements ConsultationService {
 
     @Override
     @Transactional
-    public DossierMedical findDossierMedicalByConsultationId(Long id) {
-        Consultation consultation = findById(id);
-        if (consultation.getDossierMedical() == null) {
-            throw new IllegalStateException("Consultation with ID: " + id + " does not have an associated Dossier Medical.");
-        }
-        return consultation.getDossierMedical();
-    }
-
-    @Override
-    @Transactional
-    public RendezVous findRendezVousByConsultationId(Long id) {
-        Consultation consultation = findById(id);
-        if (consultation.getRendezVous() == null) {
-            throw new IllegalStateException("Consultation with ID: " + id + " is not associated with a RendezVous.");
-        }
-        return consultation.getRendezVous();
-    }
-
-    @Override
-    @Transactional
     public void deleteById(Long id) {
         Consultation consultation = findById(id);
         if (consultation.getRendezVous() != null) {

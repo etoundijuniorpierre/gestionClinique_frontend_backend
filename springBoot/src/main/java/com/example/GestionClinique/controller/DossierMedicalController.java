@@ -35,87 +35,6 @@ public class DossierMedicalController {
     private final PatientMapper patientMapper;
 
     @PreAuthorize("hasAnyRole('MEDECIN', 'SECRETAIRE')")
-    @PostMapping(path = "/create/{idPatient}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Créer un dossier médical pour un patient",
-            description = "Crée un nouveau dossier médical associé à un patient existant")
-    public ResponseEntity<DossierMedicalResponseDto> createDossierMedicalForPatient(
-            @Parameter(description = "DTO du dossier médical à créer", required = true,
-                    content = @Content(schema = @Schema(implementation = DossierMedicalRequestDto.class)))
-            @Valid @RequestBody DossierMedicalRequestDto dossierMedicalRequestDto,
-
-            @Parameter(description = "ID du patient associé", required = true, example = "1")
-            @PathVariable("idPatient") Long idPatient) {
-        DossierMedical dossierMedicalToCreate = dossierMedicalMapper.toEntity(dossierMedicalRequestDto);
-        DossierMedical createdDossierMedical = dossierMedicalService.createDossierMedicalForPatient(idPatient, dossierMedicalToCreate);
-        return new ResponseEntity<>(dossierMedicalMapper.toDto(createdDossierMedical), HttpStatus.CREATED);
-
-    }
-
-    @PreAuthorize("hasAnyRole('MEDECIN', 'SECRETAIRE')")
-    @PutMapping(path = "/update/{idDossierMedical}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Mettre à jour un dossier médical",
-            description = "Modifie les informations d'un dossier médical existant")
-    public ResponseEntity<DossierMedicalResponseDto> updateDossierMedical(
-            @Parameter(description = "ID du dossier médical à mettre à jour", required = true, example = "1")
-            @PathVariable("idDossierMedical") Long id,
-            @Parameter(description = "DTO contenant les mises à jour", required = true,
-                    content = @Content(schema = @Schema(implementation = DossierMedicalRequestDto.class)))
-            @Valid @RequestBody DossierMedicalRequestDto dossierMedicalRequestDto) {
-        DossierMedical existingDossierMedical = dossierMedicalService.findDossierMedicalById(id);
-        dossierMedicalMapper.updateEntityFromDto(dossierMedicalRequestDto, existingDossierMedical);
-        DossierMedical updatedDossierMedical = dossierMedicalService.updateDossierMedical(id, existingDossierMedical);
-        return ResponseEntity.ok(dossierMedicalMapper.toDto(updatedDossierMedical));
-    }
-
-    @PreAuthorize("hasAnyRole('MEDECIN', 'SECRETAIRE')")
-    @GetMapping(path = "/recherche/{idDossierMedical}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Obtenir un dossier médical par son ID",
-            description = "Récupère les informations complètes d'un dossier médical")
-    public ResponseEntity<DossierMedicalResponseDto> findDossierMedicalById(
-            @Parameter(description = "ID du dossier médical", required = true, example = "1")
-            @PathVariable("idDossierMedical") Long id) {
-
-        DossierMedical dossierMedical = dossierMedicalService.findDossierMedicalById(id);
-        return ResponseEntity.ok(dossierMedicalMapper.toDto(dossierMedical));
-    }
-
-    @PreAuthorize("hasAnyRole('MEDECIN', 'SECRETAIRE')")
-    @GetMapping(path = "/recherche/allDossierMedical", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Lister tous les dossiers médicaux",
-            description = "Récupère tous les dossiers médicaux enregistrés")
-    public ResponseEntity<List<DossierMedicalResponseDto>> findAllDossierMedical() {
-        List<DossierMedical> dossiers = dossierMedicalService.findAllDossierMedical();
-        if (dossiers.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(dossierMedicalMapper.toDtoList(dossiers));
-    }
-
-    @PreAuthorize("hasAnyRole('MEDECIN', 'SECRETAIRE')")
-    @GetMapping(path = "/{idDossierMedical}/patient", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Obtenir le patient associé à un dossier",
-            description = "Récupère le patient lié à un dossier médical")
-    public ResponseEntity<PatientResponseDto> findPatientByDossierMedicalId(
-            @Parameter(description = "ID du dossier médical", required = true, example = "1")
-            @PathVariable("idDossierMedical") Long id) {
-
-        Patient patient = dossierMedicalService.findPatientByDossierMedicalId(id);
-        return ResponseEntity.ok(patientMapper.toDto(patient));
-
-    }
-
-    @PreAuthorize("hasAnyRole('MEDECIN', 'SECRETAIRE')")
-    @DeleteMapping(path = "/delete/{idDossierMedical}")
-    @Operation(summary = "Supprimer un dossier médical",
-            description = "Supprime définitivement un dossier médical")
-    public ResponseEntity<Void> deleteDossierMedical(
-            @Parameter(description = "ID du dossier à supprimer", required = true, example = "1")
-            @PathVariable("idDossierMedical") Long id) {
-        dossierMedicalService.deleteDossierMedicalById(id);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PreAuthorize("hasAnyRole('MEDECIN', 'SECRETAIRE')")
     @GetMapping(path = "/patient/{idPatient}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Obtenir le dossier médical d'un patient",
             description = "Récupère le dossier médical associé à un patient")
@@ -125,6 +44,5 @@ public class DossierMedicalController {
 
         DossierMedical dossierMedical = dossierMedicalService.findDossierMedicalByPatientId(idPatient);
         return ResponseEntity.ok(dossierMedicalMapper.toDto(dossierMedical));
-
     }
 }

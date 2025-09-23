@@ -12,8 +12,6 @@ public interface ConsultationService {
     Consultation updateConsultation(Long id, Consultation consultationDetails);
     Consultation findById(Long id);
     List<Consultation> findAll();
-    DossierMedical findDossierMedicalByConsultationId(Long id);
-    RendezVous findRendezVousByConsultationId(Long id);
     void deleteById(Long id);
     Consultation startConsultation(Long rendezVousId, Consultation consultationDetails, Long medecinId);
     Prescription addPrescriptionToConsultation(Long consultationId, Prescription prescription);

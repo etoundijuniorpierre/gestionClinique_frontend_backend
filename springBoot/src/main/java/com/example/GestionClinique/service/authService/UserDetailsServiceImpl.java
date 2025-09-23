@@ -5,14 +5,12 @@ import com.example.GestionClinique.model.entity.enumElem.StatusConnect;
 import com.example.GestionClinique.repository.UtilisateurRepository;
 import com.example.GestionClinique.service.HistoriqueActionService;
 import com.example.GestionClinique.service.UtilisateurService;
-import jakarta.transaction.Transactional; // Use jakarta.transaction for @Transactional
+import jakarta.transaction.Transactional;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
-import java.time.LocalDateTime;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
@@ -43,11 +41,11 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 utilisateur.getId(),
                 utilisateur.getEmail(),
                 utilisateur.getPassword(),
-                utilisateur.getPhotoProfil(), // Passer le chemin de la photo
+                utilisateur.getPhotoProfil(),
                 true,
-                true, // accountNonExpired
-                true, // credentialsNonExpired
-                true, // accountNonLocked
+                true,
+                true,
+                true,
                 utilisateur.getAuthorities()
         );
 

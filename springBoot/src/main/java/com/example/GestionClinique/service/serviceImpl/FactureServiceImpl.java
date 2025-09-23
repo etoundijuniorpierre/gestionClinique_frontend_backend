@@ -3,7 +3,6 @@ package com.example.GestionClinique.service.serviceImpl;
 import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
 import com.example.GestionClinique.model.entity.Consultation;
 import com.example.GestionClinique.model.entity.Facture;
-import com.example.GestionClinique.model.entity.Patient;
 import com.example.GestionClinique.model.entity.RendezVous;
 import com.example.GestionClinique.model.entity.enumElem.ModePaiement;
 import com.example.GestionClinique.model.entity.enumElem.StatutPaiement;
@@ -70,7 +69,6 @@ public class FactureServiceImpl implements FactureService {
                         savedFacture.getId(), rendezVousId),
                 loggingAspect.currentUserId()
         );
-
     }
 
     @Override
@@ -114,30 +112,6 @@ public class FactureServiceImpl implements FactureService {
     }
 
     @Override
-    public Facture updateFacture(Long id, Facture factureDetails) {
-        Facture existingFacture = factureRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Facture not found with ID: " + id));
-
-        existingFacture.setMontant(factureDetails.getMontant());
-        existingFacture.setDateEmission(factureDetails.getDateEmission());
-        existingFacture.setStatutPaiement(factureDetails.getStatutPaiement());
-        existingFacture.setModePaiement(factureDetails.getModePaiement());
-
-        historiqueActionService.enregistrerAction(
-                String.format("Mise à jour facture ID: %d", id),
-                loggingAspect.currentUserId()
-        );
-
-        return factureRepository.save(existingFacture);
-    }
-
-    @Override
-    @Transactional
-    public List<Facture> findAllFactures() {
-        return factureRepository.findAll();
-    }
-
-    @Override
     @Transactional
     public List<Facture> findFacturesByStatut(StatutPaiement statutPaiement) {
         return factureRepository.findByStatutPaiement(statutPaiement);
@@ -145,11 +119,6 @@ public class FactureServiceImpl implements FactureService {
 
     @Override
     @Transactional
-    public List<Facture> findFacturesByModePaiement(ModePaiement modePaiement) {
-        return factureRepository.findByModePaiement(modePaiement);
-    }
-
-    @Override
     public List<Facture> findAllFacturesIMPAYE() {
         return findFacturesByStatut(StatutPaiement.IMPAYEE);
     }
@@ -178,16 +147,6 @@ public class FactureServiceImpl implements FactureService {
         );
 
         factureRepository.delete(facture);
-    }
-
-    @Override
-    @Transactional
-    public Patient findPatientByFactureId(Long id) {
-        Facture facture = findById(id);
-        if (facture.getPatient() == null) {
-            throw new IllegalStateException("Facture with ID: " + id + " does not have an associated patient.");
-        }
-        return facture.getPatient();
     }
 
     @Override

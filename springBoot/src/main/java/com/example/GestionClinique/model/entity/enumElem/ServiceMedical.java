@@ -28,5 +28,4 @@ public enum ServiceMedical {
     ServiceMedical(double montant) {
         this.montant = montant;
     }
-
 }

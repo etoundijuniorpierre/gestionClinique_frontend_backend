@@ -6,7 +6,6 @@ import com.example.GestionClinique.model.entity.Utilisateur;
 import com.example.GestionClinique.model.entity.enumElem.RoleType;
 import com.example.GestionClinique.model.entity.enumElem.ServiceMedical;
 import com.example.GestionClinique.model.entity.enumElem.StatusConnect;
-import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
 import com.example.GestionClinique.repository.RendezVousRepository;
 import com.example.GestionClinique.repository.RoleRepository;
 import com.example.GestionClinique.repository.UtilisateurRepository;
@@ -205,12 +204,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Override
     @Transactional
-    public List<Utilisateur> findUtilisateurByNom(String nom) {
-        return utilisateurRepository.findByNom(nom);
-    }
-
-    @Override
-    @Transactional
     public List<Utilisateur> findUtilisateurByRole_RoleType(RoleType roleType) {
         return utilisateurRepository.findByRole_RoleType(roleType);
     }
@@ -232,16 +225,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
-    public List<RendezVous> findRendezVousByMedecinSearchTerm(String medecinSearchTerm) {
-        return rendezVousRepository.findRendezVousByMedecinSearchTerm(medecinSearchTerm);
-    }
-
-    @Override
-    public List<RendezVous> findRendezVousForMedecinByStatus(String medecinName, StatutRDV statut) {
-        return rendezVousRepository.findRendezVousForMedecinByStatus(medecinName, statut);
-    }
-
-    @Override
     public List<RendezVous> findConfirmedRendezVousForMedecinAndDate(Long medecinId, LocalDate date) {
         return rendezVousRepository.findConfirmedRendezVousForMedecinAndDate(medecinId, date);
     }
@@ -253,29 +236,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             return List.of();
         }
         return utilisateurRepository.searchByTerm(searchTerm);
-    }
-
-    @Override
-    @Transactional
-    public List<Utilisateur> findUsersWithStatusConnected() {
-        return utilisateurRepository.findByStatusConnect(StatusConnect.CONNECTE);
-    }
-
-    @Override
-    @Transactional
-    public List<Utilisateur> findUsersWithStatusDisconnected() {
-        return utilisateurRepository.findByStatusConnect(StatusConnect.DECONNECTE);
-    }
-
-    @Override
-    public List<RendezVous> findAllRendezVousCONFIRMEInBeginByToday(Long medecinId) {
-        return rendezVousRepository.findConfirmedRendezVousFromTodayByMedecin(
-                medecinId, StatutRDV.CONFIRME, LocalDate.now());
-    }
-
-    @Override
-    public List<RendezVous> findAllRendezVousCONFIRMEByMedecin(Long medecinId) {
-        return rendezVousRepository.findAllConfirmedRendezVousByMedecin(medecinId, StatutRDV.CONFIRME);
     }
 
     @Override

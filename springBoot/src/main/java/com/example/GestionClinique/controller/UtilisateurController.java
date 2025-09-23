@@ -10,8 +10,6 @@ import com.example.GestionClinique.model.entity.RendezVous;
 import com.example.GestionClinique.model.entity.Utilisateur;
 import com.example.GestionClinique.model.entity.enumElem.RoleType;
 import com.example.GestionClinique.model.entity.enumElem.ServiceMedical;
-import com.example.GestionClinique.model.entity.enumElem.StatusConnect;
-import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
 import com.example.GestionClinique.service.UtilisateurService;
 import com.example.GestionClinique.service.photoService.FileStorageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -72,31 +70,6 @@ public class UtilisateurController {
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'SECRETAIRE', 'MEDECIN')")
-    @GetMapping(path = "/nom/{nomUtilisateur}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Rechercher des utilisateurs par nom",
-            description = "Récupère tous les utilisateurs correspondant au nom spécifié (recherche partielle)")
-    public ResponseEntity<List<UtilisateurResponseDto>> findUtilisateurByNom(
-            @Parameter(description = "Nom à rechercher", required = true, example = "Dupont")
-            @PathVariable("nomUtilisateur") String nom) {
-        List<Utilisateur> utilisateurs = utilisateurService.findUtilisateurByNom(nom);
-        if (utilisateurs.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(utilisateurMapper.toDtoList(utilisateurs));
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'SECRETAIRE')")
-    @GetMapping(path = "/email/{emailUtilisateur}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Rechercher un utilisateur par email",
-            description = "Récupère un seul utilisateur par son adresse email unique")
-    public ResponseEntity<UtilisateurResponseDto> findUtilisateurByEmail(
-            @Parameter(description = "Adresse email à rechercher", required = true, example = "utilisateur@exemple.com")
-            @PathVariable("emailUtilisateur") String email) {
-        Utilisateur utilisateur = utilisateurService.findUtilisateurByEmail(email);
-        return ResponseEntity.ok(utilisateurMapper.toDto(utilisateur));
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'SECRETAIRE', 'MEDECIN')")
     @GetMapping(path = "/role/{roleType}", produces = MediaType.APPLICATION_JSON_VALUE)
     @Operation(summary = "Rechercher des utilisateurs par rôle",
             description = "Récupère tous les utilisateurs ayant le rôle spécifié dans le système")
@@ -124,7 +97,6 @@ public class UtilisateurController {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping(path = "/{idUtilisateur}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    // Simplified path: PUT to /{id}
     @Operation(summary = "Mettre à jour les informations d'un utilisateur",
             description = "Modifie les détails d'un utilisateur existant avec les informations fournies")
     public ResponseEntity<UtilisateurResponseDto> updateUtilisateur(
@@ -135,19 +107,6 @@ public class UtilisateurController {
         Utilisateur existingUtilisateur = utilisateurService.findUtilisateurById(id);
         utilisateurMapper.updateEntityFromDto(utilisateurRequestDto, existingUtilisateur);
         Utilisateur updatedUtilisateur = utilisateurService.updateUtilisateur(id, existingUtilisateur);
-        return ResponseEntity.ok(utilisateurMapper.toDto(updatedUtilisateur));
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")
-    @PatchMapping(path = "/{idUtilisateur}/{statutConnect}", produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Mettre à jour du StatutConnect d'un utilisateur",
-            description = "Modifier le status d'un Utilisateur")
-    public ResponseEntity<UtilisateurResponseDto> updateUserConnectStatus(
-            @Parameter(description = "ID de l'utilisateur à mettre à jour", required = true, example = "123")
-            @PathVariable("idUtilisateur") Long id,
-            @Parameter(description = "Nouveau statut d'activation ", required = true)
-            @PathVariable("statutConnect") StatusConnect statusConnect) {
-        Utilisateur updatedUtilisateur = utilisateurService.updateUserConnectStatus(id, statusConnect);
         return ResponseEntity.ok(utilisateurMapper.toDto(updatedUtilisateur));
     }
 
@@ -174,38 +133,6 @@ public class UtilisateurController {
             @PathVariable("idUtilisateur") Long id) {
         utilisateurService.deleteUtilisateur(id);
         return ResponseEntity.ok("l'utilisateur avec l'ID : " + id + " supprimé avec succès");
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")
-    @GetMapping("/rendezvous/medecin/search")
-    @Operation(summary = "Rechercher les rendez-vous d'un médecin par terme de recherche",
-            description = "Recherche les rendez-vous d'un médecin en utilisant un terme qui peut correspondre à son nom, prénom, email ou ID. Accessible par ADMIN et MEDECIN.")
-    public ResponseEntity<List<RendezVousResponseDto>> getRendezVousByMedecinSearchTerm(
-            @Parameter(description = "Terme de recherche (nom, prénom, email ou ID du médecin)", required = true, example = "Dr. Dupont")
-            @RequestParam String medecinSearchTerm) {
-        List<RendezVous> rendezVousEntities = utilisateurService.findRendezVousByMedecinSearchTerm(medecinSearchTerm);
-        List<RendezVousResponseDto> rendezVousDtos = rendezVousMapper.toDtoList(rendezVousEntities);
-        if (rendezVousDtos.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(rendezVousDtos);
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")
-    @GetMapping("/rendezvous/medecin/status")
-    @Operation(summary = "Récupérer les rendez-vous d'un médecin par son nom et statut",
-            description = "Permet de filtrer les rendez-vous d'un médecin en spécifiant une partie de son nom (nom ou prénom) et un statut de rendez-vous. Accessible par ADMIN et MEDECIN.")
-    public ResponseEntity<List<RendezVousResponseDto>> getRendezVousForMedecinByStatus(
-            @Parameter(description = "Nom ou prénom du médecin (recherche partielle)", required = true, example = "Dr. Jean")
-            @RequestParam String medecinName,
-            @Parameter(description = "Statut du rendez-vous (ex: CONFIRME, ANNULE, TERMINE)", required = true, example = "CONFIRME")
-            @RequestParam StatutRDV statut) {
-        List<RendezVous> rendezVousEntities = utilisateurService.findRendezVousForMedecinByStatus(medecinName, statut);
-        List<RendezVousResponseDto> rendezVousDtos = rendezVousMapper.toDtoList(rendezVousEntities);
-        if (rendezVousDtos.isEmpty()) {
-            return ResponseEntity.noContent().build();
-        }
-        return ResponseEntity.ok(rendezVousDtos);
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")
@@ -241,24 +168,6 @@ public class UtilisateurController {
         return ResponseEntity.ok(utilisateurs);
     }
 
-    @PreAuthorize("hasAnyRole('ADMIN', 'SECRETAIRE', 'MEDECIN')")
-    @GetMapping("/connected")
-    @Operation(summary = "Lister les utilisateurs actuellement connectés",
-            description = "Récupère la liste de tous les utilisateurs dont le statut de connexion est 'CONNECTE'.")
-    public ResponseEntity<List<Utilisateur>> getConnectedUsers() {
-        List<Utilisateur> connectedUsers = utilisateurService.findUsersWithStatusConnected();
-        return ResponseEntity.ok(connectedUsers);
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'SECRETAIRE', 'MEDECIN')")
-    @GetMapping("/disconnected")
-    @Operation(summary = "Lister les utilisateurs actuellement déconnectés",
-            description = "Récupère la liste de tous les utilisateurs dont le statut de connexion est 'DECONNECTE'.")
-    public ResponseEntity<List<Utilisateur>> getDisconnectedUsers() {
-        List<Utilisateur> disconnectedUsers = utilisateurService.findUsersWithStatusDisconnected();
-        return ResponseEntity.ok(disconnectedUsers);
-    }
-
     @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")
     @PutMapping("/{id}/password")
     @Operation(summary = "Mettre à jour le mot de passe d'un utilisateur",
@@ -287,26 +196,6 @@ public class UtilisateurController {
     public ResponseEntity<List<UtilisateurResponseDto>> getDisconnectedUsersByLastActivity() {
         List<Utilisateur> users = utilisateurService.findUsersWithStatusDisconnectedByOrderLastDeConnected();
         return ResponseEntity.ok(utilisateurMapper.toDtoList(users));
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")
-    @GetMapping("/{medecinId}/confirmed/from-today")
-    @Operation(summary = "Lister les rendez-vous confirmés d'un médecin à partir d'aujourd'hui",
-            description = "Récupère tous les rendez-vous confirmés pour un médecin donné, à partir du jour actuel (sans tenir compte de l'heure passée du jour), triés chronologiquement par jour.")
-    public ResponseEntity<List<RendezVousResponseDto>> getConfirmedRendezVousFromTodayForMedecin(
-            @PathVariable @Parameter(description = "ID du médecin") Long medecinId) {
-        List<RendezVous> rendezVousList = utilisateurService.findAllRendezVousCONFIRMEInBeginByToday(medecinId);
-        return ResponseEntity.ok(rendezVousMapper.toDtoList(rendezVousList));
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")
-    @GetMapping("/{medecinId}/confirmed/all")
-    @Operation(summary = "Lister tous les rendez-vous confirmés d'un médecin",
-            description = "Récupère tous les rendez-vous confirmés pour un médecin donné, sans filtre de date, triés chronologiquement par jour.")
-    public ResponseEntity<List<RendezVousResponseDto>> getAllConfirmedRendezVousForMedecin(
-            @PathVariable @Parameter(description = "ID du médecin") Long medecinId) {
-        List<RendezVous> rendezVousList = utilisateurService.findAllRendezVousCONFIRMEByMedecin(medecinId);
-        return ResponseEntity.ok(rendezVousMapper.toDtoList(rendezVousList));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")
@@ -347,17 +236,6 @@ public class UtilisateurController {
         } catch (Exception e) {
             return ResponseEntity.notFound().build();
         }
-    }
-
-    @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")
-    @GetMapping("/by-service/{serviceMedical}")
-    @Operation(summary = "Récupérer les médecins par service médical",
-            description = "Retourne la liste des médecins appartenant à un service médical spécifique")
-    public ResponseEntity<List<UtilisateurResponseDto>> getMedecinsByService(
-            @Parameter(description = "Service médical à filtrer", required = true)
-            @PathVariable ServiceMedical serviceMedical) {
-        List<Utilisateur> medecins = utilisateurService.getMedecinsByServiceMedical(serviceMedical);
-        return ResponseEntity.ok(utilisateurMapper.toDtoList(medecins));
     }
 
     @PreAuthorize("hasAnyRole('ADMIN', 'MEDECIN', 'SECRETAIRE')")

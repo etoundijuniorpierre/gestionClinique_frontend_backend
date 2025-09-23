@@ -2,8 +2,6 @@ package com.example.GestionClinique.service.serviceImpl;
 
 import com.example.GestionClinique.model.entity.DossierMedical;
 import com.example.GestionClinique.model.entity.Patient;
-import com.example.GestionClinique.model.entity.RendezVous;
-import com.example.GestionClinique.model.entity.enumElem.StatutRDV;
 import com.example.GestionClinique.repository.PatientRepository;
 import com.example.GestionClinique.repository.RendezVousRepository;
 import com.example.GestionClinique.service.HistoriqueActionService;
@@ -80,7 +78,6 @@ public class PatientServiceImpl implements PatientService {
         }
 
         historiqueActionService.enregistrerAction(String.format("Mise à jour patient ID: %d", id), loggingAspect.currentUserId());
-
         return patientRepository.save(existingPatient);
     }
 
@@ -100,40 +97,13 @@ public class PatientServiceImpl implements PatientService {
     @Override
     public void deletePatient(Long id) {
         Patient patient = patientRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("Patient not found with ID: " + id));
-
         historiqueActionService.enregistrerAction(String.format("Suppression patient ID: %d - %s %s", patient.getId(), patient.getNom(), patient.getPrenom()), loggingAspect.currentUserId());
-
         patientRepository.delete(patient);
-    }
-
-    @Transactional
-    @Override
-    public List<Patient> searchPatients(String searchTerm) {
-        if (searchTerm == null || searchTerm.trim().length() < 2) {
-            return List.of();
-        }
-        return patientRepository.searchByTerm(searchTerm);
     }
 
     @Transactional
     @Override
     public List<Patient> findPatientByNom(String nom) {
         return patientRepository.findByNom(nom);
-    }
-
-    @Transactional
-    @Override
-    public Patient findPatientByEmail(String email) {
-        return patientRepository.findByEmail(email).orElseThrow(() -> new IllegalArgumentException("Patient not found with email: " + email));
-    }
-
-    @Override
-    public List<RendezVous> findRendezVousByPatientSearchTerm(String patientSearchTerm) {
-        return rendezVousRepository.findRendezVousByPatientSearchTerm(patientSearchTerm);
-    }
-
-    @Override
-    public List<RendezVous> findRendezVousForPatientByStatus(String patientName, StatutRDV statut) {
-        return rendezVousRepository.findRendezVousForPatientByStatus(patientName, statut);
     }
 }

@@ -11,9 +11,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 import static com.example.GestionClinique.model.entity.enumElem.StatusConnect.DECONNECTE;
 
 @Service

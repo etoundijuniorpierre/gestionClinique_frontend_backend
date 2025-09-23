@@ -1,7 +1,5 @@
-// PrescriptionDto.java (updated)
 package com.example.GestionClinique.dto.RequestDto;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;;

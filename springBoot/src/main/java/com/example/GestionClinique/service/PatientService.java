@@ -12,9 +12,5 @@ public interface PatientService {
     List<Patient> findAllPatients();
     Patient findById(Long id);
     void deletePatient(Long id);
-    List<Patient> searchPatients(String searchTerm);
     List<Patient> findPatientByNom(String nom);
-    Patient findPatientByEmail(String email);
-    List<RendezVous> findRendezVousByPatientSearchTerm(String patientName);
-    List<RendezVous> findRendezVousForPatientByStatus(String patientName, StatutRDV statut);
 }
