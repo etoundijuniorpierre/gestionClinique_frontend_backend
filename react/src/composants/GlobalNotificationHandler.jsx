@@ -120,60 +120,75 @@ const GlobalNotificationHandler = () => {
   // Effet pour surveiller les changements de route et gérer le WebSocket global
   useEffect(() => {
     const userId = localStorage.getItem('id');
-    
+
     if (userId) {
       // Vérifier si l'utilisateur est sur la page chat
-      const isOnChatPage = window.location.pathname.includes('/chat') || 
-                          window.location.pathname.includes('chat');
-      
+      const isOnChatPage = window.location.pathname.includes('/chat') ||
+        window.location.pathname.includes('chat');
+
       console.log('🔄 Changement de route détecté:', {
         pathname: window.location.pathname,
         isOnChatPage
       });
-      
+
       // Si on est sur la page chat, ne pas connecter le WebSocket global
       if (isOnChatPage) {
         console.log('🔌 WebSocket global non connecté (page chat active)');
         return;
       }
-      
+
       console.log('🔌 Connexion WebSocket globale pour les notifications');
-      
+
       const handleGlobalWebSocketMessage = (message) => {
         console.log('📨 Message WebSocket global reçu:', message);
-        
-        // Traiter seulement les nouveaux messages
-        if (message.type === 'NEW_MESSAGE' && message.message) {
-          const conversationId = message.message.conversationId;
-          
-          console.log('🔔 Notification globale pour nouveau message:', {
-            conversationId,
-            sender: message.message.expediteur?.nom,
-            isOnChatPage: false
-          });
-          
+
+        // Traiter les notifications en temps réel du backend
+        if (message.type === 'NOTIFICATION_REALTIME' && message.data) {
+          const notif = message.data;
+
           // Créer une notification temporaire pour affichage immédiat
           const tempNotification = {
             id: Date.now() + Math.random(),
-            messageId: message.message.id,
-            conversationId: conversationId,
-            conversationName: 'Nouvelle conversation',
-            senderName: message.message.expediteur?.nom || 'Quelqu\'un',
-            messagePreview: message.message.contenu?.substring(0, 100) || 'Nouveau message',
+            contenu: notif.contenu,
+            type: notif.type,
             timeAgo: 'à l\'instant',
             timestamp: new Date().toISOString(),
             read: false,
-            type: 'NEW_MESSAGE',
             isTemporary: true
           };
-          
-          // Ajouter à la liste temporaire
+
+          // Ajouter à la liste pour affichage
           setNotifications(prev => [tempNotification, ...prev.slice(0, 4)]);
-          
-          // Supprimer après 5 secondes
+          setUnreadCount(prev => prev + 1);
+
+          // Émettre un événement global pour rafraîchir les compteurs dans d'autres composants
+          window.dispatchEvent(new CustomEvent('refresh-notifications'));
+
+          // Utiliser le système de notification global si disponible
+          if (window.showNotification) {
+            const icon = notif.type === 'MESSAGE' ? '💬' : '📅';
+            window.showNotification(`${icon} ${notif.contenu}`, 'info');
+          }
+
+          // Supprimer de l'affichage temporaire après 8 secondes (plus long pour laisser le temps de lire)
           setTimeout(() => {
             setNotifications(prev => prev.filter(n => n.id !== tempNotification.id));
-          }, 5000);
+          }, 8000);
+        }
+
+        // Traiter aussi les anciens messages de type NEW_MESSAGE pour compatibilité
+        else if (message.type === 'NEW_MESSAGE' && message.message) {
+          // ... existant (facultatif si NOTIFICATION_REALTIME couvre tout)
+          const tempNotification = {
+            id: Date.now() + Math.random(),
+            messageId: message.message.id,
+            conversationId: message.message.conversationId,
+            senderName: message.message.expediteur?.nom || 'Quelqu\'un',
+            messagePreview: message.message.contenu?.substring(0, 100) || 'Nouveau message',
+            type: 'MESSAGE',
+            isTemporary: true
+          };
+          setNotifications(prev => [tempNotification, ...prev.slice(0, 4)]);
         }
       };
 

@@ -35,68 +35,41 @@ const NotificationItem = ({ message, type, onClose }) => {
 
   if (!isVisible) return null;
 
-  const getStyle = () => {
-    const baseStyle = {
-      padding: '12px 16px',
-      margin: '8px',
-      borderRadius: '8px',
+  const getColors = () => {
+    switch (type) {
+      case 'success': return { bg: 'var(--success-50)', text: 'var(--success-700)', border: 'var(--success-500)', icon: '✅' };
+      case 'error': return { bg: 'var(--error-50)', text: 'var(--error-700)', border: 'var(--error-500)', icon: '❌' };
+      case 'warning': return { bg: 'var(--warning-50)', text: 'var(--warning-700)', border: 'var(--warning-500)', icon: '⚠️' };
+      case 'info':
+      default: return { bg: 'var(--info-50)', text: 'var(--info-700)', border: 'var(--info-500)', icon: 'ℹ️' };
+    }
+  };
+
+  const colors = getColors();
+
+  return (
+    <div style={{
+      padding: '16px 20px',
+      margin: '12px 0',
+      borderRadius: 'var(--radius-lg)',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      fontSize: '14px',
-      fontWeight: '500',
-      boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-      maxWidth: '400px'
-    };
-
-    switch (type) {
-      case 'success':
-        return {
-          ...baseStyle,
-          backgroundColor: '#d4edda',
-          color: '#155724',
-          border: '1px solid #c3e6cb'
-        };
-      case 'error':
-        return {
-          ...baseStyle,
-          backgroundColor: '#f8d7da',
-          color: '#721c24',
-          border: '1px solid #f5c6cb'
-        };
-      case 'warning':
-        return {
-          ...baseStyle,
-          backgroundColor: '#fff3cd',
-          color: '#856404',
-          border: '1px solid #ffeaa7'
-        };
-      case 'info':
-      default:
-        return {
-          ...baseStyle,
-          backgroundColor: '#d1ecf1',
-          color: '#0c5460',
-          border: '1px solid #bee5eb'
-        };
-    }
-  };
-
-  const getIcon = () => {
-    switch (type) {
-      case 'success': return '✓';
-      case 'error': return '✕';
-      case 'warning': return '⚠';
-      case 'info': return 'ℹ';
-      default: return '•';
-    }
-  };
-
-  return (
-    <div style={getStyle()}>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <span style={{ marginRight: '8px', fontSize: '14px' }}>{getIcon()}</span>
-        <span>{message}</span>
+      fontSize: 'var(--text-sm)',
+      fontWeight: 'var(--font-medium)',
+      backgroundColor: colors.bg,
+      color: colors.text,
+      borderLeft: `5px solid ${colors.border}`,
+      boxShadow: 'var(--shadow-lg)',
+      backdropFilter: 'var(--glass-blur)',
+      animation: isVisible ? 'slideInRight 0.3s ease-out' : 'fadeOut 0.3s ease-in',
+      maxWidth: '380px',
+      pointerEvents: 'auto',
+      pointer: 'default'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+        <span style={{ fontSize: '18px' }}>{colors.icon}</span>
+        <span style={{ fontFamily: 'var(--font-body)', lineHeight: '1.4' }}>{message}</span>
       </div>
       <button
         onClick={() => {
@@ -106,15 +79,19 @@ const NotificationItem = ({ message, type, onClose }) => {
         style={{
           background: 'none',
           border: 'none',
-          fontSize: '16px',
+          fontSize: '20px',
           cursor: 'pointer',
           color: 'inherit',
-          padding: '0',
+          padding: '4px',
           marginLeft: '12px',
-          opacity: '0.7'
+          opacity: '0.5',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          transition: 'var(--transition-fast)'
         }}
         onMouseEnter={(e) => e.target.style.opacity = '1'}
-        onMouseLeave={(e) => e.target.style.opacity = '0.7'}
+        onMouseLeave={(e) => e.target.style.opacity = '0.5'}
       >
         &times;
       </button>

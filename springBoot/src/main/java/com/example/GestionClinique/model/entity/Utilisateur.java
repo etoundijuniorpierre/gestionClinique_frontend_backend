@@ -21,6 +21,9 @@ import java.util.*;
 @Table
 public class Utilisateur extends InfoPersonnel {
 
+    @Column(unique = true, nullable = false)
+    private String username;
+
     @Column(nullable = false, name = "mot_de_passe")
     @JsonIgnore
     @Size(min = 8, max = 20)

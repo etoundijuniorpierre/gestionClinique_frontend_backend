@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import axiosInstance from '../config/axiosConfig';
 import { userService, groupService } from '../../services/messagerieService';
+import { UnifiedModal, ModalButton } from '../shared/UnifiedModal';
 
 // Fallback simple pour les notifications si le hook n'est pas disponible
 let useNotificationFallback = () => ({
@@ -23,61 +24,7 @@ try {
 
 const useNotification = useNotificationFallback;
 
-const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 1000;
-`;
-
-const ModalContent = styled.div`
-  background: white;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 500px;
-  max-height: 80vh;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-`;
-
-const ModalHeader = styled.div`
-  padding: 20px;
-  border-bottom: 1px solid #e0e0e0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-`;
-
-const ModalTitle = styled.h2`
-  margin: 0;
-  font-size: 18px;
-  color: #2c3e50;
-`;
-
-const CloseButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  color: #666;
-  padding: 0;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 4px;
-  
-  &:hover {
-    background: #f0f0f0;
-  }
-`;
+// Les styles de modaux locaux ont été supprimés car nous utilisons UnifiedModal
 
 const ModalBody = styled.div`
   padding: 20px;
@@ -424,51 +371,7 @@ const UserService = styled.div`
   font-style: italic;
 `;
 
-const ModalFooter = styled.div`
-  padding: 20px;
-  border-top: 1px solid #e0e0e0;
-  display: flex;
-  gap: 12px;
-  justify-content: flex-end;
-`;
-
-const Button = styled.button`
-  padding: 10px 20px;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  
-  &.cancel {
-    background: #6b7280;
-    color: white;
-    
-    &:hover {
-      background: #4b5563;
-      transform: translateY(-1px);
-    }
-  }
-  
-  &.create {
-    background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%);
-    color: white;
-    
-    &:hover:not(:disabled) {
-      background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(30, 64, 175, 0.3);
-    }
-    
-    &:disabled {
-      background: #9ca3af;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-  }
-`;
+// Styles de footer locaux supprimés car gérés par UnifiedModal
 
 const LoadingState = styled.div`
   display: flex;
@@ -486,7 +389,7 @@ const getAvatarColor = (role) => {
   } else if (role && typeof role === 'string') {
     roleValue = role;
   }
-  
+
   const colors = {
     'ADMIN': '#ef4444',
     'MEDECIN': '#3b82f6',
@@ -504,7 +407,7 @@ const getRoleDisplayName = (role) => {
   } else if (role && typeof role === 'string') {
     roleValue = role;
   }
-  
+
   const roles = {
     'ADMIN': 'Administrateur',
     'MEDECIN': 'Médecin',
@@ -519,7 +422,7 @@ const getUserName = (user) => {
   if (user && typeof user === 'object') {
     const nom = user.nom || '';
     const prenom = user.prenom || '';
-    
+
     if (nom && prenom) {
       return `${prenom} ${nom}`.trim();
     } else if (nom) {
@@ -528,7 +431,7 @@ const getUserName = (user) => {
       return prenom;
     }
   }
-  
+
   // Fallback
   return 'Utilisateur';
 };
@@ -538,14 +441,14 @@ const getUserInitial = (user) => {
   if (user && typeof user === 'object') {
     const nom = user.nom || '';
     const prenom = user.prenom || '';
-    
+
     if (prenom) {
       return prenom.charAt(0).toUpperCase();
     } else if (nom) {
       return nom.charAt(0).toUpperCase();
     }
   }
-  
+
   // Fallback
   return 'U';
 };
@@ -564,17 +467,17 @@ const getServiceDisplayName = (serviceName) => {
     'URGENCES': 'Urgences',
     'KINESITHERAPIE': 'Kinésithérapie'
   };
-  
+
   return serviceNames[serviceName] || serviceName;
 };
 
-const MultiSelect = ({ 
-  options, 
-  selectedValues, 
-  onSelectionChange, 
-  placeholder, 
+const MultiSelect = ({
+  options,
+  selectedValues,
+  onSelectionChange,
+  placeholder,
   getDisplayName = (value) => value,
-  disabled = false 
+  disabled = false
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const containerRef = useRef(null);
@@ -620,15 +523,15 @@ const MultiSelect = ({
 
   return (
     <MultiSelectContainer ref={containerRef}>
-      <MultiSelectButton 
-        type="button" 
+      <MultiSelectButton
+        type="button"
         onClick={handleToggle}
         disabled={disabled}
       >
         <span>{getButtonText()}</span>
         <span>{isOpen ? '▲' : '▼'}</span>
       </MultiSelectButton>
-      
+
       {isOpen && (
         <MultiSelectDropdown>
           {options.map(option => (
@@ -644,7 +547,7 @@ const MultiSelect = ({
           ))}
         </MultiSelectDropdown>
       )}
-      
+
       {selectedValues.length > 0 && (
         <SelectedItems>
           {selectedValues.map(value => (
@@ -697,8 +600,8 @@ const UserAvatarWithPhoto = ({ user, size = 32 }) => {
 
   if (photoUrl && !photoError) {
     return (
-      <UserAvatarPhoto 
-        src={photoUrl} 
+      <UserAvatarPhoto
+        src={photoUrl}
         alt={`Photo de ${getUserName(user)}`}
         size={size}
       />
@@ -734,7 +637,7 @@ const CreateGroupModal = ({ onClose, onGroupCreated, currentUserId }) => {
     try {
       setLoading(true);
       const data = await userService.getAllUsers();
-      
+
       // Debug: afficher la structure des données utilisateur
       console.log('🔍 Structure des données utilisateur dans CreateGroupModal:', data.slice(0, 3).map(user => ({
         id: user.id,
@@ -744,19 +647,19 @@ const CreateGroupModal = ({ onClose, onGroupCreated, currentUserId }) => {
         roleType: user.roleType,
         serviceMedicalName: user.serviceMedicalName
       })));
-      
+
       // Filtrer l'utilisateur actuel
       const filteredUsers = data.filter(user => user.id !== currentUserId);
       setUsers(filteredUsers);
       setFilteredUsers(filteredUsers);
-      
+
       // Extraire les services uniques
       const uniqueServices = [...new Set(filteredUsers
         .map(user => user.serviceMedicalName)
         .filter(service => service && service.trim())
       )].sort();
       setServices(uniqueServices);
-      
+
       // Extraire les rôles uniques
       const uniqueRoles = [...new Set(filteredUsers
         .map(user => {
@@ -770,7 +673,7 @@ const CreateGroupModal = ({ onClose, onGroupCreated, currentUserId }) => {
         .filter(role => role)
       )].sort();
       setRoles(uniqueRoles);
-      
+
     } catch (error) {
       console.error('❌ Erreur lors du chargement des utilisateurs:', error);
       showNotification('Erreur lors du chargement des utilisateurs', 'error');
@@ -780,7 +683,7 @@ const CreateGroupModal = ({ onClose, onGroupCreated, currentUserId }) => {
   };
 
   const handleMemberToggle = (userId) => {
-    setSelectedMembers(prev => 
+    setSelectedMembers(prev =>
       prev.includes(userId)
         ? prev.filter(id => id !== userId)
         : [...prev, userId]
@@ -818,7 +721,7 @@ const CreateGroupModal = ({ onClose, onGroupCreated, currentUserId }) => {
     const selectedInView = filteredUsers.filter(user => selectedMembers.includes(user.id)).length;
     const totalInView = filteredUsers.length;
     const totalSelected = selectedMembers.length;
-    
+
     return {
       selectedInView,
       totalInView,
@@ -833,7 +736,7 @@ const CreateGroupModal = ({ onClose, onGroupCreated, currentUserId }) => {
 
     // Filtre par services médicaux (multiple)
     if (selectedServices.length > 0) {
-      filtered = filtered.filter(user => 
+      filtered = filtered.filter(user =>
         selectedServices.includes(user.serviceMedicalName)
       );
     }
@@ -914,187 +817,182 @@ const CreateGroupModal = ({ onClose, onGroupCreated, currentUserId }) => {
   const isFormValid = groupName.trim() && selectedMembers.length > 0;
 
   return (
-    <ModalOverlay onClick={handleClose}>
-      <ModalContent onClick={(e) => e.stopPropagation()}>
-        <ModalHeader>
-          <ModalTitle>Créer un nouveau groupe</ModalTitle>
-          <CloseButton onClick={handleClose} disabled={creating}>
-            ×
-          </CloseButton>
-        </ModalHeader>
-
-        <ModalBody>
-          <FormGroup>
-            <Label>Nom du groupe *</Label>
-            <Input
-              type="text"
-              value={groupName}
-              onChange={(e) => setGroupName(e.target.value)}
-              placeholder="Entrez le nom du groupe"
-              disabled={creating}
-            />
-          </FormGroup>
-
-          <FormGroup>
-            <Label>Description</Label>
-            <TextArea
-              value={groupDescription}
-              onChange={(e) => setGroupDescription(e.target.value)}
-              placeholder="Description du groupe (optionnel)"
-              disabled={creating}
-            />
-          </FormGroup>
-
-          <MembersSection>
-            <Label>Sélectionner les membres *</Label>
-            
-            {!loading && (
-              <FiltersContainer>
-                <FilterGroup>
-                  <FilterLabel>Services médicaux</FilterLabel>
-                  <MultiSelect
-                    options={services}
-                    selectedValues={selectedServices}
-                    onSelectionChange={handleServicesChange}
-                    placeholder="Sélectionner des services"
-                    getDisplayName={getServiceDisplayName}
-                    disabled={creating}
-                  />
-                </FilterGroup>
-                
-                <FilterGroup>
-                  <FilterLabel>Rôles</FilterLabel>
-                  <MultiSelect
-                    options={roles}
-                    selectedValues={selectedRoles}
-                    onSelectionChange={handleRolesChange}
-                    placeholder="Sélectionner des rôles"
-                    getDisplayName={getRoleDisplayName}
-                    disabled={creating}
-                  />
-                </FilterGroup>
-                
-                {(selectedServices.length > 0 || selectedRoles.length > 0) && (
-                  <FilterGroup>
-                    <FilterLabel>&nbsp;</FilterLabel>
-                    <ClearFiltersButton 
-                      onClick={clearFilters}
-                      disabled={creating}
-                    >
-                      Effacer les filtres
-                    </ClearFiltersButton>
-                  </FilterGroup>
-                )}
-              </FiltersContainer>
-            )}
-            
-            {loading ? (
-              <LoadingState>Chargement des utilisateurs...</LoadingState>
-            ) : (
-              <>
-                {(() => {
-                  const stats = getSelectionStats();
-                  return (
-                    <>
-                      <MembersInfo>
-                        <span>
-                          {filteredUsers.length} utilisateur{filteredUsers.length > 1 ? 's' : ''} disponible{filteredUsers.length > 1 ? 's' : ''}
-                          {selectedServices.length > 0 && (
-                            ` dans ${selectedServices.length > 1 ? 'les services ' : 'le service '}${selectedServices.map(s => getServiceDisplayName(s)).join(', ')}`
-                          )}
-                          {selectedRoles.length > 0 && (
-                            ` avec ${selectedRoles.length > 1 ? 'les rôles ' : 'le rôle '}${selectedRoles.map(r => getRoleDisplayName(r)).join(', ')}`
-                          )}
-                        </span>
-                        <MembersCount>
-                          {stats.totalSelected} sélectionné{stats.totalSelected > 1 ? 's' : ''}
-                          {stats.totalInView > 0 && (
-                            <span style={{ fontSize: '10px', opacity: 0.7 }}>
-                              {' '}({stats.selectedInView}/{stats.totalInView} dans la vue)
-                            </span>
-                          )}
-                        </MembersCount>
-                      </MembersInfo>
-                      
-                      <UserSelectionControls>
-                        <SelectionButton
-                          onClick={handleSelectAll}
-                          disabled={creating || filteredUsers.length === 0}
-                          className="select-all"
-                        >
-                          Tout sélectionner
-                        </SelectionButton>
-                        
-                        <SelectionButton
-                          onClick={handleDeselectAll}
-                          disabled={creating || selectedMembers.length === 0}
-                          className="deselect-all"
-                        >
-                          Tout désélectionner
-                        </SelectionButton>
-                        
-                        <SelectFilteredButton
-                          onClick={handleSelectFiltered}
-                          disabled={creating || filteredUsers.length === 0 || stats.allInViewSelected}
-                        >
-                          {stats.allInViewSelected ? 'Tous sélectionnés' : `Sélectionner filtrés (${stats.totalInView})`}
-                        </SelectFilteredButton>
-                        
-                        <SelectionButton
-                          onClick={handleDeselectFiltered}
-                          disabled={creating || filteredUsers.length === 0 || stats.selectedInView === 0}
-                        >
-                          Désélectionner filtrés ({stats.selectedInView})
-                        </SelectionButton>
-                      </UserSelectionControls>
-                    </>
-                  );
-                })()}
-                <MembersList>
-                {filteredUsers.map((user) => (
-                  <MemberItem
-                    key={user.id}
-                    selected={selectedMembers.includes(user.id)}
-                    onClick={() => handleMemberToggle(user.id)}
-                  >
-                    <Checkbox
-                      type="checkbox"
-                      checked={selectedMembers.includes(user.id)}
-                      onChange={() => handleMemberToggle(user.id)}
-                      disabled={creating}
-                    />
-                    <UserAvatarWithPhoto user={user} />
-                    <UserInfo>
-                      <UserName>{getUserName(user)}</UserName>
-                      <UserRole>{getRoleDisplayName(user.role)}</UserRole>
-                      {user.serviceMedicalName && (
-                        <UserService>{getServiceDisplayName(user.serviceMedicalName)}</UserService>
-                      )}
-                    </UserInfo>
-                  </MemberItem>
-                ))}
-                </MembersList>
-              </>
-            )}
-          </MembersSection>
-        </ModalBody>
-
-        <ModalFooter>
-          <Button className="cancel" onClick={handleClose} disabled={creating}>
+    <UnifiedModal
+      isOpen={true}
+      onClose={handleClose}
+      title="Créer un nouveau groupe"
+      showFooter={true}
+      size="medium"
+      footerContent={
+        <div style={{ display: 'flex', gap: '12px', justifyContent: 'flex-end', width: '100%' }}>
+          <ModalButton onClick={handleClose} disabled={creating}>
             Annuler
-          </Button>
-          <Button
-            className="create"
+          </ModalButton>
+          <ModalButton
+            $primary
             onClick={handleCreateGroup}
             disabled={!isFormValid || creating}
           >
             {creating ? 'Création...' : 'Créer le groupe'}
-          </Button>
-        </ModalFooter>
-      </ModalContent>
-    </ModalOverlay>
+          </ModalButton>
+        </div>
+      }
+    >
+      <FormGroup>
+        <Label>Nom du groupe *</Label>
+        <Input
+          type="text"
+          value={groupName}
+          onChange={(e) => setGroupName(e.target.value)}
+          placeholder="Entrez le nom du groupe"
+          disabled={creating}
+        />
+      </FormGroup>
+
+      <FormGroup>
+        <Label>Description</Label>
+        <TextArea
+          value={groupDescription}
+          onChange={(e) => setGroupDescription(e.target.value)}
+          placeholder="Description du groupe (optionnel)"
+          disabled={creating}
+        />
+      </FormGroup>
+
+      <MembersSection>
+        <Label>Sélectionner les membres *</Label>
+
+        {!loading && (
+          <FiltersContainer>
+            <FilterGroup>
+              <FilterLabel>Services médicaux</FilterLabel>
+              <MultiSelect
+                options={services}
+                selectedValues={selectedServices}
+                onSelectionChange={handleServicesChange}
+                placeholder="Sélectionner des services"
+                getDisplayName={getServiceDisplayName}
+                disabled={creating}
+              />
+            </FilterGroup>
+
+            <FilterGroup>
+              <FilterLabel>Rôles</FilterLabel>
+              <MultiSelect
+                options={roles}
+                selectedValues={selectedRoles}
+                onSelectionChange={handleRolesChange}
+                placeholder="Sélectionner des rôles"
+                getDisplayName={getRoleDisplayName}
+                disabled={creating}
+              />
+            </FilterGroup>
+
+            {(selectedServices.length > 0 || selectedRoles.length > 0) && (
+              <FilterGroup>
+                <FilterLabel>&nbsp;</FilterLabel>
+                <ClearFiltersButton
+                  onClick={clearFilters}
+                  disabled={creating}
+                >
+                  Effacer les filtres
+                </ClearFiltersButton>
+              </FilterGroup>
+            )}
+          </FiltersContainer>
+        )}
+
+        {loading ? (
+          <LoadingState>Chargement des utilisateurs...</LoadingState>
+        ) : (
+          <>
+            {(() => {
+              const stats = getSelectionStats();
+              return (
+                <>
+                  <MembersInfo>
+                    <span>
+                      {filteredUsers.length} utilisateur{filteredUsers.length > 1 ? 's' : ''} disponible{filteredUsers.length > 1 ? 's' : ''}
+                      {selectedServices.length > 0 && (
+                        ` dans ${selectedServices.length > 1 ? 'les services ' : 'le service '}${selectedServices.map(s => getServiceDisplayName(s)).join(', ')}`
+                      )}
+                      {selectedRoles.length > 0 && (
+                        ` avec ${selectedRoles.length > 1 ? 'les rôles ' : 'le rôle '}${selectedRoles.map(r => getRoleDisplayName(r)).join(', ')}`
+                      )}
+                    </span>
+                    <MembersCount>
+                      {stats.totalSelected} sélectionné{stats.totalSelected > 1 ? 's' : ''}
+                      {stats.totalInView > 0 && (
+                        <span style={{ fontSize: '10px', opacity: 0.7 }}>
+                          {' '}({stats.selectedInView}/{stats.totalInView} dans la vue)
+                        </span>
+                      )}
+                    </MembersCount>
+                  </MembersInfo>
+
+                  <UserSelectionControls>
+                    <SelectionButton
+                      onClick={handleSelectAll}
+                      disabled={creating || filteredUsers.length === 0}
+                      className="select-all"
+                    >
+                      Tout sélectionner
+                    </SelectionButton>
+
+                    <SelectionButton
+                      onClick={handleDeselectAll}
+                      disabled={creating || selectedMembers.length === 0}
+                      className="deselect-all"
+                    >
+                      Tout désélectionner
+                    </SelectionButton>
+
+                    <SelectFilteredButton
+                      onClick={handleSelectFiltered}
+                      disabled={creating || filteredUsers.length === 0 || stats.allInViewSelected}
+                    >
+                      {stats.allInViewSelected ? 'Tous sélectionnés' : `Sélectionner filtrés (${stats.totalInView})`}
+                    </SelectFilteredButton>
+
+                    <SelectionButton
+                      onClick={handleDeselectFiltered}
+                      disabled={creating || filteredUsers.length === 0 || stats.selectedInView === 0}
+                    >
+                      Désélectionner filtrés ({stats.selectedInView})
+                    </SelectionButton>
+                  </UserSelectionControls>
+                </>
+              );
+            })()}
+            <MembersList>
+              {filteredUsers.map((user) => (
+                <MemberItem
+                  key={user.id}
+                  selected={selectedMembers.includes(user.id)}
+                  onClick={() => handleMemberToggle(user.id)}
+                >
+                  <Checkbox
+                    type="checkbox"
+                    checked={selectedMembers.includes(user.id)}
+                    onChange={() => handleMemberToggle(user.id)}
+                    disabled={creating}
+                  />
+                  <UserAvatarWithPhoto user={user} />
+                  <UserInfo>
+                    <UserName>{getUserName(user)}</UserName>
+                    <UserRole>{getRoleDisplayName(user.role)}</UserRole>
+                    {user.serviceMedicalName && (
+                      <UserService>{getServiceDisplayName(user.serviceMedicalName)}</UserService>
+                    )}
+                  </UserInfo>
+                </MemberItem>
+              ))}
+            </MembersList>
+          </>
+        )}
+      </MembersSection>
+    </UnifiedModal>
   );
 };
 
 export default CreateGroupModal;
- 

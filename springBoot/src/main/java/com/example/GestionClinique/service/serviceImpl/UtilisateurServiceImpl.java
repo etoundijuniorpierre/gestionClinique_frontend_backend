@@ -49,6 +49,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Transactional
     @Override
     public Utilisateur createUtilisateur(Utilisateur utilisateur) {
+        if (utilisateur.getUsername() == null || utilisateur.getUsername().isBlank()) {
+            throw new IllegalArgumentException("Le nom d'utilisateur ne peut pas être vide.");
+        }
+        if (findUtilisateurByUsername(utilisateur.getUsername()) != null) {
+            throw new IllegalArgumentException("A user with this username already exists.");
+        }
         if (findUtilisateurByEmail(utilisateur.getEmail()) != null) {
             throw new IllegalArgumentException("A user with this email address already exists.");
         }
@@ -67,7 +73,8 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         }
 
         Role role = roleRepository.findById(utilisateur.getRole().getId())
-                .orElseThrow(() -> new IllegalArgumentException("Rôle non trouvé avec ID: " + utilisateur.getRole().getId()));
+                .orElseThrow(() -> new IllegalArgumentException(
+                        "Rôle non trouvé avec ID: " + utilisateur.getRole().getId()));
 
         if (role.getRoleType() == SECRETAIRE || role.getRoleType() == ADMIN) {
             utilisateur.setServiceMedical(null);
@@ -83,9 +90,9 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
         historiqueActionService.enregistrerAction(
                 String.format("Création d'un nouvel utilisateur: %s %s (ID: %d, Rôle: %s)",
-                        savedUser.getNom(), savedUser.getPrenom(), savedUser.getId(), savedUser.getRole().getRoleType()),
-                loggingAspect.currentUserId()
-        );
+                        savedUser.getNom(), savedUser.getPrenom(), savedUser.getId(),
+                        savedUser.getRole().getRoleType()),
+                loggingAspect.currentUserId());
 
         return savedUser;
     }
@@ -105,8 +112,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
             historiqueActionService.enregistrerAction(
                     String.format("Mise à jour de la photo de profil de l'utilisateur ID: %d", userId),
-                    loggingAspect.currentUserId()
-            );
+                    loggingAspect.currentUserId());
         }
         return utilisateurRepository.findById(userId).orElse(null);
     }
@@ -148,6 +154,9 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         if (utilisateurDetails.getPrenom() != null) {
             existingUtilisateur.setPrenom(utilisateurDetails.getPrenom());
         }
+        if (utilisateurDetails.getUsername() != null) {
+            existingUtilisateur.setUsername(utilisateurDetails.getUsername());
+        }
         if (utilisateurDetails.getEmail() != null) {
             existingUtilisateur.setEmail(utilisateurDetails.getEmail());
         }
@@ -171,14 +180,14 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         }
         if (utilisateurDetails.getRole() != null && utilisateurDetails.getRole().getId() != null) {
             Role newRole = roleRepository.findById(utilisateurDetails.getRole().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("Rôle non trouvé avec ID: " + utilisateurDetails.getRole().getId()));
+                    .orElseThrow(() -> new IllegalArgumentException(
+                            "Rôle non trouvé avec ID: " + utilisateurDetails.getRole().getId()));
             existingUtilisateur.setRole(newRole);
         }
 
         historiqueActionService.enregistrerAction(
                 String.format("Mise à jour des informations de l'utilisateur ID: %d", id),
-                loggingAspect.currentUserId()
-        );
+                loggingAspect.currentUserId());
 
         return utilisateurRepository.save(existingUtilisateur);
     }
@@ -191,8 +200,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         historiqueActionService.enregistrerAction(
                 String.format("Suppression de l'utilisateur %s %s (ID: %d)",
                         utilisateur.getNom(), utilisateur.getPrenom(), utilisateur.getId()),
-                loggingAspect.currentUserId()
-        );
+                loggingAspect.currentUserId());
 
         utilisateurRepository.delete(utilisateur);
     }
@@ -200,6 +208,11 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Override
     public Utilisateur findUtilisateurByEmail(String email) {
         return utilisateurRepository.findByEmail(email).orElse(null);
+    }
+
+    @Override
+    public Utilisateur findUtilisateurByUsername(String username) {
+        return utilisateurRepository.findByUsername(username).orElse(null);
     }
 
     @Override
@@ -219,8 +232,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         historiqueActionService.enregistrerAction(
                 String.format("Changement de statut de l'utilisateur ID: %d à %s",
                         id, isActive ? "ACTIF" : "INACTIF"),
-                loggingAspect.currentUserId()
-        );
+                loggingAspect.currentUserId());
         return utilisateurRepository.findById(id).orElse(null);
     }
 
@@ -254,8 +266,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
         historiqueActionService.enregistrerAction(
                 "Changement de mot de passe effectué",
-                loggingAspect.currentUserId()
-        );
+                loggingAspect.currentUserId());
 
         utilisateur.setPassword(passwordEncoder.encode(newPassword));
         return utilisateurRepository.save(utilisateur);

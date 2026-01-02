@@ -15,10 +15,10 @@ const SousDiv1Style = Styled.div`
  width: 99%;
 
 `
-const Span2= Styled.span`
+const Span2 = Styled.span`
     display: ${props => props.$Spandisplay2};
 `
-const Span1= Styled.span`
+const Span1 = Styled.span`
     cursor: pointer;
 `
 const Span3 = Styled.span`
@@ -155,27 +155,27 @@ const FormulaireUtilisateur = () => {
   const { startLoading, stopLoading, isLoading } = useLoading();
   const { showConfirmation } = useConfirmation();
   const idUser = localStorage.getItem('id');
-    const [nomprofil, setnomprofil]= useState('')
+  const [nomprofil, setnomprofil] = useState('')
 
-    useEffect(() => {
-           const nomutilisateur =  async ()=> {
-                try {
-                const response = await axiosInstance.get(`/utilisateurs/${idUser}`);
-                console.log('Token utilisé:', localStorage.getItem('token'));
-              if (response) {
-                 setnomprofil(response.data.nom)
-                }
-            } catch (error) {
-                console.error('Erreur lors de la récupération des utilisateurs:', error);
-                
-            } finally {
-              console.log('fin')
-            }
-            }
-            nomutilisateur()
-    }, [idUser]);
+  useEffect(() => {
+    const nomutilisateur = async () => {
+      try {
+        const response = await axiosInstance.get(`/utilisateurs/${idUser}`);
+        console.log('Token utilisé:', localStorage.getItem('token'));
+        if (response) {
+          setnomprofil(response.data.nom)
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des utilisateurs:', error);
 
-  
+      } finally {
+        console.log('fin')
+      }
+    }
+    nomutilisateur()
+  }, [idUser]);
+
+
   // Mapping des rôles avec leurs IDs
   const roleMapping = {
     "ADMIN": { id: 1, roleType: "ADMIN" },
@@ -184,30 +184,31 @@ const FormulaireUtilisateur = () => {
   };
 
   const [formData, setFormData] = useState({
-   
-  nom: "",
-  prenom: "",
-  email: "",
-  dateNaissance: "",
-  telephone: "",
-  adresse: "",
-  genre: "m",
-  password: "",
-  serviceMedicalName: "",
-  actif: true,
-  role: ""
+
+    username: "",
+    nom: "",
+    prenom: "",
+    email: "",
+    dateNaissance: "",
+    telephone: "",
+    adresse: "",
+    genre: "m",
+    password: "",
+    serviceMedicalName: "",
+    actif: true,
+    role: ""
 
   });
   const [isVisible, setisVisible] = useState(false)
   const [telephoneError, setTelephoneError] = useState("")
   const [telephoneValid, setTelephoneValid] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
-    
-  
+
+
 
   const handleChange = e => {
     const { name, value } = e.target;
-    
+
     // Gestion spéciale pour le téléphone
     if (name === "telephone") {
       // Garder uniquement les chiffres et limiter à 9
@@ -231,16 +232,20 @@ const FormulaireUtilisateur = () => {
     setTelephoneError('');
     setTelephoneValid(true);
   };
- const handleChangerole = e => {
+  const handleChangerole = e => {
     const { name, value } = e.target;
     value === "MEDECIN" ? setisVisible(true) : setisVisible(false)
     setFormData(prev => ({ ...prev, [name]: value }));
   };
   const token = localStorage.getItem('token');
-  const handleSubmit = async(e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validation spécifique des champs requis
+    if (!formData.username.trim()) {
+      window.showNotification('Le champ "Nom d\'utilisateur" est obligatoire', 'error');
+      return;
+    }
     if (!formData.nom.trim()) {
       window.showNotification('Le champ "Nom" est obligatoire', 'error');
       return;
@@ -289,6 +294,7 @@ const FormulaireUtilisateur = () => {
     }
 
     const dataToSend = {
+      username: formData.username,
       nom: formData.nom,
       prenom: formData.prenom,
       email: formData.email,
@@ -312,13 +318,13 @@ const FormulaireUtilisateur = () => {
     try {
       const response = await axiosInstance.post(`/utilisateurs`, dataToSend);
       console.log(response.data);
-      
+
       window.showNotification('Utilisateur créé avec succès', 'success');
       navigate("/admin/utilisateur");
 
     } catch (error) {
       console.error('Erreur de connexion :', error);
-      
+
       // Messages d'erreur plus spécifiques
       if (error.response) {
         if (error.response.status === 409) {
@@ -335,7 +341,7 @@ const FormulaireUtilisateur = () => {
       } else {
         window.showNotification('Erreur lors de la création de l\'utilisateur', 'error');
       }
-    } finally{
+    } finally {
       stopLoading('createUser');
     };
   };
@@ -354,126 +360,135 @@ const FormulaireUtilisateur = () => {
     });
   };
   return (<>
-              <SousDiv1Style>
-                <Barrehorizontal1 titrepage="Gestion des utilisateurs" imgprofil1={imgprofil} nomprofil={nomprofil}> 
-                    <Span1 onClick={handleClick}>Liste des utilisateurs</Span1>
-                    <Span2 > {">"} Ajouter un utilisateur</Span2>
-                </Barrehorizontal1>
-            </SousDiv1Style>
-      <Afficheformulaireadd>
+    <SousDiv1Style>
+      <Barrehorizontal1 titrepage="Gestion des utilisateurs" imgprofil1={imgprofil} nomprofil={nomprofil}>
+        <Span1 onClick={handleClick}>Liste des utilisateurs</Span1>
+        <Span2 > {">"} Ajouter un utilisateur</Span2>
+      </Barrehorizontal1>
+    </SousDiv1Style>
+    <Afficheformulaireadd>
       <Form onSubmit={handleSubmit}>
         <FormContainer>
-        <Title>Créer un utilisateur</Title>
-        <TraitHorizontal></TraitHorizontal>
-        <FormRow>
-          <FormGroup>
-            <Label htmlFor="nom">Nom</Label>
-            <Input id="nom" name="nom" value={formData.nom} onChange={handleChange} />
-          </FormGroup>
-          <FormGroup>
-            <Label htmlFor="prenom">Prénom</Label>
-            <Input id="prenom" name="prenom" value={formData.prenom} onChange={handleChange} />
-          </FormGroup>
-        </FormRow>
+          <Title>Créer un utilisateur</Title>
+          <TraitHorizontal></TraitHorizontal>
+          <FormRow>
+            <FormGroup>
+              <Label htmlFor="username">Nom d'utilisateur *</Label>
+              <Input id="username" name="username" value={formData.username} onChange={handleChange} required />
+            </FormGroup>
+            <FormGroup>
+              {/* Vide pour garder l'équilibre */}
+            </FormGroup>
+          </FormRow>
+          <FormRow>
+            <FormGroup>
+              <Label htmlFor="nom">Nom</Label>
+              <Input id="nom" name="nom" value={formData.nom} onChange={handleChange} />
+            </FormGroup>
+            <FormGroup>
+              <Label htmlFor="prenom">Prénom</Label>
+              <Input id="prenom" name="prenom" value={formData.prenom} onChange={handleChange} />
+            </FormGroup>
+          </FormRow>
 
-        <FormRow>
-          <FormGroup>
-            <Label htmlFor="adresse">Adresse</Label>
-            <Input id="adresse" name="adresse" value={formData.adresse} onChange={handleChange} />
-          </FormGroup>
-          <FormGroup>
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} />
-          </FormGroup>
-        </FormRow>
+          <FormRow>
+            <FormGroup>
+              <Label htmlFor="adresse">Adresse</Label>
+              <Input id="adresse" name="adresse" value={formData.adresse} onChange={handleChange} />
+            </FormGroup>
+            <FormGroup>
+              <Label htmlFor="email">Email</Label>
+              <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} />
+            </FormGroup>
+          </FormRow>
 
-        <FormRow>
-          <FormGroup>
-            <Label htmlFor="genre">Genre</Label>
-            <Select id="genre" name="genre" value={formData.genre} onChange={handleChange}>
-              <option value="FEMME">Femme</option>
-              <option value="HOMME">Homme</option>
-            </Select>
-          </FormGroup>
-          <FormGroup>
-            <Label htmlFor="dateNaissance">Date de naissance</Label>
-            <Input id="dateNaissance" name="dateNaissance" type="date" value={formData.dateNaissance} onChange={handleChange} />
-          </FormGroup>
-        </FormRow>
-         <FormRow>
-          <FormGroup>
-            <Label htmlFor="password">Mot de passe</Label>
-            <div style={{ position: 'relative', display: 'inline-block' }}>
-              <Input id="password" name="password" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={handleChange} placeholder="Entrez le mot de passe" />
-              <button
-                type="button"
-                onClick={() => setShowPassword(prev => !prev)}
-                style={{
-                  position: 'absolute',
-                  right: '10px',
-                  top: '50%',
-                  transform: 'translateY(-50%)',
-                  background: 'transparent',
-                  border: 'none',
-                  cursor: 'pointer',
-                  color: '#666'
-                }}
-                aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
-              >
-                {showPassword ? '🙈' : '👁️'}
-              </button>
-            </div>
-          </FormGroup>
-          <FormGroup>
-            <Label htmlFor="telephone">Téléphone</Label>
-            <Input 
-              id="telephone" 
-              name="telephone" 
-              type="tel"
-              value={formData.telephone} 
-              onChange={handleChange}
-              placeholder="XXXXXXXXX"
-              title="9 chiffres"
-              maxLength={9}
-              className={telephoneError ? 'input-error' : telephoneValid ? 'input-valid' : ''}
-            />
-            {telephoneError && <span className="error-message">{telephoneError}</span>}
-            {telephoneValid && <span className="success-message">✓ Numéro valide</span>}
-          </FormGroup>
-        </FormRow>
-        <FormRow>
-          <FormGroup>
-            <Label htmlFor="role">Rôle</Label>
-            <Select id="role" name="role" value={formData.role} onChange={handleChangerole}>
-              <option value="">Sélectionnez un rôle</option>
-              <option value="ADMIN">ADMIN</option>
-              <option value="MEDECIN">MEDECIN</option>
-              <option value="SECRETAIRE">SECRETAIRE</option>
-            </Select>
+          <FormRow>
+            <FormGroup>
+              <Label htmlFor="genre">Genre</Label>
+              <Select id="genre" name="genre" value={formData.genre} onChange={handleChange}>
+                <option value="FEMME">Femme</option>
+                <option value="HOMME">Homme</option>
+              </Select>
+            </FormGroup>
+            <FormGroup>
+              <Label htmlFor="dateNaissance">Date de naissance</Label>
+              <Input id="dateNaissance" name="dateNaissance" type="date" value={formData.dateNaissance} onChange={handleChange} />
+            </FormGroup>
+          </FormRow>
+          <FormRow>
+            <FormGroup>
+              <Label htmlFor="password">Mot de passe</Label>
+              <div style={{ position: 'relative', display: 'inline-block' }}>
+                <Input id="password" name="password" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={handleChange} placeholder="Entrez le mot de passe" />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(prev => !prev)}
+                  style={{
+                    position: 'absolute',
+                    right: '10px',
+                    top: '50%',
+                    transform: 'translateY(-50%)',
+                    background: 'transparent',
+                    border: 'none',
+                    cursor: 'pointer',
+                    color: '#666'
+                  }}
+                  aria-label={showPassword ? 'Masquer le mot de passe' : 'Afficher le mot de passe'}
+                >
+                  {showPassword ? '🙈' : '👁️'}
+                </button>
+              </div>
+            </FormGroup>
+            <FormGroup>
+              <Label htmlFor="telephone">Téléphone</Label>
+              <Input
+                id="telephone"
+                name="telephone"
+                type="tel"
+                value={formData.telephone}
+                onChange={handleChange}
+                placeholder="XXXXXXXXX"
+                title="9 chiffres"
+                maxLength={9}
+                className={telephoneError ? 'input-error' : telephoneValid ? 'input-valid' : ''}
+              />
+              {telephoneError && <span className="error-message">{telephoneError}</span>}
+              {telephoneValid && <span className="success-message">✓ Numéro valide</span>}
+            </FormGroup>
+          </FormRow>
+          <FormRow>
+            <FormGroup>
+              <Label htmlFor="role">Rôle</Label>
+              <Select id="role" name="role" value={formData.role} onChange={handleChangerole}>
+                <option value="">Sélectionnez un rôle</option>
+                <option value="ADMIN">ADMIN</option>
+                <option value="MEDECIN">MEDECIN</option>
+                <option value="SECRETAIRE">SECRETAIRE</option>
+              </Select>
             </FormGroup>
             <FormGroupvisible $formgroupdisplay={isVisible ? "flex" : "none"}>
               <Label htmlFor="servicemedical">Service médical</Label>
               <Select id="servicemedical" name="serviceMedicalName" value={formData.serviceMedicalName} onChange={handleChange} >
-                 <option value="CARDIOLOGIE">CARDIOLOGIE</option>
-                 <option value="MEDECINE_GENERALE">MEDECINE_GENERALE</option>
-                 <option value="PEDIATRIE">PEDIATRIE</option>
-                 <option value="GYNECOLOGIE">GYNECOLOGIE</option>
-                 <option value="DERMATOLOGIE">DERMATOLOGIE</option>
-                 <option value="OPHTAMOLOGIE">OPHTAMOLOGIE</option>
-                 <option value="ORTHOPEDIE">ORTHOPEDIE</option>
-                 <option value="RADIOLOGIE">RADIOLOGIE</option>
-                 <option value="LABORATOIRE_ANALYSES">LABORATOIRE_ANALYSES</option>
-                 <option value="URGENCES">URGENCES</option>
-                 <option value="KINESITHERAPIE">KINESITHERAPIE</option>
-                
+                <option value="CARDIOLOGIE">CARDIOLOGIE</option>
+                <option value="MEDECINE_GENERALE">MEDECINE_GENERALE</option>
+                <option value="PEDIATRIE">PEDIATRIE</option>
+                <option value="GYNECOLOGIE">GYNECOLOGIE</option>
+                <option value="DERMATOLOGIE">DERMATOLOGIE</option>
+                <option value="OPHTAMOLOGIE">OPHTAMOLOGIE</option>
+                <option value="ORTHOPEDIE">ORTHOPEDIE</option>
+                <option value="RADIOLOGIE">RADIOLOGIE</option>
+                <option value="LABORATOIRE_ANALYSES">LABORATOIRE_ANALYSES</option>
+                <option value="URGENCES">URGENCES</option>
+                <option value="KINESITHERAPIE">KINESITHERAPIE</option>
+
               </Select>
-          </FormGroupvisible>
-        </FormRow>
+            </FormGroupvisible>
+          </FormRow>
         </FormContainer>
         <ButtonRow>
-          <button 
-            type="button" 
-            className="cancel-button" 
+          <button
+            type="button"
+            className="cancel-button"
             onClick={() => {
               showConfirmation({
                 title: "Annuler",
@@ -487,8 +502,8 @@ const FormulaireUtilisateur = () => {
           >
             Annuler
           </button>
-          <button 
-            type="submit" 
+          <button
+            type="submit"
             className="submit-button"
             disabled={isLoading('createUser')}
           >
@@ -496,8 +511,8 @@ const FormulaireUtilisateur = () => {
           </button>
         </ButtonRow>
       </Form>
-      </Afficheformulaireadd>
-    </>
+    </Afficheformulaireadd>
+  </>
   );
 };
 

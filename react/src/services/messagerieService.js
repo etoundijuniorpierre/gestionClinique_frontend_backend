@@ -429,6 +429,21 @@ export const connectWebSocket = (userId, onMessageReceived, onConnected) => {
                     console.error("📨 Message brut:", message.body);
                 }
             });
+
+            // S'abonner aux notifications en temps réel (nouveaux messages, RDV, etc.)
+            stompClient.subscribe(`/user/queue/notifications`, (message) => {
+                console.log("🔔 Notification temps réel reçue:", message);
+                try {
+                    const body = JSON.parse(message.body);
+                    // On transmet la notification au callback
+                    onMessageReceived({ 
+                        type: 'NOTIFICATION_REALTIME', 
+                        data: body 
+                    });
+                } catch (error) {
+                    console.error("❌ Erreur lors du parsing de la notification:", error);
+                }
+            });
             
             if (onConnected) onConnected();
         },

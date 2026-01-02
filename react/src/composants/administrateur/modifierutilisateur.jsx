@@ -1,4 +1,4 @@
-import React, { useState,useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { API_BASE } from '../../composants/config/apiconfig'
 import { useNavigate, useParams } from 'react-router-dom';
 import axiosInstance from '../../composants/config/axiosConfig';
@@ -15,14 +15,14 @@ const SousDiv1Style = Styled.div`
  width: 99%;
 
 `
-const Span3= Styled.span`
+const Span3 = Styled.span`
   
 `
- 
-const Span2= Styled.span`
+
+const Span2 = Styled.span`
   cursor: pointer;
 `
-const Span1= Styled.span`
+const Span1 = Styled.span`
     cursor: pointer;
 `
 const Title = Styled.div`
@@ -169,8 +169,8 @@ const ModifierUtilisateur = () => {
   const { startLoading, stopLoading, isLoading } = useLoading();
   const { showConfirmation } = useConfirmation();
   const idUser = localStorage.getItem('id');
-  const [nomprofil, setnomprofil]= useState('')
-  
+  const [nomprofil, setnomprofil] = useState('')
+
   // Mapping des rôles pour la conversion
   const roleMapping = {
     "ADMIN": 1,
@@ -178,85 +178,85 @@ const ModifierUtilisateur = () => {
     "SECRETAIRE": 3
   };
 
-    useEffect(() => {
-           const nomutilisateur =  async ()=> {
-                try {
-                const response = await axiosInstance.get(`/utilisateurs/${idUser}`);
-                console.log('Token utilisé:', localStorage.getItem('token'));
-              if (response) {
-                 setnomprofil(response.data.nom)
-                }
-            } catch (error) {
-                console.error('Erreur lors de la récupération des utilisateurs:', error);
-                // L'erreur 401 sera automatiquement gérée par l'intercepteur Axios
-            } finally {
-              console.log('fin')
-            }
-            }
-            nomutilisateur()
-    }, [idUser]);
-    
+  useEffect(() => {
+    const nomutilisateur = async () => {
+      try {
+        const response = await axiosInstance.get(`/utilisateurs/${idUser}`);
+        console.log('Token utilisé:', localStorage.getItem('token'));
+        if (response) {
+          setnomprofil(response.data.nom)
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des utilisateurs:', error);
+        // L'erreur 401 sera automatiquement gérée par l'intercepteur Axios
+      } finally {
+        console.log('fin')
+      }
+    }
+    nomutilisateur()
+  }, [idUser]);
+
   const [isVisiblerole, setisVisiblerole] = useState(false)
   const [formData, setFormData] = useState({});
   const [erreur, setErreur] = useState(null);
-  
-    
+
+
   const { id } = useParams();
-  
-   
-   useEffect(()=>{
-         startLoading('fetchUser');
-         const fetchUtilisateurs = async () => {
-            try {
-                const response = await axiosInstance.get(`/utilisateurs/${id}`);
-                //console.log(response.data);
-               const user = response.data
-               
-               // Transformer les données pour la compatibilité avec le formulaire
-               const transformedData = {
-                 ...user,
-                 // Garder l'objet role complet avec id et roleType
-                 role: user.role ? { 
-                   id: user.role.id, 
-                   roleType: user.role.id === 1 ? "ADMIN" : 
-                             user.role.id === 2 ? "MEDECIN" : 
-                             user.role.id === 3 ? "SECRETAIRE" : ""
-                 } : null,
-                 // S'assurer que serviceMedicalName est correctement mappé
-                 serviceMedicalName: user.serviceMedicalName || ""
-               };
-               
-               console.log('=== DEBUG PRÉCHARGEMENT ===');
-               console.log('Données reçues du backend:', user);
-               console.log('Role ID reçu:', user.role?.id);
-               console.log('Données transformées:', transformedData);
-               console.log('Role transformé:', transformedData.role);
-               console.log('Service médical:', transformedData.serviceMedicalName);
-               console.log('isVisiblerole sera:', transformedData.role?.roleType === "MEDECIN");
-               console.log('================================');
-               
-               setFormData(transformedData);
-               
-               // Utiliser les données transformées pour la vérification
-               if (transformedData.role?.roleType === "MEDECIN") {
-                 setisVisiblerole(true);
-               } else {
-                 setisVisiblerole(false);
-               }
-            } catch (error) {
-                console.error('Erreur lors de la récupération des utilisateurs:', error);
-                // L'erreur 401 sera automatiquement gérée par l'intercepteur Axios
-                if (error.response?.status !== 401) {
-                    setErreur('Erreur lors du chargement');
-                    window.showNotification('Erreur lors du chargement de l\'utilisateur', 'error');
-                }
-            } finally {
-                stopLoading('fetchUser');
-            }
-    
+
+
+  useEffect(() => {
+    startLoading('fetchUser');
+    const fetchUtilisateurs = async () => {
+      try {
+        const response = await axiosInstance.get(`/utilisateurs/${id}`);
+        //console.log(response.data);
+        const user = response.data
+
+        // Transformer les données pour la compatibilité avec le formulaire
+        const transformedData = {
+          ...user,
+          // Garder l'objet role complet avec id et roleType
+          role: user.role ? {
+            id: user.role.id,
+            roleType: user.role.id === 1 ? "ADMIN" :
+              user.role.id === 2 ? "MEDECIN" :
+                user.role.id === 3 ? "SECRETAIRE" : ""
+          } : null,
+          // S'assurer que serviceMedicalName est correctement mappé
+          serviceMedicalName: user.serviceMedicalName || ""
         };
-            fetchUtilisateurs();
-        },[id]);
+
+        console.log('=== DEBUG PRÉCHARGEMENT ===');
+        console.log('Données reçues du backend:', user);
+        console.log('Role ID reçu:', user.role?.id);
+        console.log('Données transformées:', transformedData);
+        console.log('Role transformé:', transformedData.role);
+        console.log('Service médical:', transformedData.serviceMedicalName);
+        console.log('isVisiblerole sera:', transformedData.role?.roleType === "MEDECIN");
+        console.log('================================');
+
+        setFormData(transformedData);
+
+        // Utiliser les données transformées pour la vérification
+        if (transformedData.role?.roleType === "MEDECIN") {
+          setisVisiblerole(true);
+        } else {
+          setisVisiblerole(false);
+        }
+      } catch (error) {
+        console.error('Erreur lors de la récupération des utilisateurs:', error);
+        // L'erreur 401 sera automatiquement gérée par l'intercepteur Axios
+        if (error.response?.status !== 401) {
+          setErreur('Erreur lors du chargement');
+          window.showNotification('Erreur lors du chargement de l\'utilisateur', 'error');
+        }
+      } finally {
+        stopLoading('fetchUser');
+      }
+
+    };
+    fetchUtilisateurs();
+  }, [id]);
 
 
   const handleChange = e => {
@@ -270,7 +270,7 @@ const ModifierUtilisateur = () => {
   };
   const handleChangerole = e => {
     const selectedRoleType = e.target.value;
-  
+
     // Vérifier si un rôle a été sélectionné
     if (!selectedRoleType) {
       setisVisiblerole(false);
@@ -281,17 +281,17 @@ const ModifierUtilisateur = () => {
       }));
       return;
     }
-  
+
     // Vérifier si c'est un médecin
     const isMedecin = selectedRoleType === "MEDECIN";
-  
+
     // Afficher ou masquer le champ serviceMedical
     setisVisiblerole(isMedecin);
-  
+
     // Mettre à jour formData avec l'objet role contenant id et roleType
     setFormData(prev => ({
       ...prev,
-      role: { 
+      role: {
         id: roleMapping[selectedRoleType],
         roleType: selectedRoleType
       },
@@ -299,13 +299,13 @@ const ModifierUtilisateur = () => {
       serviceMedicalName: isMedecin ? prev.serviceMedicalName : ""
     }));
   };
-  
 
-  
-  
- 
-  
- 
+
+
+
+
+
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -332,7 +332,7 @@ const ModifierUtilisateur = () => {
 
     } catch (error) {
       console.error('Erreur de connexion :', error);
-      
+
       // L'erreur 401 sera automatiquement gérée par l'intercepteur Axios
       if (error.response && error.response.status !== 401) {
         // Messages d'erreur plus spécifiques
@@ -355,9 +355,9 @@ const ModifierUtilisateur = () => {
     };
   };
 
-  
-  
-  
+
+
+
 
   const handleClick = () => {
     showConfirmation({
@@ -369,7 +369,7 @@ const ModifierUtilisateur = () => {
       variant: "danger"
     });
   };
-  
+
   const handleClick1 = () => {
     showConfirmation({
       title: "Voir les détails",
@@ -408,24 +408,33 @@ const ModifierUtilisateur = () => {
       </div>
     </div>
   );
-     return (
+  return (
     <>
       <SousDiv1Style>
-          <Barrehorizontal1 titrepage="Gestion des utilisateurs" imgprofil1={imgprofil} nomprofil={nomprofil}> 
-              <Span1 onClick={handleClick}>Liste des utilisateurs</Span1>
-              <Span2 onClick={handleClick1}> {">"} Détail de l'utilisateur</Span2>
-              <Span3 > {">"} Modifier les informations</Span3>
-          </Barrehorizontal1>
+        <Barrehorizontal1 titrepage="Gestion des utilisateurs" imgprofil1={imgprofil} nomprofil={nomprofil}>
+          <Span1 onClick={handleClick}>Liste des utilisateurs</Span1>
+          <Span2 onClick={handleClick1}> {">"} Détail de l'utilisateur</Span2>
+          <Span3 > {">"} Modifier les informations</Span3>
+        </Barrehorizontal1>
       </SousDiv1Style>
       <Modifieruser>
-          <Form onSubmit={handleSubmit}>
-            <FormContainer>
-              <Title>
-                <Title1>Modifier les informations de l’ utilisateur</Title1>
-                <Title2>Edit</Title2>
+        <Form onSubmit={handleSubmit}>
+          <FormContainer>
+            <Title>
+              <Title1>Modifier les informations de l’ utilisateur</Title1>
+              <Title2>Edit</Title2>
             </Title>
             <Title></Title>
             <TraitHorizontal></TraitHorizontal>
+            <FormRow>
+              <FormGroup>
+                <Label htmlFor="username">Nom d'utilisateur</Label>
+                <Input id="username" name="username" value={formData.username || ""} onChange={handleChange} />
+              </FormGroup>
+              <FormGroup>
+                {/* Vide pour l'équilibre */}
+              </FormGroup>
+            </FormRow>
             <FormRow>
               <FormGroup>
                 <Label htmlFor="nom">Nom</Label>
@@ -463,15 +472,15 @@ const ModifierUtilisateur = () => {
               </FormGroup>
             </FormRow>
 
-                          <FormRow>
-               <FormGroup>
-                 <Label htmlFor="telephone">telephone</Label>
-                 <Input id="telephone" name="telephone" value={formData.telephone} onChange={handleChange} placeholder="XXXXXXXXX" title="9 chiffres" maxLength={9} />
-               </FormGroup>
-               <FormGroup>
-                 {/* Champ vide pour maintenir la mise en page */}
-               </FormGroup>
-             </FormRow>
+            <FormRow>
+              <FormGroup>
+                <Label htmlFor="telephone">telephone</Label>
+                <Input id="telephone" name="telephone" value={formData.telephone} onChange={handleChange} placeholder="XXXXXXXXX" title="9 chiffres" maxLength={9} />
+              </FormGroup>
+              <FormGroup>
+                {/* Champ vide pour maintenir la mise en page */}
+              </FormGroup>
+            </FormRow>
 
 
 
@@ -484,52 +493,52 @@ const ModifierUtilisateur = () => {
                   <option value="MEDECIN">Médecin</option>
                   <option value="SECRETAIRE">Secrétaire</option>
                 </Select>
-                </FormGroup>
-                <FormGroupvisible $formgroupdisplay={isVisiblerole ? "flex" : "none"}>
-                  <Label htmlFor="serviceMedicalName">Service médical</Label>
-                  <Select id="serviceMedicalName" name="serviceMedicalName" value={formData.serviceMedicalName || ""} onChange={handleChange} >
-                    <option value="">Sélectionnez un service</option>
-                    <option value="CARDIOLOGIE">CARDIOLOGIE</option>
-                    <option value="MEDECINE_GENERALE">MEDECINE_GENERALE</option>
-                    <option value="PEDIATRIE">PEDIATRIE</option>
-                    <option value="GYNECOLOGIE">GYNECOLOGIE</option>
-                    <option value="DERMATOLOGIE">DERMATOLOGIE</option>
-                    <option value="OPHTAMOLOGIE">OPHTAMOLOGIE</option>
-                    <option value="ORTHOPEDIE">ORTHOPEDIE</option>
-                    <option value="RADIOLOGIE">RADIOLOGIE</option>
-                    <option value="LABORATOIRE_ANALYSES">LABORATOIRE_ANALYSES</option>
-                    <option value="URGENCES">URGENCES</option>
-                    <option value="KINESITHERAPIE">KINESITHERAPIE</option>
-                  </Select>
+              </FormGroup>
+              <FormGroupvisible $formgroupdisplay={isVisiblerole ? "flex" : "none"}>
+                <Label htmlFor="serviceMedicalName">Service médical</Label>
+                <Select id="serviceMedicalName" name="serviceMedicalName" value={formData.serviceMedicalName || ""} onChange={handleChange} >
+                  <option value="">Sélectionnez un service</option>
+                  <option value="CARDIOLOGIE">CARDIOLOGIE</option>
+                  <option value="MEDECINE_GENERALE">MEDECINE_GENERALE</option>
+                  <option value="PEDIATRIE">PEDIATRIE</option>
+                  <option value="GYNECOLOGIE">GYNECOLOGIE</option>
+                  <option value="DERMATOLOGIE">DERMATOLOGIE</option>
+                  <option value="OPHTAMOLOGIE">OPHTAMOLOGIE</option>
+                  <option value="ORTHOPEDIE">ORTHOPEDIE</option>
+                  <option value="RADIOLOGIE">RADIOLOGIE</option>
+                  <option value="LABORATOIRE_ANALYSES">LABORATOIRE_ANALYSES</option>
+                  <option value="URGENCES">URGENCES</option>
+                  <option value="KINESITHERAPIE">KINESITHERAPIE</option>
+                </Select>
               </FormGroupvisible>
             </FormRow>
-            </FormContainer>
-            <ButtonRow>
-              <button 
-                type="button" 
-                className="cancel-button" 
-                onClick={() => {
-                  showConfirmation({
-                    title: "Annuler",
-                    message: "Voulez-vous vraiment annuler les modifications et retourner à la liste des utilisateurs ?",
-                    onConfirm: () => navigate("/admin/utilisateur"),
-                    confirmText: "Annuler",
-                    cancelText: "Continuer"
-                  });
-                }}
-                disabled={isLoading('updateUser')}
-              >
-                Annuler
-              </button>
-              <button 
-                type="submit" 
-                className="submit-button"
-                disabled={isLoading('updateUser')}
-              >
-                {isLoading('updateUser') ? 'Modification...' : 'Modifier'}
-              </button>
-            </ButtonRow>
-          </Form>
+          </FormContainer>
+          <ButtonRow>
+            <button
+              type="button"
+              className="cancel-button"
+              onClick={() => {
+                showConfirmation({
+                  title: "Annuler",
+                  message: "Voulez-vous vraiment annuler les modifications et retourner à la liste des utilisateurs ?",
+                  onConfirm: () => navigate("/admin/utilisateur"),
+                  confirmText: "Annuler",
+                  cancelText: "Continuer"
+                });
+              }}
+              disabled={isLoading('updateUser')}
+            >
+              Annuler
+            </button>
+            <button
+              type="submit"
+              className="submit-button"
+              disabled={isLoading('updateUser')}
+            >
+              {isLoading('updateUser') ? 'Modification...' : 'Modifier'}
+            </button>
+          </ButtonRow>
+        </Form>
       </Modifieruser>
     </>
   );

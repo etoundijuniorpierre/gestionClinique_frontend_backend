@@ -10,7 +10,7 @@ import icon from '../assets/Icon.png'
 
 function PageLogin() {
   let navigate = useNavigate()
-  const [email, setemail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setpassword] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
@@ -22,15 +22,15 @@ function PageLogin() {
   const [success, setSuccess] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
   const [popupMessage, setPopupMessage] = useState('');
-  
-  // Validation email en temps réel
+
+  // Validation username en temps réel (optionnel, par exemple min 3 caractères)
   useEffect(() => {
-    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-      setEmailValid(false);
+    if (username && username.length < 3) {
+      setEmailValid(false); // On garde le nom de l'état pour minimiser les changements ailleurs si possible, ou on le renomme
     } else {
       setEmailValid(true);
     }
-  }, [email]);
+  }, [username]);
 
   // Validation mot de passe en temps réel
   useEffect(() => {
@@ -43,9 +43,9 @@ function PageLogin() {
 
   // Vérifier si l'utilisateur était déjà connecté
   useEffect(() => {
-    const savedEmail = localStorage.getItem('rememberedEmail');
-    if (savedEmail) {
-      setemail(savedEmail);
+    const savedUsername = localStorage.getItem('rememberedUsername');
+    if (savedUsername) {
+      setUsername(savedUsername);
       setRememberMe(true);
     }
   }, []);
@@ -60,7 +60,7 @@ function PageLogin() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     // Validation finale
     if (!emailValid || !passwordValid) {
       setError('Veuillez corriger les erreurs avant de continuer');
@@ -78,15 +78,15 @@ function PageLogin() {
 
     try {
       const response = await axiosInstance.post(`/login`, {
-        email,
+        username,
         password,
       });
 
       const { id, token, username, photoUrl, authorities } = response.data;
-      
+
       // Réinitialiser les tentatives de connexion
       setLoginAttempts(0);
-      
+
       // Sauvegarder les informations de connexion
       localStorage.setItem('token', token);
       localStorage.setItem('id', id);
@@ -96,9 +96,9 @@ function PageLogin() {
 
       // Gérer "Se souvenir de moi"
       if (rememberMe) {
-        localStorage.setItem('rememberedEmail', email);
+        localStorage.setItem('rememberedUsername', username);
       } else {
-        localStorage.removeItem('rememberedEmail');
+        localStorage.removeItem('rememberedUsername');
       }
 
 
@@ -165,12 +165,12 @@ function PageLogin() {
 
     } catch (error) {
       console.error('Erreur de connexion :', error);
-      
+
       // Incrémenter les tentatives de connexion
       setLoginAttempts(prev => prev + 1);
-      
+
       if (error.response?.status === 401) {
-        setError('Email ou mot de passe incorrect');
+        setError('Nom d\'utilisateur ou mot de passe incorrect');
       } else if (error.response?.status === 404) {
         setError('Utilisateur non trouvé');
       } else if (error.response?.status === 403) {
@@ -215,43 +215,43 @@ function PageLogin() {
         <form className='formulaire' onSubmit={handleSubmit}>
           <img src={logoclinique} alt="Logo" />
           <div className='formulaire_1'>
-            
+
             <p className='text'>
               <span>Bonjour ! </span><br />
               Connectez-vous pour commencer à travailler.
             </p>
-            
+
             {error && (
               <div className="error-message">
                 <span className="error-icon">⚠️</span>
                 {error}
               </div>
             )}
-            
+
             <div className="form-group">
-              <label htmlFor="email" className='login-label'>
-                Email
-                {!emailValid && email && (
+              <label htmlFor="username" className='login-label'>
+                Nom d'utilisateur
+                {!emailValid && username && (
                   <span className="validation-error"> *</span>
                 )}
               </label>
-              <input 
-                type="email" 
-                id="email" 
-                name="email" 
-                value={email} 
-                onChange={(e) => setemail(e.target.value)} 
-                placeholder='Entrez votre email' 
-                required 
-                className={`login-input ${!emailValid && email ? 'error' : ''}`}
+              <input
+                type="text"
+                id="username"
+                name="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+                placeholder="Entrez votre nom d'utilisateur"
+                required
+                className={`login-input ${!emailValid && username ? 'error' : ''}`}
                 disabled={isLoading}
                 onKeyPress={handleKeyPress}
               />
-              {!emailValid && email && (
-                <span className="validation-message">Format d'email invalide</span>
+              {!emailValid && username && (
+                <span className="validation-message">Nom d'utilisateur trop court</span>
               )}
             </div>
-    
+
             <div className="form-group">
               <label htmlFor="password" className='login-label'>
                 Mot de passe
@@ -260,19 +260,19 @@ function PageLogin() {
                 )}
               </label>
               <div className="password-input-container">
-                <input 
-                  type={showPassword ? "text" : "password"} 
-                  id="password" 
-                  name="password" 
-                  value={password} 
-                  onChange={(e) => setpassword(e.target.value)} 
-                  placeholder='Entrez votre mot de passe' 
-                  required 
+                <input
+                  type={showPassword ? "text" : "password"}
+                  id="password"
+                  name="password"
+                  value={password}
+                  onChange={(e) => setpassword(e.target.value)}
+                  placeholder='Entrez votre mot de passe'
+                  required
                   className={`login-input password-input ${!passwordValid && password ? 'error' : ''}`}
                   disabled={isLoading}
                   onKeyPress={handleKeyPress}
                 />
-                <button 
+                <button
                   type="button"
                   className="password-toggle"
                   onClick={() => setShowPassword(!showPassword)}
@@ -299,16 +299,16 @@ function PageLogin() {
 
             <div className="form-options">
               <label className="remember-me">
-                <input 
-                  type="checkbox" 
+                <input
+                  type="checkbox"
                   checked={rememberMe}
                   onChange={(e) => setRememberMe(e.target.checked)}
                   disabled={isLoading}
                 />
                 <span>Se souvenir de moi</span>
               </label>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="forgot-password-btn"
                 onClick={handleForgotPassword}
                 disabled={isLoading}
@@ -316,10 +316,10 @@ function PageLogin() {
                 Mot de passe oublié ?
               </button>
             </div>
-            
-            <button 
-              type="submit" 
-              className={`modern-login-button ${isLoading ? 'loading' : ''} ${success ? 'success' : ''}`} 
+
+            <button
+              type="submit"
+              className={`modern-login-button ${isLoading ? 'loading' : ''} ${success ? 'success' : ''}`}
               disabled={isLoading || !emailValid || !passwordValid || loginAttempts >= 5}
             >
               {isLoading ? (
@@ -334,7 +334,7 @@ function PageLogin() {
                 </>
               ) : (
                 <>
-                  Se connecter 
+                  Se connecter
                   <img src={icon} className='icon' alt="Connexion" />
                 </>
               )}
@@ -342,8 +342,8 @@ function PageLogin() {
 
             <div className="login-footer">
               <p>Nouveau sur la plateforme ?</p>
-              <button 
-                type="button" 
+              <button
+                type="button"
                 className="contact-admin-btn"
                 onClick={handleContactAdmin}
                 disabled={isLoading}

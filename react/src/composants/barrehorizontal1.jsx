@@ -7,6 +7,7 @@ import notificationApi from '../services/notificationApi';
 import styled from 'styled-components';
 import Photoprofil from './photoprofil'
 import notificationService from '../services/notificationService';
+import ThemeToggle from './ThemeToggle';
 
 const Barrehorizontal1Style = Styled.div`
     display: flex;
@@ -173,7 +174,7 @@ const Chemin = Styled.div`
     display: flex;
 `
 
-function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificationCount = 0, userRole = 'USER'}){
+function Barrehorizontal1({ titrepage, imgprofil1, nomprofil, children, notificationCount = 0, userRole = 'USER' }) {
     const [notifications, setNotifications] = useState([]);
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [currentPhotoUrl, setCurrentPhotoUrl] = useState(imgprofil1);
@@ -191,7 +192,7 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
                 console.warn('Erreur lors du parsing du rôle:', error);
             }
         }
-        
+
         switch (cleanRole) {
             case 'MEDECIN':
                 return 'Dr.';
@@ -207,7 +208,7 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
     // Récupérer la photo de profil actuelle
     useEffect(() => {
         let objectUrl;
-    
+
         const fetchCurrentPhoto = async () => {
             const token = localStorage.getItem('token');
             if (userId && token) {
@@ -215,7 +216,7 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
                     const response = await axiosInstance.get(`/utilisateurs/${userId}/photo`, {
                         responseType: 'blob',
                     });
-    
+
                     objectUrl = URL.createObjectURL(response.data);
                     setCurrentPhotoUrl(objectUrl);
                 } catch (error) {
@@ -223,9 +224,9 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
                 }
             }
         };
-    
+
         fetchCurrentPhoto();
-    
+
         return () => {
             if (objectUrl) {
                 URL.revokeObjectURL(objectUrl);
@@ -248,7 +249,20 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
                 console.error('Erreur lors de la récupération des notifications:', error);
             }
         };
+
         fetchNotifications();
+
+        // Écouter l'événement de rafraîchissement des notifications
+        const handleRefreshNotifications = () => {
+            console.log('🔔 Événement refresh-notifications reçu, actualisation...');
+            fetchNotifications();
+        };
+
+        window.addEventListener('refresh-notifications', handleRefreshNotifications);
+
+        return () => {
+            window.removeEventListener('refresh-notifications', handleRefreshNotifications);
+        };
     }, [dropdownOpen]); // refresh à chaque ouverture
 
     // Marquer toutes les notifications comme lues à la fermeture du menu
@@ -263,21 +277,21 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
             console.error('Erreur lors du marquage comme lues:', error);
         }
     };
-    
+
 
     const handlePhotoUpload = async (file) => {
         try {
             // Validation du fichier
             const maxSize = 15 * 1024 * 1024; // 15MB
             const allowedTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
-            
+
             if (file.size > maxSize) {
                 if (window.showNotification) {
                     window.showNotification('Le fichier est trop volumineux (max 15MB)', 'error');
                 }
                 return;
             }
-            
+
             if (!allowedTypes.includes(file.type)) {
                 if (window.showNotification) {
                     window.showNotification('Format de fichier non supporté (JPG, PNG, GIF uniquement)', 'error');
@@ -312,11 +326,11 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
                 if (response.data && photoUrl) {
                     // Construire l'URL complète de la photo
                     const fullPhotoUrl = `${API_BASE}/utilisateurs/${userId}/photo`;
-                    
+
                     // Mettre à jour la photo dans le localStorage et l'état local
                     localStorage.setItem('photoUrl', fullPhotoUrl);
                     setCurrentPhotoUrl(fullPhotoUrl);
-                    
+
                     if (window.showNotification) {
                         window.showNotification('Photo de profil mise à jour avec succès !', 'success');
                     }
@@ -327,12 +341,12 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
                         console.log('Tentative de récupération de la photo avec token:', token ? `${token.substring(0, 20)}...` : 'null');
                         console.log('Rôle utilisateur:', userRole);
                         const photoResponse = await axiosInstance.get(`/utilisateurs/${userId}/photo`);
-                        
+
                         if (photoResponse.data) {
                             localStorage.setItem('photoUrl', photoResponse.data);
                             setCurrentPhotoUrl(photoResponse.data);
                         }
-                        
+
                         if (window.showNotification) {
                             window.showNotification('Photo de profil mise à jour avec succès !', 'success');
                         }
@@ -345,11 +359,11 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
                     }
                 }
             }
-            
+
         } catch (error) {
             console.error('Erreur lors de l\'upload de la photo:', error);
             let errorMessage = 'Erreur lors de l\'upload de la photo. Veuillez réessayer.';
-            
+
             if (error.response?.status === 401) {
                 errorMessage = 'Session expirée. Veuillez vous reconnecter.';
             } else if (error.response?.status === 403) {
@@ -361,7 +375,7 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
             } else if (error.response?.status === 413) {
                 errorMessage = 'Fichier trop volumineux.';
             }
-            
+
             if (window.showNotification) {
                 window.showNotification(errorMessage, 'error');
             }
@@ -386,7 +400,7 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
                 if (window.showNotification) {
                     window.showNotification('Mot de passe modifié avec succès ! Vous allez être déconnecté.', 'success');
                 }
-                
+
                 // Attendre un peu pour que l'utilisateur voie le message
                 setTimeout(() => {
                     // Vider le localStorage
@@ -395,11 +409,11 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
                     window.location.href = '/';
                 }, 2000);
             }
-            
+
         } catch (error) {
             console.error('Erreur lors du changement de mot de passe:', error);
             let errorMessage = 'Erreur lors du changement de mot de passe. Veuillez réessayer.';
-            
+
             if (error.response?.status === 401) {
                 errorMessage = 'Session expirée. Veuillez vous reconnecter.';
             } else if (error.response?.status === 403) {
@@ -409,7 +423,7 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
             } else if (error.response?.status === 400) {
                 errorMessage = error.response.data?.message || 'Données invalides.';
             }
-            
+
             throw new Error(errorMessage);
         }
     };
@@ -435,16 +449,17 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
         &:hover { background: #f3f4f6; }
     `;
 
-    return(<>
+    return (<>
         <Barrehorizontal1Style>
             <Contenu>
                 <TitreStyle>
                     {titrepage}
                 </TitreStyle>
-                <DivStyle style={{position:'relative'}}>
-                    <div style={{position:'relative'}}>
+                <DivStyle style={{ position: 'relative' }}>
+                    <ThemeToggle />
+                    <div style={{ position: 'relative' }}>
                         <span onClick={() => setDropdownOpen(!dropdownOpen)}>
-                            <Cloche notificationCount={globalNotificationCount || notificationCount}/>
+                            <Cloche notificationCount={globalNotificationCount || notificationCount} />
                         </span>
                         {dropdownOpen && (
                             <DropdownMenu onMouseLeave={handleDropdownClose}>
@@ -452,15 +467,15 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
                                     <DropdownItem>Aucune notification</DropdownItem>
                                 ) : notifications.map((n) => (
                                     <DropdownItem key={n.id}>
-                                        <div style={{fontWeight:'bold'}}>{n.type || 'Notification'}</div>
-                                        <div style={{fontSize:'13px',color:'#374151'}}>{n.contenu || 'Nouvelle notification'}</div>
-                                        <div style={{fontSize:'11px',color:'#9ca3af'}}>{n.timeAgo || ''}</div>
+                                        <div style={{ fontWeight: 'bold' }}>{n.type || 'Notification'}</div>
+                                        <div style={{ fontSize: '13px', color: '#374151' }}>{n.contenu || 'Nouvelle notification'}</div>
+                                        <div style={{ fontSize: '11px', color: '#9ca3af' }}>{n.timeAgo || ''}</div>
                                     </DropdownItem>
                                 ))}
                             </DropdownMenu>
                         )}
                     </div>
-                    <Photoprofil 
+                    <Photoprofil
                         imgprofil={currentPhotoUrl}
                         onPhotoUpload={handlePhotoUpload}
                         onChangePassword={handlePasswordChange}
@@ -469,11 +484,11 @@ function Barrehorizontal1({titrepage, imgprofil1, nomprofil, children, notificat
                     <NomDocStyle>
                         {getTitlePrefix(userRole)} {nomprofil}
                     </NomDocStyle>
-                </DivStyle> 
+                </DivStyle>
             </Contenu>
-           <Chemin>
+            <Chemin>
                 {children}
-           </Chemin>
+            </Chemin>
         </Barrehorizontal1Style>
     </>)
 }

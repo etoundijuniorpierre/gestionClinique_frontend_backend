@@ -17,11 +17,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     private final UtilisateurRepository utilisateurRepository;
     private final HistoriqueActionService historiqueActionService;
-    @Lazy private final UtilisateurService utilisateurService;
+    @Lazy
+    private final UtilisateurService utilisateurService;
 
     public UserDetailsServiceImpl(UtilisateurRepository utilisateurRepository,
-                                  HistoriqueActionService historiqueActionService,
-                                  @Lazy UtilisateurService utilisateurService) {
+            HistoriqueActionService historiqueActionService,
+            @Lazy UtilisateurService utilisateurService) {
         this.utilisateurRepository = utilisateurRepository;
         this.historiqueActionService = historiqueActionService;
         this.utilisateurService = utilisateurService;
@@ -29,25 +30,26 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     @Transactional
-    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Utilisateur utilisateur = utilisateurRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé avec l'email : " + email));
+    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        Utilisateur utilisateur = utilisateurRepository.findByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException(
+                        "Utilisateur non trouvé avec le nom d'utilisateur : " + username));
 
         if (!utilisateur.getActif()) {
-            throw new UsernameNotFoundException("Utilisateur avec l'email : " + email + " est désactivé.");
+            throw new UsernameNotFoundException(
+                    "Utilisateur avec le nom d'utilisateur : " + username + " est désactivé.");
         }
 
         UserDetails userDetails = new MonUserDetailsCustom(
                 utilisateur.getId(),
-                utilisateur.getEmail(),
+                utilisateur.getUsername(),
                 utilisateur.getPassword(),
                 utilisateur.getPhotoProfil(),
                 true,
                 true,
                 true,
                 true,
-                utilisateur.getAuthorities()
-        );
+                utilisateur.getAuthorities());
 
         utilisateurService.updateUserConnectStatus(utilisateur.getId(), StatusConnect.CONNECTE);
 

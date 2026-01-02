@@ -32,40 +32,38 @@ public class AuthController {
     private final JwtUtil jwtUtil;
     private final HistoriqueActionService historiqueActionService;
 
-    @PostMapping(path = API_NAME + "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    @Operation(summary = "Login un utilisateur",
-            description = "Permet à un utilisateur de se connecter au système en fournissant email et mot de passe, et obtient un JWT.")
+    @PostMapping(path = API_NAME
+            + "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @Operation(summary = "Login un utilisateur", description = "Permet à un utilisateur de se connecter au système en fournissant email et mot de passe, et obtient un JWT.")
     public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword())
-            );
+                    new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
             MonUserDetailsCustom userDetails = (MonUserDetailsCustom) authentication.getPrincipal();
 
             if (userDetails == null) {
                 System.err.println("ERREUR: UserDetails est null après l'authentification.");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Authentication failed: UserDetails is null.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                        .body("Authentication failed: UserDetails is null.");
             }
 
             String jwt = jwtUtil.generateToken(userDetails);
-            String photoUrl = userDetails.getPhotoProfilPath() != null ?
-                    "/api/utilisateurs/" + userDetails.getId() + "/photo" :
-                    null;
+            String photoUrl = userDetails.getPhotoProfilPath() != null
+                    ? "/api/utilisateurs/" + userDetails.getId() + "/photo"
+                    : null;
 
             historiqueActionService.enregistrerAction(
-                    "Connexion avec l'email : " + loginRequest.getEmail(),
-                    userDetails.getId()
-            );
+                    "Connexion avec le nom d'utilisateur : " + loginRequest.getUsername(),
+                    userDetails.getId());
 
             return ResponseEntity.ok(new LoginResponse(
                     userDetails.getId(),
                     jwt,
                     userDetails.getUsername(),
                     photoUrl,
-                    userDetails.getAuthorities()
-            ));
+                    userDetails.getAuthorities()));
 
         } catch (org.springframework.security.core.AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials.");
