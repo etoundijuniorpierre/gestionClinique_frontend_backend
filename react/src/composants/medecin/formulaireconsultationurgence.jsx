@@ -129,6 +129,15 @@ const Label = Styled.label`
   color: #333333;
   font-weight: 500;
   font-family: 'Inter', sans-serif;
+  
+  ${props => props.required && `
+    &::after {
+      content: ' *';
+      color: #ff4141;
+      font-weight: bold;
+      margin-left: 2px;
+    }
+  `}
 `;
 
 const Input = Styled.input`
@@ -714,64 +723,43 @@ const FormulaireConsultationUrgence = () => {
       errors.push('Le diagnostic est obligatoire');
     }
 
-    // Validation et formatage des champs numériques
-    let temperature = 0.1;
-    let poids = 0.1;
-    let taille = 0.1;
-
+    // Simplified validation: Only Motifs and Diagnostic are strictly mandatory
+    // Temperature, Poids, Taille are now optional but validated if provided
     try {
-      // Traitement de la température
-      if (formData.temperature && formData.temperature !== 0.1) {
+      // Traitement de la température (si renseignée)
+      if (formData.temperature && formData.temperature !== 0.1 && formData.temperature !== "0.1") {
         const tempVal = parseFloat(formData.temperature.toString().replace(',', '.'));
-        if (!isNaN(tempVal) && tempVal > 0) {
-          if (tempVal < 30) {
-            errors.push('La température doit être supérieure ou égale à 30°C');
-          } else if (tempVal > 95) {
-            errors.push('La température doit être inférieure ou égale à 95°C');
+        if (!isNaN(tempVal)) {
+          if (tempVal < 30 || tempVal > 95) {
+            errors.push('La température doit être comprise entre 30°C et 95°C');
           } else {
             temperature = tempVal;
           }
-        } else {
-          errors.push('La température doit être un nombre valide');
         }
-      } else {
-        errors.push('La température est obligatoire');
       }
 
-      // Traitement du poids
-      if (formData.poids && formData.poids !== 0.1) {
+      // Traitement du poids (si renseigné)
+      if (formData.poids && formData.poids !== 0.1 && formData.poids !== "0.1") {
         const poidsVal = parseFloat(formData.poids.toString().replace(',', '.'));
-        if (!isNaN(poidsVal) && poidsVal > 0) {
-          if (poidsVal < 1) {
-            errors.push('Le poids doit être supérieur ou égal à 1 kg');
-          } else if (poidsVal > 500) {
-            errors.push('Le poids doit être inférieur ou égal à 500 kg');
+        if (!isNaN(poidsVal)) {
+          if (poidsVal < 1 || poidsVal > 500) {
+            errors.push('Le poids doit être compris entre 1 kg et 500 kg');
           } else {
             poids = poidsVal;
           }
-        } else {
-          errors.push('Le poids doit être un nombre valide');
         }
-      } else {
-        errors.push('Le poids est obligatoire');
       }
 
-      // Traitement de la taille
-      if (formData.taille && formData.taille !== 0.1) {
+      // Traitement de la taille (si renseignée)
+      if (formData.taille && formData.taille !== 0.1 && formData.taille !== "0.1") {
         const tailleVal = parseFloat(formData.taille.toString().replace(',', '.'));
-        if (!isNaN(tailleVal) && tailleVal > 0) {
-          if (tailleVal < 50) {
-            errors.push('La taille doit être supérieure ou égale à 50 cm');
-          } else if (tailleVal > 300) {
-            errors.push('La taille doit être inférieure ou égale à 300 cm');
+        if (!isNaN(tailleVal)) {
+          if (tailleVal < 50 || tailleVal > 300) {
+            errors.push('La taille doit être comprise entre 50 cm et 300 cm');
           } else {
             taille = tailleVal;
           }
-        } else {
-          errors.push('La taille doit être un nombre valide');
         }
-      } else {
-        errors.push('La taille est obligatoire');
       }
     } catch (error) {
       errors.push('Erreur lors de la validation des valeurs numériques');
@@ -911,17 +899,17 @@ const FormulaireConsultationUrgence = () => {
                 fontFamily: 'Inter, sans-serif'
               }}>
                 <strong>⚠️ Consultation d'urgence :</strong> Cette consultation est créée pour des cas d'urgence 
-                non programmés. Assurez-vous de remplir tous les champs obligatoires.
+                non programmés.
                 <br />
                 <strong>Note :</strong> Les champs marqués d'un * sont obligatoires.
                 <br />
-                <strong>Unités :</strong> Taille en cm, Poids en kg, Température en °C.
+                <strong>Unités :</strong> Taille en cm, Poids en kg, Température en °C. (Ces champs sont désormais optionnels)
               </p>
             </div>
 
             <FormRow>
               <FormGroup>
-                <Label htmlFor="taille">Taille * (en cm)</Label>
+                <Label htmlFor="taille">Taille (en cm)</Label>
                 <Input
                   id="taille"
                   name="taille"
@@ -929,19 +917,11 @@ const FormulaireConsultationUrgence = () => {
                   value={formData.taille <= 0.1 ? '' : formData.taille}
                   onChange={handleChange}
                   placeholder="Ex: 175 (pour 1m75)"
-                  style={{
-                    borderColor: formData.taille <= 0.1 ? '#ef4444' : '#d1d5db'
-                  }}
                 />
-                {formData.taille <= 0.1 && (
-                  <small style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>
-                    La taille doit être supérieure à 0
-                  </small>
-                )}
               </FormGroup>
 
               <FormGroup>
-                <Label htmlFor="poids">Poids * (en kg)</Label>
+                <Label htmlFor="poids">Poids (en kg)</Label>
                 <Input
                   id="poids"
                   name="poids"
@@ -949,21 +929,13 @@ const FormulaireConsultationUrgence = () => {
                   value={formData.poids <= 0.1 ? '' : formData.poids}
                   onChange={handleChange}
                   placeholder="Ex: 70.5"
-                  style={{
-                    borderColor: formData.poids <= 0.1 ? '#ef4444' : '#d1d5db'
-                  }}
                 />
-                {formData.poids <= 0.1 && (
-                  <small style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>
-                    Le poids doit être supérieur à 0
-                  </small>
-                )}
               </FormGroup>
             </FormRow>
 
             <FormRow>
               <FormGroup>
-                <Label htmlFor="temperature">Temperature * (en °C)</Label>
+                <Label htmlFor="temperature">Temperature (en °C)</Label>
                 <Input
                   id="temperature"
                   name="temperature"
@@ -971,15 +943,7 @@ const FormulaireConsultationUrgence = () => {
                   value={formData.temperature <= 0.1 ? '' : formData.temperature}
                   onChange={handleChange}
                   placeholder="Ex: 37.2"
-                  style={{
-                    borderColor: formData.temperature <= 0.1 ? '#ef4444' : '#d1d5db'
-                  }}
                 />
-                {formData.temperature <= 0.1 && (
-                  <small style={{ color: '#ef4444', fontSize: '12px', marginTop: '4px' }}>
-                    La température doit être supérieure à 0
-                  </small>
-                )}
               </FormGroup>
               
               <FormGroup>
@@ -996,7 +960,7 @@ const FormulaireConsultationUrgence = () => {
             
             <FormRow>
               <FormGroup>
-                <Label htmlFor="motifs">Motifs *</Label>
+                <Label required htmlFor="motifs">Motifs</Label>
                 <TextArea
                   id='motifs'
                   name="motifs"
@@ -1015,7 +979,7 @@ const FormulaireConsultationUrgence = () => {
               </FormGroup>
 
               <FormGroup>
-                <Label htmlFor="diagnostic">Diagnostic *</Label>
+                <Label required htmlFor="diagnostic">Diagnostic</Label>
                 <TextArea
                   id='diagnostic'
                   name="diagnostic"

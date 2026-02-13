@@ -77,12 +77,12 @@ function PageLogin() {
     setError('');
 
     try {
-      const response = await axiosInstance.post(`/login`, {
+      const response = await axiosInstance.post(`login`, {
         username,
         password,
       });
 
-      const { id, token, username, photoUrl, authorities } = response.data;
+      const { id, token, username: loginUsername, photoUrl, authorities } = response.data;
 
       // Réinitialiser les tentatives de connexion
       setLoginAttempts(0);
@@ -90,7 +90,7 @@ function PageLogin() {
       // Sauvegarder les informations de connexion
       localStorage.setItem('token', token);
       localStorage.setItem('id', id);
-      localStorage.setItem('username', username);
+      localStorage.setItem('username', loginUsername);
       localStorage.setItem('photoUrl', photoUrl);
       localStorage.setItem('user', JSON.stringify(authorities[0].authority));
 
@@ -109,7 +109,7 @@ function PageLogin() {
             const token = localStorage.getItem('token');
             if (token) {
               try {
-                await axiosInstance.post(`/rendezvous/cancel-old`);
+                await axiosInstance.post(`rendezvous/cancel-old`);
                 console.log('Vieux rendez-vous annulés avec succès');
               } catch (cancelError) {
                 if (cancelError.response?.status === 403) {
@@ -175,8 +175,8 @@ function PageLogin() {
         setError('Utilisateur non trouvé');
       } else if (error.response?.status === 403) {
         setError('Compte désactivé. Contactez l\'administrateur.');
-      } else if (error.code === 'NETWORK_ERROR') {
-        setError('Erreur de connexion réseau. Vérifiez votre connexion internet.');
+      } else if (error.code === 'NETWORK_ERROR' || error.code === 'ERR_NETWORK' || !error.response) {
+        setError('Erreur de connexion au serveur. Vérifiez que le backend est lancé.');
       } else {
         setError('Erreur de connexion. Veuillez réessayer.');
       }

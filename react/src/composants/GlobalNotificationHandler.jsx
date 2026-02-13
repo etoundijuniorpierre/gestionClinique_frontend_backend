@@ -121,7 +121,12 @@ const GlobalNotificationHandler = () => {
   useEffect(() => {
     const userId = localStorage.getItem('id');
 
-    if (userId) {
+    if (!userId) {
+      console.warn('⚠️ Pas d\'ID utilisateur, WebSocket non connecté');
+      return;
+    }
+
+    try {
       // Vérifier si l'utilisateur est sur la page chat
       const isOnChatPage = window.location.pathname.includes('/chat') ||
         window.location.pathname.includes('chat');
@@ -140,70 +145,86 @@ const GlobalNotificationHandler = () => {
       console.log('🔌 Connexion WebSocket globale pour les notifications');
 
       const handleGlobalWebSocketMessage = (message) => {
-        console.log('📨 Message WebSocket global reçu:', message);
+        try {
+          console.log('📨 Message WebSocket global reçu:', message);
 
-        // Traiter les notifications en temps réel du backend
-        if (message.type === 'NOTIFICATION_REALTIME' && message.data) {
-          const notif = message.data;
+          // Traiter les notifications en temps réel du backend
+          if (message.type === 'NOTIFICATION_REALTIME' && message.data) {
+            const notif = message.data;
 
-          // Créer une notification temporaire pour affichage immédiat
-          const tempNotification = {
-            id: Date.now() + Math.random(),
-            contenu: notif.contenu,
-            type: notif.type,
-            timeAgo: 'à l\'instant',
-            timestamp: new Date().toISOString(),
-            read: false,
-            isTemporary: true
-          };
+            // Créer une notification temporaire pour affichage immédiat
+            const tempNotification = {
+              id: Date.now() + Math.random(),
+              contenu: notif.contenu,
+              type: notif.type,
+              timeAgo: 'à l\'instant',
+              timestamp: new Date().toISOString(),
+              read: false,
+              isTemporary: true
+            };
 
-          // Ajouter à la liste pour affichage
-          setNotifications(prev => [tempNotification, ...prev.slice(0, 4)]);
-          setUnreadCount(prev => prev + 1);
+            // Ajouter à la liste pour affichage
+            setNotifications(prev => [tempNotification, ...prev.slice(0, 4)]);
+            setUnreadCount(prev => prev + 1);
 
-          // Émettre un événement global pour rafraîchir les compteurs dans d'autres composants
-          window.dispatchEvent(new CustomEvent('refresh-notifications'));
+            // Émettre un événement global pour rafraîchir les compteurs dans d'autres composants
+            window.dispatchEvent(new CustomEvent('refresh-notifications'));
 
-          // Utiliser le système de notification global si disponible
-          if (window.showNotification) {
-            const icon = notif.type === 'MESSAGE' ? '💬' : '📅';
-            window.showNotification(`${icon} ${notif.contenu}`, 'info');
+            // Utiliser le système de notification global si disponible
+            if (window.showNotification) {
+              const icon = notif.type === 'MESSAGE' ? '💬' : '📅';
+              window.showNotification(`${icon} ${notif.contenu}`, 'info');
+            }
+
+            // Supprimer de l'affichage temporaire après 8 secondes
+            setTimeout(() => {
+              setNotifications(prev => prev.filter(n => n.id !== tempNotification.id));
+            }, 8000);
           }
-
-          // Supprimer de l'affichage temporaire après 8 secondes (plus long pour laisser le temps de lire)
-          setTimeout(() => {
-            setNotifications(prev => prev.filter(n => n.id !== tempNotification.id));
-          }, 8000);
-        }
-
-        // Traiter aussi les anciens messages de type NEW_MESSAGE pour compatibilité
-        else if (message.type === 'NEW_MESSAGE' && message.message) {
-          // ... existant (facultatif si NOTIFICATION_REALTIME couvre tout)
-          const tempNotification = {
-            id: Date.now() + Math.random(),
-            messageId: message.message.id,
-            conversationId: message.message.conversationId,
-            senderName: message.message.expediteur?.nom || 'Quelqu\'un',
-            messagePreview: message.message.contenu?.substring(0, 100) || 'Nouveau message',
-            type: 'MESSAGE',
-            isTemporary: true
-          };
-          setNotifications(prev => [tempNotification, ...prev.slice(0, 4)]);
+          // Traiter aussi les anciens messages de type NEW_MESSAGE pour compatibilité
+          else if (message.type === 'NEW_MESSAGE' && message.message) {
+            const tempNotification = {
+              id: Date.now() + Math.random(),
+              messageId: message.message.id,
+              conversationId: message.message.conversationId,
+              senderName: message.message.expediteur?.nom || 'Quelqu\'un',
+              messagePreview: message.message.contenu?.substring(0, 100) || 'Nouveau message',
+              type: 'MESSAGE',
+              isTemporary: true
+            };
+            setNotifications(prev => [tempNotification, ...prev.slice(0, 4)]);
+          }
+        } catch (messageError) {
+          console.error('❌ Erreur lors du traitement du message WebSocket:', messageError);
+          // Ne pas propager l'erreur pour éviter de casser l'app
         }
       };
 
-      connectWebSocket(
-        parseInt(userId),
-        handleGlobalWebSocketMessage,
-        () => {
-          console.log('✅ WebSocket global connecté pour les notifications');
-        }
-      );
+      try {
+        connectWebSocket(
+          parseInt(userId),
+          handleGlobalWebSocketMessage,
+          () => {
+            console.log('✅ WebSocket global connecté pour les notifications');
+          }
+        );
+      } catch (wsError) {
+        console.error('❌ Erreur lors de la connexion WebSocket:', wsError);
+        // Ne pas propager l'erreur - l'app doit continuer à fonctionner sans WebSocket
+      }
 
       return () => {
-        disconnectWebSocket();
-        console.log('🔌 WebSocket global déconnecté');
+        try {
+          disconnectWebSocket();
+          console.log('🔌 WebSocket global déconnecté');
+        } catch (disconnectError) {
+          console.error('❌ Erreur lors de la déconnexion WebSocket:', disconnectError);
+        }
       };
+    } catch (error) {
+      console.error('❌ Erreur critique dans GlobalNotificationHandler:', error);
+      // Ne pas propager l'erreur pour éviter de casser toute l'application
+      return () => {}; // Cleanup vide en cas d'erreur
     }
   }, [window.location.pathname]); // Dépendance sur le pathname pour détecter les changements de route
 

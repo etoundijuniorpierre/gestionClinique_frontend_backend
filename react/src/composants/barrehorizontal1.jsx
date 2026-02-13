@@ -7,7 +7,6 @@ import notificationApi from '../services/notificationApi';
 import styled from 'styled-components';
 import Photoprofil from './photoprofil'
 import notificationService from '../services/notificationService';
-import ThemeToggle from './ThemeToggle';
 
 const Barrehorizontal1Style = Styled.div`
     display: flex;
@@ -456,7 +455,6 @@ function Barrehorizontal1({ titrepage, imgprofil1, nomprofil, children, notifica
                     {titrepage}
                 </TitreStyle>
                 <DivStyle style={{ position: 'relative' }}>
-                    <ThemeToggle />
                     <div style={{ position: 'relative' }}>
                         <span onClick={() => setDropdownOpen(!dropdownOpen)}>
                             <Cloche notificationCount={globalNotificationCount || notificationCount} />

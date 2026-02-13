@@ -8,6 +8,7 @@ import Barrehorizontal1 from '../../composants/barrehorizontal1';
 import imgprofil from '../../assets/photoDoc.png'
 import '../../styles/add-buttons.css'
 import '../../styles/formulairepatientsecretaire.css'
+import { handleApiError } from '../../utils/errorHandler';
 
 
 
@@ -100,32 +101,63 @@ const Form = Styled.form`
 const Label = Styled.label`
   font-size: 14px;
   margin-bottom: 5px;
-  color: rgba(51, 51, 51, 1);
+  color: var(--text-primary);
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  
+  ${props => props.required && `
+    &::after {
+      content: ' *';
+      color: var(--error-500);
+      font-weight: bold;
+      margin-left: 2px;
+    }
+  `}
 `;
 
 const Input = Styled.input`
   padding: 10px;
-  border: 1px solid rgba(217, 217, 217, 1);
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
   width: 351px;
-  color: rgba(30, 30, 30, 1);
+  color: var(--text-primary);
+  background-color: var(--bg-input);
+  font-size: 14px;
+  font-family: 'Inter', sans-serif;
+  transition: all var(--transition-base);
+  
   &:focus{
-    border: 1px solid rgba(217, 217, 217, 1);
+    border: 1px solid var(--border-focus);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--state-focus-ring);
+  }
+  
+  &::placeholder {
+    color: var(--text-tertiary);
   }
 `;
 
 const Select = Styled.select`
   min-width: 351px;
   padding: 10px;
-  border: 1px solid #ddd;
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
 `;
 
 const TextArea = Styled.textarea`
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-primary);
+  background-color: var(--bg-input);
+  color: var(--text-primary);
   resize: vertical;
+  transition: all var(--transition-base);
+  
+  &:focus {
+    border: 1px solid var(--border-focus);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--state-focus-ring);
+  }
 `;
 
 const ButtonRow = Styled.div`
@@ -184,34 +216,9 @@ const FormulairePatientSecretaire = () => {
   const validateForm = () => {
     const newErrors = {};
 
-    // Validation des champs obligatoires
+    // Simplified validation: Only Nom and Telephone are mandatory
     if (!formData.nom.trim()) {
       newErrors.nom = "Le nom est obligatoire";
-    } else if (formData.nom.trim().length < 2) {
-      newErrors.nom = "Le nom doit contenir au moins 2 caractères";
-    }
-
-    if (!formData.prenom.trim()) {
-      newErrors.prenom = "Le prénom est obligatoire";
-    } else if (formData.prenom.trim().length < 2) {
-      newErrors.prenom = "Le prénom doit contenir au moins 2 caractères";
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = "L'email est obligatoire";
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = "L'email n'est pas valide";
-    }
-
-    if (!formData.dateNaissance) {
-      newErrors.dateNaissance = "La date de naissance est obligatoire";
-    } else {
-      const birthDate = new Date(formData.dateNaissance);
-      const today = new Date();
-      const age = today.getFullYear() - birthDate.getFullYear();
-      if (age < 0 || age > 120) {
-        newErrors.dateNaissance = "La date de naissance n'est pas valide";
-      }
     }
 
     if (!formData.telephone.trim()) {
@@ -220,12 +227,9 @@ const FormulairePatientSecretaire = () => {
       newErrors.telephone = "Le numéro doit contenir exactement 9 chiffres";
     }
 
-    if (!formData.adresse.trim()) {
-      newErrors.adresse = "L'adresse est obligatoire";
-    }
-
-    if (!formData.genre) {
-      newErrors.genre = "Le genre est obligatoire";
+    // Optional email validation if provided
+    if (formData.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      newErrors.email = "L'email n'est pas valide";
     }
 
     setErrors(newErrors);
@@ -315,27 +319,7 @@ const FormulairePatientSecretaire = () => {
       }, 2000);
 
     } catch (error) {
-      console.error('Erreur de connexion :', error);
-      
-      // Notification d'erreur
-      let errorMessage = "Erreur lors de l'ajout du patient";
-      if (error.response) {
-        if (error.response.status === 400) {
-          errorMessage = "Données invalides. Veuillez vérifier les informations saisies.";
-        } else if (error.response.status === 401) {
-          errorMessage = "Session expirée. Veuillez vous reconnecter.";
-        } else if (error.response.status === 409) {
-          errorMessage = "Un patient avec cet email existe déjà.";
-        } else if (error.response.status >= 500) {
-          errorMessage = "Erreur serveur. Veuillez réessayer plus tard.";
-        }
-      } else if (error.request) {
-        errorMessage = "Erreur de connexion au serveur. Vérifiez votre connexion internet.";
-      }
-      
-      if (window.showNotification) {
-        window.showNotification(errorMessage, "error");
-      }
+      handleApiError(error, "Erreur lors de l'ajout du patient");
     } finally {
       setIsSubmitting(false);
     }
@@ -386,7 +370,7 @@ const FormulairePatientSecretaire = () => {
                 <Title>Informations générales</Title>
                 <FormRow>
                   <FormGroup>
-                    <Label htmlFor="nom">Nom <span className="required-field">*</span></Label>
+                    <Label required htmlFor="nom">Nom</Label>
                     <Input 
                       id="nom" 
                       name="nom" 
@@ -397,7 +381,7 @@ const FormulairePatientSecretaire = () => {
                     {errors.nom && <span className="error-message">{errors.nom}</span>}
                   </FormGroup>
                   <FormGroup>
-                    <Label htmlFor="prenom">Prénom <span className="required-field">*</span></Label>
+                    <Label htmlFor="prenom">Prénom</Label>
                     <Input 
                       id="prenom" 
                       name="prenom" 
@@ -411,7 +395,7 @@ const FormulairePatientSecretaire = () => {
 
                 <FormRow>
                   <FormGroup>
-                    <Label htmlFor="adresse">Adresse <span className="required-field">*</span></Label>
+                    <Label htmlFor="adresse">Adresse</Label>
                     <Input 
                       id="adresse" 
                       name="adresse" 
@@ -422,7 +406,7 @@ const FormulairePatientSecretaire = () => {
                     {errors.adresse && <span className="error-message">{errors.adresse}</span>}
                   </FormGroup>
                   <FormGroup>
-                    <Label htmlFor="email">Email <span className="required-field">*</span></Label>
+                    <Label htmlFor="email">Email</Label>
                     <Input 
                       id="email" 
                       name="email" 
@@ -437,7 +421,7 @@ const FormulairePatientSecretaire = () => {
 
                 <FormRow>
                   <FormGroup>
-                    <Label htmlFor="genre">Genre <span className="required-field">*</span></Label>
+                    <Label htmlFor="genre">Genre</Label>
                     <Select 
                       id="genre" 
                       name="genre" 
@@ -451,7 +435,7 @@ const FormulairePatientSecretaire = () => {
                     {errors.genre && <span className="error-message">{errors.genre}</span>}
                   </FormGroup>
                   <FormGroup>
-                    <Label htmlFor="dateNaissance">Date de naissance <span className="required-field">*</span></Label>
+                    <Label htmlFor="dateNaissance">Date de naissance</Label>
                     <Input 
                       id="dateNaissance" 
                       name="dateNaissance" 
@@ -466,7 +450,7 @@ const FormulairePatientSecretaire = () => {
                 <FormRow>
                   
                   <FormGroup>
-                    <Label htmlFor="telephone">Téléphone <span className="required-field">*</span></Label>
+                    <Label required htmlFor="telephone">Téléphone</Label>
                     <Input 
                       id="telephone" 
                       name="telephone" 

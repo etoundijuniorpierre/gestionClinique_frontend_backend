@@ -334,40 +334,6 @@ const ChatContainer = () => {
     return () => document.removeEventListener('visibilitychange', handleVisibilityChange);
   }, [currentUser?.id]);
 
-
-
-  // Effet pour l'actualisation automatique du chat toutes les 10 secondes
-  useEffect(() => {
-    if (!currentUser?.id) return;
-
-    // Actualiser le chat toutes les 10 secondes
-    const autoRefreshInterval = setInterval(() => {
-      // Vérifier si l'onglet est actif et visible
-      const isTabActive = !document.hidden && document.hasFocus();
-      
-      if (isTabActive) {
-        console.log('🔄 Actualisation automatique du chat (10s)...');
-        
-        // Actualiser les conversations
-        fetchConversations();
-        
-        // Si une conversation est sélectionnée, actualiser aussi ses messages
-        if (selectedConversation) {
-          console.log('🔄 Actualisation des messages de la conversation active:', selectedConversation.id);
-          // Le composant ChatWindow se chargera de l'actualisation via ses propres hooks
-        }
-      } else {
-        console.log('⏸️ Actualisation du chat mise en pause (onglet inactif)');
-      }
-    }, 10000); // 10 secondes
-
-    // Nettoyer l'intervalle
-    return () => {
-      clearInterval(autoRefreshInterval);
-      console.log('🧹 Intervalle d\'actualisation automatique nettoyé');
-    };
-  }, [currentUser?.id, selectedConversation?.id, fetchConversations]);
-
   const handleWebSocketMessage = (message) => {
     console.log('📨 Message WebSocket reçu:', message);
     
@@ -607,7 +573,6 @@ const ChatContainer = () => {
             <Header>
               <HeaderTitle>
                 Messages
-                <AutoRefreshIndicator title="Actualisation automatique toutes les 5 secondes" />
               </HeaderTitle>
               <HeaderActions>
                 <ActionButton onClick={handleNewConversation}>

@@ -383,45 +383,6 @@ input:disabled, textarea:disabled, select:disabled {
 .inline-block { display: inline-block; }
 
 /* ========================================
-   DARK MODE
-   ======================================== */
-
-[data-theme="dark"] body {
-  background-color: var(--neutral-50);
-  color: var(--neutral-900);
-}
-
-[data-theme="dark"] h1,
-[data-theme="dark"] h2,
-[data-theme="dark"] h3,
-[data-theme="dark"] h4,
-[data-theme="dark"] h5,
-[data-theme="dark"] h6 {
-  color: var(--neutral-900);
-}
-
-[data-theme="dark"] p {
-  color: var(--neutral-700);
-}
-
-[data-theme="dark"] input,
-[data-theme="dark"] textarea,
-[data-theme="dark"] select {
-  background-color: var(--neutral-100);
-  border-color: var(--neutral-300);
-  color: var(--neutral-900);
-}
-
-[data-theme="dark"] ::-webkit-scrollbar-track {
-  background: var(--neutral-100);
-}
-
-[data-theme="dark"] ::-webkit-scrollbar-thumb {
-  background: var(--neutral-400);
-  border-color: var(--neutral-100);
-}
-
-/* ========================================
    PRINT STYLES
    ======================================== */
 

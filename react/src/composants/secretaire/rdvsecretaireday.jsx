@@ -16,6 +16,7 @@ import iconsupprime from '../../assets/Iconsupprime.svg'
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { ConfirmationModal } from '../shared/UnifiedModal';
 import Pagination from '../shared/Pagination';
+import { handleApiError } from '../../utils/errorHandler';
 
 const SousDiv1Style = Styled.div`
   width: 100%;
@@ -351,12 +352,7 @@ function RendezvousScretaireToday() {
 
                 console.log(response.data);
             } catch (error) {
-                console.error('Erreur lors de l\'annulation du rendez-vous:', error);
-
-                // Afficher un message d'erreur
-                if (window.showNotification) {
-                    window.showNotification("Erreur lors de l'annulation du rendez-vous", "error");
-                }
+                handleApiError(error, "Erreur lors de l'annulation du rendez-vous");
             }
         };
 
@@ -386,12 +382,7 @@ function RendezvousScretaireToday() {
 
             console.log(`rendezvous ${rendezvousASupprimer} supprimé`);
         } catch (error) {
-            console.error('Erreur lors de la suppression :', error);
-
-            // Afficher un message d'erreur
-            if (window.showNotification) {
-                window.showNotification("Erreur lors de la suppression du rendez-vous", "error");
-            }
+            handleApiError(error, "Erreur lors de la suppression du rendez-vous");
         }
     };
 

@@ -9,6 +9,7 @@ import imgprofil from '../../assets/photoDoc.png'
 import '../../styles/add-buttons.css'
 import { useLoading } from '../LoadingProvider';
 import { useConfirmation } from '../ConfirmationProvider';
+import { handleApiError } from '../../utils/errorHandler';
 
 
 const SousDiv1Style = Styled.div`
@@ -100,46 +101,57 @@ const Form = Styled.form`
 const Label = Styled.label`
   font-size: 14px;
   margin-bottom: 5px;
-  color: #333333;
+  color: var(--text-primary);
   font-weight: 500;
   font-family: 'Inter', sans-serif;
+  
+  ${props => props.required && `
+    &::after {
+      content: ' *';
+      color: var(--error-500);
+      font-weight: bold;
+      margin-left: 2px;
+    }
+  `}
 `;
 
 const Input = Styled.input`
   padding: 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
   width: 351px;
-  color: #333333;
-  background-color: #ffffff;
+  color: var(--text-primary);
+  background-color: var(--bg-input);
   font-size: 14px;
   font-family: 'Inter', sans-serif;
+  transition: all var(--transition-base);
   
   &:focus{
-    border: 1px solid #667eea;
+    border: 1px solid var(--border-focus);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px var(--state-focus-ring);
   }
   
   &::placeholder {
-    color: #9ca3af;
+    color: var(--text-tertiary);
   }
 `;
 
 const Select = Styled.select`
   min-width: 351px;
   padding: 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
-  background-color: #ffffff;
-  color: #333333;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
   font-size: 14px;
   font-family: 'Inter', sans-serif;
+  transition: all var(--transition-base);
   
   &:focus {
-    border: 1px solid #667eea;
+    border: 1px solid var(--border-focus);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px var(--state-focus-ring);
   }
 `;
 
@@ -192,7 +204,7 @@ const FormulaireUtilisateur = () => {
     dateNaissance: "",
     telephone: "",
     adresse: "",
-    genre: "m",
+    genre: "HOMME",
     password: "",
     serviceMedicalName: "",
     actif: true,
@@ -254,8 +266,8 @@ const FormulaireUtilisateur = () => {
       window.showNotification('Le champ "Prénom" est obligatoire', 'error');
       return;
     }
-    if (!formData.email.trim()) {
-      window.showNotification('Le champ "Email" est obligatoire', 'error');
+    if (!formData.dateNaissance) {
+      window.showNotification('Le champ "Date de naissance" est obligatoire', 'error');
       return;
     }
     if (!formData.password) {
@@ -267,16 +279,24 @@ const FormulaireUtilisateur = () => {
       return;
     }
 
-    // Validation de l'email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      window.showNotification('Veuillez entrer une adresse email valide', 'error');
+    // Validation du service médical pour les médecins
+    if (formData.role === "MEDECIN" && !formData.serviceMedicalName) {
+      window.showNotification('Le champ "Service médical" est obligatoire pour un médecin', 'error');
       return;
     }
 
+    // Validation de l'email (uniquement si rempli)
+    if (formData.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        window.showNotification('Veuillez entrer une adresse email valide', 'error');
+        return;
+      }
+    }
+
     // Validation du mot de passe
-    if (formData.password.length < 6) {
-      window.showNotification('Le mot de passe doit contenir au moins 6 caractères', 'error');
+    if (formData.password.length < 8) {
+      window.showNotification('Le mot de passe doit contenir au moins 8 caractères', 'error');
       return;
     }
 
@@ -297,10 +317,10 @@ const FormulaireUtilisateur = () => {
       username: formData.username,
       nom: formData.nom,
       prenom: formData.prenom,
-      email: formData.email,
+      email: formData.email.trim() || null,
       dateNaissance: formData.dateNaissance,
       telephone: formData.telephone,
-      adresse: formData.adresse,
+      adresse: formData.adresse.trim() || "",
       genre: formData.genre,
       password: formData.password,
       actif: formData.actif,
@@ -323,24 +343,7 @@ const FormulaireUtilisateur = () => {
       navigate("/admin/utilisateur");
 
     } catch (error) {
-      console.error('Erreur de connexion :', error);
-
-      // Messages d'erreur plus spécifiques
-      if (error.response) {
-        if (error.response.status === 409) {
-          window.showNotification('Un utilisateur avec cet email existe déjà', 'error');
-        } else if (error.response.status === 400) {
-          window.showNotification('Données invalides. Vérifiez les informations saisies', 'error');
-        } else if (error.response.status === 401) {
-          window.showNotification('Session expirée. Veuillez vous reconnecter', 'error');
-        } else {
-          window.showNotification(`Erreur serveur: ${error.response.data?.message || 'Erreur lors de la création'}`, 'error');
-        }
-      } else if (error.request) {
-        window.showNotification('Erreur de connexion au serveur. Vérifiez votre connexion internet', 'error');
-      } else {
-        window.showNotification('Erreur lors de la création de l\'utilisateur', 'error');
-      }
+      handleApiError(error, "Erreur lors de la création de l'utilisateur");
     } finally {
       stopLoading('createUser');
     };
@@ -373,7 +376,7 @@ const FormulaireUtilisateur = () => {
           <TraitHorizontal></TraitHorizontal>
           <FormRow>
             <FormGroup>
-              <Label htmlFor="username">Nom d'utilisateur *</Label>
+              <Label required htmlFor="username">Nom d'utilisateur</Label>
               <Input id="username" name="username" value={formData.username} onChange={handleChange} required />
             </FormGroup>
             <FormGroup>
@@ -382,12 +385,12 @@ const FormulaireUtilisateur = () => {
           </FormRow>
           <FormRow>
             <FormGroup>
-              <Label htmlFor="nom">Nom</Label>
+              <Label required htmlFor="nom">Nom</Label>
               <Input id="nom" name="nom" value={formData.nom} onChange={handleChange} />
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="prenom">Prénom</Label>
-              <Input id="prenom" name="prenom" value={formData.prenom} onChange={handleChange} />
+              <Label required htmlFor="prenom">Prénom</Label>
+              <Input id="prenom" name="prenom" value={formData.prenom} onChange={handleChange} required />
             </FormGroup>
           </FormRow>
 
@@ -411,13 +414,13 @@ const FormulaireUtilisateur = () => {
               </Select>
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="dateNaissance">Date de naissance</Label>
-              <Input id="dateNaissance" name="dateNaissance" type="date" value={formData.dateNaissance} onChange={handleChange} />
+              <Label required htmlFor="dateNaissance">Date de naissance</Label>
+              <Input id="dateNaissance" name="dateNaissance" type="date" value={formData.dateNaissance} onChange={handleChange} required />
             </FormGroup>
           </FormRow>
           <FormRow>
             <FormGroup>
-              <Label htmlFor="password">Mot de passe</Label>
+              <Label required htmlFor="password">Mot de passe</Label>
               <div style={{ position: 'relative', display: 'inline-block' }}>
                 <Input id="password" name="password" type={showPassword ? 'text' : 'password'} value={formData.password} onChange={handleChange} placeholder="Entrez le mot de passe" />
                 <button
@@ -440,7 +443,7 @@ const FormulaireUtilisateur = () => {
               </div>
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="telephone">Téléphone</Label>
+              <Label required htmlFor="telephone">Téléphone</Label>
               <Input
                 id="telephone"
                 name="telephone"
@@ -458,7 +461,7 @@ const FormulaireUtilisateur = () => {
           </FormRow>
           <FormRow>
             <FormGroup>
-              <Label htmlFor="role">Rôle</Label>
+              <Label required htmlFor="role">Rôle</Label>
               <Select id="role" name="role" value={formData.role} onChange={handleChangerole}>
                 <option value="">Sélectionnez un rôle</option>
                 <option value="ADMIN">ADMIN</option>
@@ -467,8 +470,9 @@ const FormulaireUtilisateur = () => {
               </Select>
             </FormGroup>
             <FormGroupvisible $formgroupdisplay={isVisible ? "flex" : "none"}>
-              <Label htmlFor="servicemedical">Service médical</Label>
+              <Label required={isVisible} htmlFor="servicemedical">Service médical</Label>
               <Select id="servicemedical" name="serviceMedicalName" value={formData.serviceMedicalName} onChange={handleChange} >
+                <option value="">Sélectionnez un service</option>
                 <option value="CARDIOLOGIE">CARDIOLOGIE</option>
                 <option value="MEDECINE_GENERALE">MEDECINE_GENERALE</option>
                 <option value="PEDIATRIE">PEDIATRIE</option>
@@ -480,7 +484,6 @@ const FormulaireUtilisateur = () => {
                 <option value="LABORATOIRE_ANALYSES">LABORATOIRE_ANALYSES</option>
                 <option value="URGENCES">URGENCES</option>
                 <option value="KINESITHERAPIE">KINESITHERAPIE</option>
-
               </Select>
             </FormGroupvisible>
           </FormRow>

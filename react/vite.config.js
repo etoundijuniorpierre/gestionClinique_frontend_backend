@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
+import path from 'path'
 
 // https://vite.dev/config/
 export default defineConfig({
@@ -13,6 +14,15 @@ export default defineConfig({
       // Polyfills for Node.js globals
       'global': 'globalThis',
       'process': 'process/browser',
+      // Clean Code: Alias pour imports absolus
+      '@': path.resolve(__dirname, './src'),
+      '@composants': path.resolve(__dirname, './src/composants'),
+      '@assets': path.resolve(__dirname, './src/assets'),
+      '@services': path.resolve(__dirname, './src/services'),
+      '@styles': path.resolve(__dirname, './src/styles'),
+      '@pages': path.resolve(__dirname, './src/pages'),
+      '@contexts': path.resolve(__dirname, './src/contexts'),
+      '@utils': path.resolve(__dirname, './src/utils'),
     }
   },
   optimizeDeps: {

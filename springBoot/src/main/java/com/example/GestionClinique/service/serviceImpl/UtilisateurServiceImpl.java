@@ -55,8 +55,11 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         if (findUtilisateurByUsername(utilisateur.getUsername()) != null) {
             throw new IllegalArgumentException("A user with this username already exists.");
         }
-        if (findUtilisateurByEmail(utilisateur.getEmail()) != null) {
-            throw new IllegalArgumentException("A user with this email address already exists.");
+        // Vérifier l'email uniquement s'il est fourni
+        if (utilisateur.getEmail() != null && !utilisateur.getEmail().isBlank()) {
+            if (findUtilisateurByEmail(utilisateur.getEmail()) != null) {
+                throw new IllegalArgumentException("A user with this email address already exists.");
+            }
         }
         if (utilisateur.getPassword() == null || utilisateur.getPassword().isBlank()) {
             throw new IllegalArgumentException("Le mot de passe ne peut pas être vide.");
@@ -65,9 +68,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             throw new IllegalArgumentException("Le mot de passe doit contenir au moins 8 caractères.");
         }
         utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
-        if (utilisateur.getServiceMedical() == null || utilisateur.getServiceMedical().describeConstable().isEmpty()) {
-            utilisateur.setServiceMedical(null);
-        }
+        // serviceMedical est déjà null si non fourni, pas besoin de le réinitialiser
         if (utilisateur.getActif() == null) {
             utilisateur.setActif(true);
         }
@@ -83,6 +84,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             utilisateur.setServiceMedical(utilisateur.getServiceMedical());
         }
 
+        // Calculer l'âge à partir de la date de naissance
         utilisateur.setAge((long) Period.between(utilisateur.getDateNaissance(), LocalDate.now()).getYears());
 
         utilisateur.setRole(role);

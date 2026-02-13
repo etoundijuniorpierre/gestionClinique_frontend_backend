@@ -1,19 +1,19 @@
 export const API_BASE = 'http://localhost:2025/Api/V1/clinique';
 
 export const STATS_ENDPOINTS = {
-    DAILY: '/stats/daily',
-    MONTHLY: '/stats/monthly',
-    YEARLY: '/stats/yearly',
+    DAILY: 'stats/daily',
+    MONTHLY: 'stats/monthly',
+    YEARLY: 'stats/yearly',
 };
 
 export const USER_ENDPOINTS = {
-    ALL_USERS: '/utilisateurs',
-    USER_BY_ID: (id) => `/utilisateurs/${id}`,
-    USER_PHOTO: (id) => `/utilisateurs/${id}/photo`,
-    USER_BY_ROLE: (role) => `/utilisateurs/role/${role}`,
-    SEARCH_USERS: '/utilisateurs/search',
-    CONNECTED_USERS: '/utilisateurs/connected',
-    DISCONNECTED_USERS: '/utilisateurs/disconnected',
+    ALL_USERS: 'utilisateurs',
+    USER_BY_ID: (id) => `utilisateurs/${id}`,
+    USER_PHOTO: (id) => `utilisateurs/${id}/photo`,
+    USER_BY_ROLE: (role) => `utilisateurs/role/${role}`,
+    SEARCH_USERS: 'utilisateurs/search',
+    CONNECTED_USERS: 'utilisateurs/connected',
+    DISCONNECTED_USERS: 'utilisateurs/disconnected',
 };
 
 export const getDefaultHeaders = () => {

@@ -28,9 +28,9 @@ public class DataInitializer {
     @Bean
     @Transactional
     public CommandLineRunner initializeData(RoleRepository roleRepository,
-                                            UtilisateurRepository utilisateurRepository,
-                                            SalleRepository salleRepository,
-                                            PasswordEncoder passwordEncoder) {
+            UtilisateurRepository utilisateurRepository,
+            SalleRepository salleRepository,
+            PasswordEncoder passwordEncoder) {
         return args -> {
             initializeRoles(roleRepository);
             initializeAdminUser(utilisateurRepository, roleRepository, passwordEncoder);
@@ -51,9 +51,9 @@ public class DataInitializer {
     }
 
     private void initializeAdminUser(UtilisateurRepository utilisateurRepository,
-                                     RoleRepository roleRepository,
-                                     PasswordEncoder passwordEncoder) {
-        if (utilisateurRepository.findByEmail("admin@gmail.com").isEmpty()) {
+            RoleRepository roleRepository,
+            PasswordEncoder passwordEncoder) {
+        if (utilisateurRepository.findByUsername("admin").isEmpty()) {
             Role adminRole = roleRepository.findFirstByRoleType(ADMIN)
                     .orElseThrow(() -> new IllegalStateException("ADMIN role not found"));
 
@@ -63,6 +63,7 @@ public class DataInitializer {
             Utilisateur admin = new Utilisateur();
             admin.setNom("admin");
             admin.setPrenom("admin");
+            admin.setUsername("admin");
             admin.setEmail("admin@gmail.com");
             admin.setDateNaissance(birthDate);
             admin.setAge(age);
@@ -84,7 +85,7 @@ public class DataInitializer {
 
     private void initializeSalles(SalleRepository salleRepository) {
         Arrays.stream(ServiceMedical.values()).forEach(serviceMedical -> {
-            if (salleRepository.findByServiceMedical(serviceMedical)==null) {
+            if (salleRepository.findByServiceMedical(serviceMedical) == null) {
                 Salle salle = new Salle();
                 salle.setNumeroSalle("Salle-" + serviceMedical.name());
                 salle.setServiceMedical(serviceMedical);

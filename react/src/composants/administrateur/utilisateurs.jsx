@@ -17,6 +17,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useLoading } from '../LoadingProvider';
 import { useConfirmation } from '../ConfirmationProvider';
 import Pagination from '../shared/Pagination';
+import { handleApiError } from '../../utils/errorHandler';
 
 const SousDiv1Style = Styled.div`
     padding-right: 32px;
@@ -223,8 +224,7 @@ function Utilisateur() {
                 window.location.reload();
             }, 500);
         } catch (error) {
-            console.log(error)
-            window.showNotification('Erreur lors de la modification du statut', 'error');
+            handleApiError(error, "Erreur lors de la modification du statut");
         } finally {
             stopLoading('toggleStatus');
         }
@@ -266,8 +266,7 @@ function Utilisateur() {
             window.showNotification('Utilisateur supprimé avec succès', 'success');
             console.log(`Utilisateur ${userId} supprimé`);
         } catch (error) {
-            console.error('Erreur lors de la suppression :', error);
-            window.showNotification('Erreur lors de la suppression', 'error');
+            handleApiError(error, "Erreur lors de la suppression");
         } finally {
             stopLoading('deleteUser');
         }

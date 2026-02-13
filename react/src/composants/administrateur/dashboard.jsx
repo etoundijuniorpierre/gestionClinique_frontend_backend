@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import axiosInstance from '../../composants/config/axiosConfig';
 import { API_BASE, STATS_ENDPOINTS } from '../../composants/config/apiconfig';
 import '../../styles/dashboard.css';
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend } from 'chart.js';
@@ -11,6 +11,7 @@ import iconutilisateurblanc from '../../assets/iconutilisateurdashboardblanc.svg
 
 // Enregistrer les composants Chart.js nécessaires
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+
 
 function Dashboard() {
     const idUser = localStorage.getItem('id');
@@ -34,33 +35,26 @@ function Dashboard() {
     const [datejour, setDatejour] = useState(new Date().toISOString().split('T')[0])
     // Récupération du nom et de la photo de profil de l'utilisateur connecté
     useEffect(() => {
-        const token = localStorage.getItem('token');
         const fetchUserProfile = async () => {
             try {
-                const response = await axios.get(`${API_BASE}/utilisateurs/${idUser}`,
-                    {
-                        headers: {
-                            accept: 'application/json',
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        }
-                    });
+                const response = await axiosInstance.get(`utilisateurs/${idUser}`);
                 if (response && response.data) {
                     setnomprofil(response.data.nom || '')
                     // Utiliser l'API de récupération des images par ID
                     if (response.data.id) {
                         try {
-                            const photoResponse = await axios.get(`${API_BASE}/utilisateurs/${response.data.id}/photo`, {
-                                headers: {
-                                    Authorization: `Bearer ${token}`,
-                                },
+                            const photoResponse = await axiosInstance.get(`utilisateurs/${response.data.id}/photo`, {
                                 responseType: 'blob'
                             });
-                            const imageUrl = URL.createObjectURL(photoResponse.data);
-                            setImgprofil(imageUrl);
-                            setBlobUrls(prev => [...prev, imageUrl]);
+                            if (photoResponse.data && photoResponse.data.size > 0) {
+                                const imageUrl = URL.createObjectURL(photoResponse.data);
+                                setImgprofil(imageUrl);
+                                setBlobUrls(prev => [...prev, imageUrl]);
+                            } else {
+                                setImgprofil(imgprofilDefault);
+                            }
                         } catch (photoError) {
-                            // Si pas de photo, utiliser l'image par défaut
+                            console.log('Photo non disponible pour l\'utilisateur, utilisation de l\'image par défaut');
                             setImgprofil(imgprofilDefault);
                         }
                     } else {
@@ -68,8 +62,9 @@ function Dashboard() {
                     }
                 }
             } catch (error) {
-                console.error('Erreur lors de la récupération des utilisateurs:', error);
+                console.error('Erreur lors de la récupération du profil utilisateur:', error);
                 setImgprofil(imgprofilDefault);
+                setnomprofil('Utilisateur');
             }
         }
         fetchUserProfile()
@@ -82,16 +77,10 @@ function Dashboard() {
         const statjournalier = async () => {
             try {
                 const url = datejour
-                    ? `${API_BASE}${STATS_ENDPOINTS.DAILY}?date=${datejour}`
-                    : `${API_BASE}${STATS_ENDPOINTS.DAILY}`;
+                    ? `${STATS_ENDPOINTS.DAILY}?date=${datejour}`
+                    : STATS_ENDPOINTS.DAILY;
     
-                const response = await axios.get(url, {
-                    headers: {
-                        accept: 'application/json',
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    },
-                });
+                const response = await axiosInstance.get(url);
     
                 if (response && response.data) {
                     setstatjour(response.data || {});
@@ -117,13 +106,7 @@ function Dashboard() {
 
                 for (let month = 1; month <= 12; month++) {
                     try {
-                        const response = await axios.get(`${API_BASE}${STATS_ENDPOINTS.MONTHLY}?month=${month}`, {
-                            headers: {
-                                accept: 'application/json',
-                                Authorization: `Bearer ${token}`,
-                                'Content-Type': 'application/json',
-                            }
-                        });
+                        const response = await axiosInstance.get(`${STATS_ENDPOINTS.MONTHLY}?month=${month}`);
 
                         if (response && response.data) {
                             // Extraire le chiffre d'affaires du mois
@@ -161,18 +144,11 @@ function Dashboard() {
 
     // Récupération des statistiques annuelles
     useEffect(() => {
-        const token = localStorage.getItem('token');
         const fetchYearlyStats = async () => {
             try {
                 setStatsLoading(true);
                 const currentYear = new Date().getFullYear();
-                const response = await axios.get(`${API_BASE}${STATS_ENDPOINTS.YEARLY}?year=${currentYear}`, {
-                    headers: {
-                        accept: 'application/json',
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    }
-                });
+                const response = await axiosInstance.get(`${STATS_ENDPOINTS.YEARLY}?year=${currentYear}`);
 
                 if (response && response.data) {
                     setYearlyStats(response.data);
@@ -194,16 +170,9 @@ function Dashboard() {
 
     // Récupération des statistiques du dernier mois
     useEffect(() => {
-        const token = localStorage.getItem('token');
         const fetchLastMonthStats = async () => {
             try {
-                const response = await axios.get(`${API_BASE}${STATS_ENDPOINTS.MONTHLY}?month=last`, {
-                    headers: {
-                        accept: 'application/json',
-                        Authorization: `Bearer ${token}`,
-                        'Content-Type': 'application/json',
-                    }
-                });
+                const response = await axiosInstance.get(`${STATS_ENDPOINTS.MONTHLY}?month=last`);
 
                 if (response && response.data) {
                     setLastMonthStats(response.data);
@@ -222,30 +191,24 @@ function Dashboard() {
         const token = localStorage.getItem('token');
         const utilisateursconnectes = async () => {
             try {
-                const response = await axios.get(`${API_BASE}/utilisateurs/connected/last-activity`,
-                    {
-                        headers: {
-                            accept: 'application/json',
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        }
-                    });
+                const response = await axiosInstance.get(`utilisateurs/connected/last-activity`);
                 if (response && response.data) {
                     // Pour chaque utilisateur, récupérer sa photo de profil via l'API
                     const usersWithImg = await Promise.all(
                         response.data.map(async user => {
                             try {
-                                const photoResponse = await axios.get(`${API_BASE}/utilisateurs/${user.id}/photo`, {
-                                    headers: {
-                                        Authorization: `Bearer ${token}`,
-                                    },
+                                const photoResponse = await axiosInstance.get(`utilisateurs/${user.id}/photo`, {
                                     responseType: 'blob'
                                 });
-                                const imageUrl = URL.createObjectURL(photoResponse.data);
-                                setBlobUrls(prev => [...prev, imageUrl]);
-                                return { ...user, imgProfilUrl: imageUrl };
+                                if (photoResponse.data && photoResponse.data.size > 0) {
+                                    const imageUrl = URL.createObjectURL(photoResponse.data);
+                                    setBlobUrls(prev => [...prev, imageUrl]);
+                                    return { ...user, imgProfilUrl: imageUrl };
+                                } else {
+                                    return { ...user, imgProfilUrl: imgprofilDefault };
+                                }
                             } catch (photoError) {
-                                // Si pas de photo, utiliser l'image par défaut
+                                // Si pas de photo (404 ou autre erreur), utiliser l'image par défaut
                                 return { ...user, imgProfilUrl: imgprofilDefault };
                             }
                         })
@@ -271,29 +234,23 @@ function Dashboard() {
         const token = localStorage.getItem('token');
         const utilisateursdeconnectes = async () => {
             try {
-                const response = await axios.get(`${API_BASE}/utilisateurs/disconnected/last-activity`,
-                    {
-                        headers: {
-                            accept: 'application/json',
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        }
-                    });
+                const response = await axiosInstance.get(`utilisateurs/disconnected/last-activity`);
                 if (response && response.data) {
                     const usersWithImg = await Promise.all(
                         response.data.map(async user => {
                             try {
-                                const photoResponse = await axios.get(`${API_BASE}/utilisateurs/${user.id}/photo`, {
-                                    headers: {
-                                        Authorization: `Bearer ${token}`,
-                                    },
+                                const photoResponse = await axiosInstance.get(`utilisateurs/${user.id}/photo`, {
                                     responseType: 'blob'
                                 });
-                                const imageUrl = URL.createObjectURL(photoResponse.data);
-                                setBlobUrls(prev => [...prev, imageUrl]);
-                                return { ...user, imgProfilUrl: imageUrl };
+                                if (photoResponse.data && photoResponse.data.size > 0) {
+                                    const imageUrl = URL.createObjectURL(photoResponse.data);
+                                    setBlobUrls(prev => [...prev, imageUrl]);
+                                    return { ...user, imgProfilUrl: imageUrl };
+                                } else {
+                                    return { ...user, imgProfilUrl: imgprofilDefault };
+                                }
                             } catch (photoError) {
-                                // Si pas de photo, utiliser l'image par défaut
+                                // Si pas de photo (404 ou autre erreur), utiliser l'image par défaut
                                 return { ...user, imgProfilUrl: imgprofilDefault };
                             }
                         })
@@ -321,14 +278,7 @@ function Dashboard() {
         const Historique = async () => {
             try {
                 // Récupérer TOUTES les actions sans limitation
-                const response = await axios.get(`${API_BASE}/historiqueActions`,
-                    {
-                        headers: {
-                            accept: 'application/json',
-                            Authorization: `Bearer ${token}`,
-                            'Content-Type': 'application/json',
-                        }
-                    });
+                const response = await axiosInstance.get(`historiqueActions`);
                 if (response && response.data) {
                     // Trier du plus récent au plus ancien - Aucune limitation sur le nombre d'actions
                     const sortedHistorique = response.data.sort((a, b) => {
@@ -364,18 +314,21 @@ function Dashboard() {
 
     // Fonction pour obtenir les statistiques selon le type sélectionné
     const getCurrentStats = () => {
-        switch (selectedStatsType) {
-            case 'daily':
-                return statjour;
-            case 'monthly':
-                return statjour; // On utilise les stats du jour pour le mois actuel
-            case 'lastMonth':
-                return lastMonthStats;
-            case 'yearly':
-                return yearlyStats;
-            default:
-                return statjour;
-        }
+        const stats = (() => {
+            switch (selectedStatsType) {
+                case 'daily':
+                    return statjour;
+                case 'monthly':
+                    return statjour; 
+                case 'lastMonth':
+                    return lastMonthStats;
+                case 'yearly':
+                    return yearlyStats;
+                default:
+                    return statjour;
+            }
+        })();
+        return stats || {};
     };
 
     // Fonction pour obtenir le titre selon le type sélectionné
@@ -402,12 +355,28 @@ function Dashboard() {
     };
 
     if (loading) {
+        console.log('🔄 Dashboard en cours de chargement...');
         return (
-            <div className="loading-container">
+            <div className="loading-container" style={{ 
+                display: 'flex', 
+                justifyContent: 'center', 
+                alignItems: 'center', 
+                height: '100vh',
+                fontSize: '18px',
+                color: '#333'
+            }}>
                 <div>Chargement du dashboard...</div>
             </div>
         );
     }
+
+    console.log('✅ Dashboard prêt à s\'afficher', {
+        statjour,
+        usersconnecte: usersconnecte.length,
+        historiques: historiques.length,
+        nomprofil,
+        imgprofil
+    });
 
     return (
         <>
@@ -447,10 +416,14 @@ function Dashboard() {
                                     <p className='sous-grid-title'>Connecté depuis le</p>
                                     {connexionadmin && connexionadmin.length > 0 ? connexionadmin.map((connexion) => (
                                         <p className='grid-11-date' key={connexion.id}>
-                                            {connexion.lastLoginDate ? connexion.lastLoginDate.split("T")[0] : 'N/A'} A <br />
-                                            <span className='grid-11-date-heure'>
-                                                {connexion.lastLoginDate ? connexion.lastLoginDate.split("T")[1].split(".")[0] : 'N/A'}
-                                            </span>
+                                            {connexion && connexion.lastLoginDate ? (
+                                                <>
+                                                    {connexion.lastLoginDate.split("T")[0]} A <br />
+                                                    <span className='grid-11-date-heure'>
+                                                        {connexion.lastLoginDate.split("T")[1] ? connexion.lastLoginDate.split("T")[1].split(".")[0] : ''}
+                                                    </span>
+                                                </>
+                                            ) : 'N/A'}
                                         </p>
                                     )) : <p className='grid-11-date'>Aucune donnée disponible</p>}
                                 </div>
@@ -466,10 +439,14 @@ function Dashboard() {
                                     <p className='sous-grid-title'> Dernière connection </p>
                                     {connexionadmin && connexionadmin.length > 0 ? connexionadmin.map((connexion) => (
                                         <p className='grid-11-date' key={connexion.id}>
-                                            {connexion.lastLogoutDate ? connexion.lastLogoutDate.split("T")[0] : 'N/A'}<br />
-                                            <span className='grid-11-date-heure'>
-                                                {connexion.lastLogoutDate ? connexion.lastLogoutDate.split("T")[1].split(".")[0] : 'N/A'}
-                                            </span>
+                                            {connexion && connexion.lastLogoutDate ? (
+                                                <>
+                                                    {connexion.lastLogoutDate.split("T")[0]}<br />
+                                                    <span className='grid-11-date-heure'>
+                                                        {connexion.lastLogoutDate.split("T")[1] ? connexion.lastLogoutDate.split("T")[1].split(".")[0] : ''}
+                                                    </span>
+                                                </>
+                                            ) : 'N/A'}
                                         </p>
                                     )) : <p className='grid-11-date'>Aucune donnée disponible</p>}
                                 </div>
@@ -590,11 +567,15 @@ function Dashboard() {
                                     <div className='grid-31-content'>
                                         <p className='sous-grid-3-title'>Connecté depuis le</p>
                                         <p className='grid-31-date'>
-                                            {user.lastLoginDate ? user.lastLoginDate.split("T")[0] : 'N/A'} à
-                                            <br />
-                                            <span className='grid-31-date-heure'>
-                                                {user.lastLoginDate ? user.lastLoginDate.split("T")[1].split(".")[0] : 'N/A'}
-                                            </span>
+                                            {user && user.lastLoginDate ? (
+                                                <>
+                                                    {user.lastLoginDate.split("T")[0]} à
+                                                    <br />
+                                                    <span className='grid-31-date-heure'>
+                                                        {user.lastLoginDate.split("T")[1] ? user.lastLoginDate.split("T")[1].split(".")[0] : ''}
+                                                    </span>
+                                                </>
+                                            ) : 'N/A'}
                                         </p>
                                     </div>
                                 </div>
@@ -619,11 +600,15 @@ function Dashboard() {
                                             <div className='grid-31-content'>
                                                 <p className='sous-grid-3-title'>Dernière connexion</p>
                                                 <p className='grid-31-date'>
-                                                    {user.lastLogoutDate ? user.lastLogoutDate.split("T")[0] : 'N/A'} à
-                                                    <br />
-                                                    <span className='grid-31-date-heure'>
-                                                        {user.lastLogoutDate ? user.lastLogoutDate.split("T")[1].split(".")[0] : 'N/A'}
-                                                    </span>
+                                                    {user && user.lastLogoutDate ? (
+                                                        <>
+                                                            {user.lastLogoutDate.split("T")[0]} à
+                                                            <br />
+                                                            <span className='grid-31-date-heure'>
+                                                                {user.lastLogoutDate.split("T")[1] ? user.lastLogoutDate.split("T")[1].split(".")[0] : ''}
+                                                            </span>
+                                                        </>
+                                                    ) : 'N/A'}
                                                 </p>
                                             </div>
                                         </div>
@@ -661,7 +646,7 @@ function Dashboard() {
                                         datasets: [
                                             {
                                                 label: "revenu",
-                                                data: monthlyrevenu.length > 0 ? monthlyrevenu : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                                                data: (monthlyrevenu && monthlyrevenu.length > 0) ? monthlyrevenu : [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                                                 backgroundColor: "white",
                                                 borderColor: "rgba(159, 159, 255, 1)",
                                             },

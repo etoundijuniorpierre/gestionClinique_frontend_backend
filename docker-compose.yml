@@ -59,7 +59,7 @@ services:
     container_name: clinique_frontend
     restart: unless-stopped
     ports:
-      - "${FRONTEND_PORT:-80}:80"
+      - "${FRONTEND_PORT:-2026}:80"
     depends_on:
       backend:
         condition: service_healthy

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import Styled from 'styled-components';
 import { UnifiedModal, ModalButton } from './shared/UnifiedModal';
+import { handleApiError } from '../utils/errorHandler';
 
 const ProfileContainer = Styled.div`
   position: relative;
@@ -156,6 +157,53 @@ if (typeof document !== 'undefined') {
   document.head.appendChild(style);
 }
 
+// Styled components pour les formulaires
+const FormGroup = Styled.div`
+  margin-bottom: 20px;
+`;
+
+const Label = Styled.label`
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: #333;
+  font-size: 14px;
+`;
+
+const Input = Styled.input`
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s ease;
+  
+  &:focus {
+    outline: none;
+    border-color: #4141ff;
+  }
+  
+  &.error {
+    border-color: #ff4141;
+  }
+`;
+
+const ErrorMessage = Styled.div`
+  color: #ff4141;
+  font-size: 13px;
+  margin-top: 6px;
+`;
+
+const SuccessMessage = Styled.div`
+  color: #41ff41;
+  font-size: 13px;
+  margin-top: 6px;
+  padding: 10px;
+  background-color: #f0fff0;
+  border-radius: 6px;
+  border: 1px solid #41ff41;
+`;
+
 function Photoprofil({ imgprofil, onPhotoUpload, onChangePassword, userId }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [showPhotoModal, setShowPhotoModal] = useState(false);
@@ -280,12 +328,8 @@ function Photoprofil({ imgprofil, onPhotoUpload, onChangePassword, userId }) {
       }, 1500);
 
     } catch (error) {
-      console.error('Erreur lors de l\'upload:', error);
       setErrors({ upload: 'Erreur lors de l\'upload. Veuillez réessayer.' });
-
-      if (window.showNotification) {
-        window.showNotification('Erreur lors de l\'upload de la photo', 'error');
-      }
+      handleApiError(error, "Erreur lors de l'upload de la photo");
     } finally {
       setIsLoading(false);
     }
@@ -348,12 +392,8 @@ function Photoprofil({ imgprofil, onPhotoUpload, onChangePassword, userId }) {
       }, 2000);
 
     } catch (error) {
-      console.error('Erreur lors du changement de mot de passe:', error);
       setErrors({ general: 'Erreur lors du changement de mot de passe. Veuillez réessayer.' });
-
-      if (window.showNotification) {
-        window.showNotification('Erreur lors du changement de mot de passe', 'error');
-      }
+      handleApiError(error, "Erreur lors du changement de mot de passe");
     } finally {
       setIsLoading(false);
     }

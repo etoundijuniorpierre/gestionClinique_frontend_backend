@@ -57,6 +57,8 @@ function PageAdmin(){
     const location = useLocation();
     const [contenuActif, setContenuActif] = useState('dashboard');
     
+    console.log('🏠 PageAdmin rendu', { pathname: location.pathname, contenuActif });
+    
     // Déterminer le contenu actif basé sur l'URL
     useEffect(() => {
         const path = location.pathname;
@@ -64,6 +66,8 @@ function PageAdmin(){
         // Extraction du segment de route après /admin/
         const segments = path.split('/').filter(segment => segment);
         const routeSegment = segments[1] || 'dashboard'; // Si pas de segment, default to dashboard
+        
+        console.log('🔄 Changement de route PageAdmin', { path, segments, routeSegment });
         
         if (routeSegment === 'dashboard' || routeSegment === 'admin' || segments.length === 1) {
             setContenuActif('dashboard');

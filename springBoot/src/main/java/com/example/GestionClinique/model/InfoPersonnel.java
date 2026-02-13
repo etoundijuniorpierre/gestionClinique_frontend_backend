@@ -18,10 +18,10 @@ public abstract class InfoPersonnel extends BaseEntity {
     @Column(name = "nom", nullable = false)
     protected String nom;
 
-    @Column(name = "prenom", nullable = false)
+    @Column(name = "prenom")
     protected String prenom;
 
-    @Column(name = "date_naissance", nullable = false)
+    @Column(name = "date_naissance")
     protected LocalDate dateNaissance;
 
     @Column(name = "age")
@@ -33,10 +33,10 @@ public abstract class InfoPersonnel extends BaseEntity {
     @Column(name = "telephone", nullable = false)
     protected String telephone;
 
-    @Column(name = "adresse", nullable = false)
+    @Column(name = "adresse")
     protected String adresse;
 
-    @Column(name = "genre", nullable = false)
+    @Column(name = "genre")
     protected String genre;
 
 }

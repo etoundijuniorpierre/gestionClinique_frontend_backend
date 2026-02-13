@@ -26,7 +26,7 @@ public class Utilisateur extends InfoPersonnel {
 
     @Column(nullable = false, name = "mot_de_passe")
     @JsonIgnore
-    @Size(min = 8, max = 20)
+    @Size(min = 6, max = 20)
     private String password;
 
     private Boolean actif;

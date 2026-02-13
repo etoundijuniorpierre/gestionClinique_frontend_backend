@@ -17,6 +17,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useLoading } from '../LoadingProvider';
 import { useConfirmation } from '../ConfirmationProvider';
 import Pagination from '../shared/Pagination';
+import { handleApiError } from '../../utils/errorHandler';
 
 
 const SousDiv1Style = Styled.div`
@@ -251,8 +252,7 @@ function Patient(){
             window.showNotification('Patient supprimé avec succès', 'success');
             console.log(`patient ${patientId} supprimé`);
         } catch (error) {
-            console.error('Erreur lors de la suppression :', error);
-            window.showNotification('Erreur lors de la suppression', 'error');
+            handleApiError(error, "Erreur lors de la suppression");
         } finally {
             stopLoading('deletePatient');
         }

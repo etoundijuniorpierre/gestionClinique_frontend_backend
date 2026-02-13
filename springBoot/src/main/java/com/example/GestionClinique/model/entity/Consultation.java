@@ -1,6 +1,5 @@
 package com.example.GestionClinique.model.entity;
 
-
 import com.example.GestionClinique.model.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -19,22 +18,22 @@ import java.util.List;
 @Table
 public class Consultation extends BaseEntity {
 
-    @Column(nullable = false)
+    @Column
     private Float poids;
 
-    @Column(nullable = false)
+    @Column
     private Float taille;
 
-    @Column(nullable = false)
+    @Column
     private Float temperature;
 
-    @Column(nullable = false)
+    @Column
     private String tensionArterielle;
 
     @Column(nullable = false)
     private String motifs;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
+    @Column(columnDefinition = "TEXT")
     private String compteRendu;
 
     @Column(nullable = false, columnDefinition = "TEXT")

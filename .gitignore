@@ -4,7 +4,6 @@
 .env.*.local
 
 # Docker
-.dockerignore
 
 # Logs
 *.log

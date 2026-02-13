@@ -9,6 +9,7 @@ import imgprofil from '../../assets/photoDoc.png'
 import '../../styles/add-buttons.css'
 import { useLoading } from '../LoadingProvider';
 import { useConfirmation } from '../ConfirmationProvider';
+import { handleApiError } from '../../utils/errorHandler';
 
 
 const SousDiv1Style = Styled.div`
@@ -244,11 +245,10 @@ const ModifierUtilisateur = () => {
           setisVisiblerole(false);
         }
       } catch (error) {
-        console.error('Erreur lors de la récupération des utilisateurs:', error);
         // L'erreur 401 sera automatiquement gérée par l'intercepteur Axios
         if (error.response?.status !== 401) {
           setErreur('Erreur lors du chargement');
-          window.showNotification('Erreur lors du chargement de l\'utilisateur', 'error');
+          handleApiError(error, "Erreur lors du chargement de l'utilisateur");
         }
       } finally {
         stopLoading('fetchUser');
@@ -331,24 +331,9 @@ const ModifierUtilisateur = () => {
       navigate("/admin/utilisateur");
 
     } catch (error) {
-      console.error('Erreur de connexion :', error);
-
       // L'erreur 401 sera automatiquement gérée par l'intercepteur Axios
-      if (error.response && error.response.status !== 401) {
-        // Messages d'erreur plus spécifiques
-        if (error.response.status === 409) {
-          window.showNotification('Un utilisateur avec cet email existe déjà', 'error');
-        } else if (error.response.status === 400) {
-          window.showNotification('Données invalides. Vérifiez les informations saisies', 'error');
-        } else if (error.response.status === 404) {
-          window.showNotification('Utilisateur introuvable', 'error');
-        } else {
-          window.showNotification(`Erreur serveur: ${error.response.data?.message || 'Erreur lors de la modification'}`, 'error');
-        }
-      } else if (error.request) {
-        window.showNotification('Erreur de connexion au serveur. Vérifiez votre connexion internet', 'error');
-      } else if (error.response?.status !== 401) {
-        window.showNotification('Erreur lors de la modification de l\'utilisateur', 'error');
+      if (error.response?.status !== 401) {
+        handleApiError(error, "Erreur lors de la modification de l'utilisateur");
       }
     } finally {
       stopLoading('updateUser');

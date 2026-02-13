@@ -9,6 +9,7 @@ import imgprofil from '../../assets/photoDoc.png'
 import '../../styles/add-buttons.css'
 import { useLoading } from '../LoadingProvider';
 import { useConfirmation } from '../ConfirmationProvider';
+import { handleApiError } from '../../utils/errorHandler';
 
 
 
@@ -100,54 +101,74 @@ const Form = Styled.form`
 const Label = Styled.label`
   font-size: 14px;
   margin-bottom: 5px;
-  color: #333333;
+  color: var(--text-primary);
   font-weight: 500;
   font-family: 'Inter', sans-serif;
+  
+  ${props => props.required && `
+    &::after {
+      content: ' *';
+      color: var(--error-500);
+      font-weight: bold;
+      margin-left: 2px;
+    }
+  `}
 `;
 
 const Input = Styled.input`
   padding: 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
   width: 351px;
-  color: #333333;
-  background-color: #ffffff;
+  color: var(--text-primary);
+  background-color: var(--bg-input);
   font-size: 14px;
   font-family: 'Inter', sans-serif;
+  transition: all var(--transition-base);
   
   &:focus{
-    border: 1px solid #667eea;
+    border: 1px solid var(--border-focus);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px var(--state-focus-ring);
   }
   
   &::placeholder {
-    color: #9ca3af;
+    color: var(--text-tertiary);
   }
 `;
 
 const Select = Styled.select`
   min-width: 351px;
   padding: 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
-  background-color: #ffffff;
-  color: #333333;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
   font-size: 14px;
   font-family: 'Inter', sans-serif;
+  transition: all var(--transition-base);
   
   &:focus {
-    border: 1px solid #667eea;
+    border: 1px solid var(--border-focus);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px var(--state-focus-ring);
   }
 `;
 
 const TextArea = Styled.textarea`
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--border-primary);
+  background-color: var(--bg-input);
+  color: var(--text-primary);
   resize: vertical;
+  transition: all var(--transition-base);
+  
+  &:focus {
+    border: 1px solid var(--border-focus);
+    outline: none;
+    box-shadow: 0 0 0 3px var(--state-focus-ring);
+  }
 `;
 
 const ButtonRow = Styled.div`
@@ -237,24 +258,19 @@ const handleChange = e => {
       window.showNotification('Le champ "Nom" est obligatoire', 'error');
       return;
     }
-    if (!formData.prenom.trim()) {
-      window.showNotification('Le champ "Prénom" est obligatoire', 'error');
-      return;
-    }
-    if (!formData.email.trim()) {
-      window.showNotification('Le champ "Email" est obligatoire', 'error');
-      return;
-    }
     if (!formData.telephone.trim()) {
       window.showNotification('Le champ "Téléphone" est obligatoire', 'error');
       return;
     }
+    // Prénom and Email are now optional in validation logic
 
-    // Validation de l'email
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
-      window.showNotification('Veuillez entrer une adresse email valide', 'error');
-      return;
+    // Validation de l'email (uniquement si rempli)
+    if (formData.email.trim()) {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        window.showNotification('Veuillez entrer une adresse email valide', 'error');
+        return;
+      }
     }
 
     // Validation du téléphone (exactement 9 chiffres)
@@ -271,24 +287,7 @@ const handleChange = e => {
     window.showNotification('Patient créé avec succès', 'success');
     navigate("/admin/patient");
     } catch (error) {
-      console.error('Erreur de connexion :', error);
-      
-      // Messages d'erreur plus spécifiques
-      if (error.response) {
-        if (error.response.status === 409) {
-          window.showNotification('Un patient avec cet email existe déjà', 'error');
-        } else if (error.response.status === 400) {
-          window.showNotification('Données invalides. Vérifiez les informations saisies', 'error');
-        } else if (error.response.status === 401) {
-          window.showNotification('Session expirée. Veuillez vous reconnecter', 'error');
-        } else {
-          window.showNotification(`Erreur serveur: ${error.response.data?.message || 'Erreur lors de la création'}`, 'error');
-        }
-      } else if (error.request) {
-        window.showNotification('Erreur de connexion au serveur. Vérifiez votre connexion internet', 'error');
-      } else {
-        window.showNotification('Erreur lors de la création du patient', 'error');
-      }
+      handleApiError(error, "Erreur lors de la création du patient");
     } finally{
       stopLoading('createPatient');
     };
@@ -337,7 +336,7 @@ const handleChange = e => {
                 <Title>Informations générales</Title>
                 <FormRow>
                   <FormGroup>
-                    <Label htmlFor="nom">Nom</Label>
+                    <Label required htmlFor="nom">Nom</Label>
                     <Input id="nom" name="nom" value={formData.nom} onChange={handleChange} />
                   </FormGroup>
                   <FormGroup>
@@ -373,7 +372,7 @@ const handleChange = e => {
                 <FormRow>
                   
                   <FormGroup>
-                    <Label htmlFor="telephone">Téléphone</Label>
+                    <Label required htmlFor="telephone">Téléphone</Label>
                     <Input 
                       id="telephone" 
                       name="telephone" 

@@ -5,6 +5,7 @@ import axiosInstance from '../config/axiosConfig';
 import Styled from 'styled-components';
 import fondImage from '../../assets/backgroundimageuserform.jpg';
 import '../../styles/add-buttons.css'
+import { handleApiError } from '../../utils/errorHandler';
 
 // IMPORTS pour la génération PDF
 import { pdf } from '@react-pdf/renderer';
@@ -52,7 +53,22 @@ const FormRow = Styled.div`display: flex; gap: 10px; margin-bottom: 15px;`;
 const FormGroup = Styled.div`flex: 1; display: flex; flex-direction: column;`;
 const FormGroupvisible = Styled.div`flex: 1; display: ${props => props.$formgroupdisplay || "none"}; flex-direction: column;`;
 const Form = Styled.form`margin: 0; padding-left:0; width: 766px;`;
-const Label = Styled.label`font-size: 14px; margin-bottom: 8px; color: #374151; font-weight: 500; font-family: 'Inter', sans-serif;`;
+const Label = Styled.label`
+  font-size: 14px;
+  margin-bottom: 8px;
+  color: #374151;
+  font-weight: 500;
+  font-family: 'Inter', sans-serif;
+  
+  ${props => props.required && `
+    &::after {
+      content: ' *';
+      color: #ff4141;
+      font-weight: bold;
+      margin-left: 2px;
+    }
+  `}
+`;
 const Input = Styled.input`
   padding: 12px 16px; 
   border: 2px solid #e5e7eb; 
@@ -275,10 +291,7 @@ const FormulaireFacture = ({ id, onClick1 }) => {
         }
       }, 100);
     } catch (error) {
-      console.error('Erreur lors de la génération:', error);
-      if (window.showNotification) {
-        window.showNotification("Erreur lors de la génération de la facture", "error");
-      }
+      handleApiError(error, "Erreur lors de la génération de la facture");
     } finally {
       setShowLoader(false);
     }
@@ -433,7 +446,7 @@ const FormulaireFacture = ({ id, onClick1 }) => {
               <Input id="montant" name="montant" value={facture.montant} readOnly />
             </FormGroup>
             <FormGroup>
-              <Label htmlFor="modepaiement">💳 Mode de Paiement</Label>
+              <Label required htmlFor="modepaiement">💳 Mode de Paiement</Label>
               <Select id="modepaiement" name="modePaiement" value={facture.modePaiement} onChange={handleChange}>
                 <option value="ESPECES">💵 Espèces</option>
                 <option value="CARTE_BANCAIRE">💳 Carte Bancaire</option>

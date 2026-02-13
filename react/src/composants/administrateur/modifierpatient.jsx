@@ -9,6 +9,7 @@ import imgprofil from '../../assets/photoDoc.png'
 import '../../styles/add-buttons.css'
 import { useLoading } from '../LoadingProvider';
 import { useConfirmation } from '../ConfirmationProvider';
+import { handleApiError } from '../../utils/errorHandler';
 
 
 const SousDiv1Style = Styled.div`
@@ -222,9 +223,8 @@ const ModifierPatient = () => {
                 //console.log(response.data);
                setFormData(response.data);
             } catch (error) {
-                console.error('Erreur lors de la récupération des utilisateurs:', error);
                 setErreur('Erreur lors du chargement');
-                window.showNotification('Erreur lors du chargement du patient', 'error');
+                handleApiError(error, "Erreur lors du chargement du patient");
             } finally {
                 stopLoading('fetchPatient');
             }
@@ -250,26 +250,7 @@ const ModifierPatient = () => {
             navigate("/admin/patient");
             
           } catch (error) {
-            console.error('Erreur de connexion :', error);
-            
-            // Messages d'erreur plus spécifiques
-            if (error.response) {
-              if (error.response.status === 409) {
-                window.showNotification('Un patient avec cet email existe déjà', 'error');
-              } else if (error.response.status === 400) {
-                window.showNotification('Données invalides. Vérifiez les informations saisies', 'error');
-              } else if (error.response.status === 401) {
-                window.showNotification('Session expirée. Veuillez vous reconnecter', 'error');
-              } else if (error.response.status === 404) {
-                window.showNotification('Patient introuvable', 'error');
-              } else {
-                window.showNotification(`Erreur serveur: ${error.response.data?.message || 'Erreur lors de la modification'}`, 'error');
-              }
-            } else if (error.request) {
-              window.showNotification('Erreur de connexion au serveur. Vérifiez votre connexion internet', 'error');
-            } else {
-              window.showNotification('Erreur lors de la modification du patient', 'error');
-            }
+            handleApiError(error, "Erreur lors de la modification du patient");
           } finally{
             stopLoading('updatePatient');
           }

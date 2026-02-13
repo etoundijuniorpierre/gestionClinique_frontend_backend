@@ -346,7 +346,8 @@ const RECONNECT_DELAY = 3000; // 3 secondes
 
 export const connectWebSocket = (userId, onMessageReceived, onConnected) => {
     console.log("🔌 Tentative de connexion WebSocket pour l'utilisateur:", userId);
-    console.log("🌐 URL WebSocket:", `${API_BASE}/ws`);
+    const wsBaseUrl = API_BASE.endsWith('/') ? API_BASE.slice(0, -1) : API_BASE;
+    console.log("🌐 URL WebSocket:", `${wsBaseUrl}/ws`);
     
     // Vérifier l'authentification avant la connexion
     const authStatus = checkAuthStatus();
@@ -366,8 +367,8 @@ export const connectWebSocket = (userId, onMessageReceived, onConnected) => {
     
     stompClient = new StompClient({
         webSocketFactory: () => {
-            console.log("🔌 Création de la connexion SockJS...");
-            const sock = new SockJS(`${API_BASE}/ws`);
+            const wsUrl = API_BASE.endsWith('/') ? `${API_BASE}ws` : `${API_BASE}/ws`;
+            const sock = new SockJS(wsUrl);
             
             // Ajouter des listeners pour diagnostiquer les problèmes de connexion
             sock.onopen = () => {

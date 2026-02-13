@@ -7,10 +7,15 @@ import lombok.*;
 @EqualsAndHashCode(callSuper = true)
 @Data
 public class UtilisateurRequestDto extends InfoPersonnelRequestDto {
-    @NotNull
+    @NotNull(message = "Le nom d'utilisateur est obligatoire")
+    private String username;
+
+    @NotNull(message = "Le mot de passe est obligatoire")
     private String password;
+
     private ServiceMedical serviceMedicalName;
     private Boolean actif;
-    @NotNull
+
+    @NotNull(message = "Le rôle est obligatoire")
     private RoleRequestDto role;
 }

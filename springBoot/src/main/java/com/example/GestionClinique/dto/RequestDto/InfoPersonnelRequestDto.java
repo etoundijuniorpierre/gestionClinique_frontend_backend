@@ -15,25 +15,23 @@ import java.time.LocalDate;
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public abstract class InfoPersonnelRequestDto {
-    @NotEmpty
+    @NotEmpty(message = "Le nom est obligatoire")
     private String nom;
 
-    @NotEmpty
+    @NotEmpty(message = "Le prénom est obligatoire")
     private String prenom;
 
-    @NotNull
-    @Email
+    @Email(message = "L'email doit être valide")
     private String email;
 
-    @NotNull
+    @NotNull(message = "La date de naissance est obligatoire")
     private LocalDate dateNaissance;
 
-    @NotNull
+    @NotNull(message = "Le téléphone est obligatoire")
     private String telephone;
 
-    @NotNull
     private String adresse;
 
-    @NotNull
+    @NotNull(message = "Le genre est obligatoire")
     private String genre;
 }

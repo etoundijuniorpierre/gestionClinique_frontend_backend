@@ -36,8 +36,8 @@ public class SecurityConfig {
     private final @Lazy CustomLogoutHandler customLogoutHandler;
 
     public SecurityConfig(UserDetailsServiceImpl userDetailsService,
-                          JwtAuthenticationFilter jwtAuthenticationFilter,
-                          @Lazy CustomLogoutHandler customLogoutHandler) {
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            @Lazy CustomLogoutHandler customLogoutHandler) {
         this.userDetailsService = userDetailsService;
         this.jwtAuthenticationFilter = jwtAuthenticationFilter;
         this.customLogoutHandler = customLogoutHandler;
@@ -49,7 +49,8 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
         return authenticationConfiguration.getAuthenticationManager();
     }
 
@@ -73,19 +74,18 @@ public class SecurityConfig {
                         .requestMatchers("/Api/V1/clinique/rendezvous/cancel-old").permitAll()
                         .requestMatchers("/Api/V1/clinique/ws/**").permitAll()
                         .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/actuator/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/Api/V1/clinique/utilisateurs").hasRole("ADMIN")
-                        .anyRequest().authenticated()
-                )
+                        .anyRequest().authenticated())
                 .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                )
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .logout(logout -> logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/Api/V1/clinique/logout"))
                         .addLogoutHandler(customLogoutHandler)
-                        .logoutSuccessHandler((request, response, authentication) -> {})
-                        .permitAll()
-                );
+                        .logoutSuccessHandler((request, response, authentication) -> {
+                        })
+                        .permitAll());
 
         return http.build();
     }

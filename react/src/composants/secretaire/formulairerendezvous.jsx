@@ -10,6 +10,7 @@ import FormulaireFacture from './formulairefacture';
 import '../../styles/add-buttons.css'
 import { ConfirmationModal } from '../shared/UnifiedModal';
 import { InfoModal } from '../shared/UnifiedModal';
+import { handleApiError } from '../../utils/errorHandler';
 
 
 const SousDiv1Style = Styled.div`
@@ -102,66 +103,78 @@ const Form = Styled.form`
 const Label = Styled.label`
   font-size: 14px;
   margin-bottom: 5px;
-  color: #333333;
+  color: var(--text-primary);
   font-weight: 500;
   font-family: 'Inter', sans-serif;
+  
+  ${props => props.required && `
+    &::after {
+      content: ' *';
+      color: var(--error-500);
+      font-weight: bold;
+      margin-left: 2px;
+    }
+  `}
 `;
 
 const Input = Styled.input`
   padding: 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
   width: 351px;
-  color: #333333;
-  background-color: #ffffff;
+  color: var(--text-primary);
+  background-color: var(--bg-input);
   font-size: 14px;
   font-family: 'Inter', sans-serif;
+  transition: all var(--transition-base);
   
   &:focus{
-    border: 1px solid #667eea;
+    border: 1px solid var(--border-focus);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px var(--state-focus-ring);
   }
   
   &::placeholder {
-    color: #9ca3af;
+    color: var(--text-tertiary);
   }
 `;
 
 const Select = Styled.select`
   min-width: 351px;
   padding: 10px;
-  border: 1px solid #d1d5db;
+  border: 1px solid var(--border-primary);
   border-radius: 8px;
-  background-color: #ffffff;
-  color: #333333;
+  background-color: var(--bg-input);
+  color: var(--text-primary);
   font-size: 14px;
   font-family: 'Inter', sans-serif;
+  transition: all var(--transition-base);
   
   &:focus {
-    border: 1px solid #667eea;
+    border: 1px solid var(--border-focus);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px var(--state-focus-ring);
   }
 `;
 const TextArea = Styled.textarea`
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #d1d5db;
-  background-color: #ffffff;
-  color: #333333;
+  border: 1px solid var(--border-primary);
+  background-color: var(--bg-input);
+  color: var(--text-primary);
   font-size: 14px;
   font-family: 'Inter', sans-serif;
   resize: vertical;
+  transition: all var(--transition-base);
   
   &:focus {
-    border: 1px solid #667eea;
+    border: 1px solid var(--border-focus);
     outline: none;
-    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    box-shadow: 0 0 0 3px var(--state-focus-ring);
   }
   
   &::placeholder {
-    color: #9ca3af;
+    color: var(--text-tertiary);
   }
 `;
 const ButtonRow = Styled.div`
@@ -350,11 +363,8 @@ const FormulaireRendezVous = () => {
           }
         }
       } catch (error) {
-        console.error('Erreur lors de la récupération des médecins disponibles:', error);
+        handleApiError(error, "Erreur lors de la récupération des médecins disponibles");
         setmedecindisponible([]);
-        if (window.showNotification) {
-          window.showNotification("Erreur lors de la récupération des médecins disponibles", "error");
-        }
       } finally {
         setisloading(false);
       }
@@ -470,13 +480,7 @@ const FormulaireRendezVous = () => {
          window.showNotification("Rendez-vous créé avec succès !", "success");
        }
     } catch (error) {
-      console.error('Erreur de connexion :', error);
-      console.log(token)
-      
-      // Afficher un message d'erreur à l'utilisateur
-      if (window.showNotification) {
-        window.showNotification("Erreur lors de la création du rendez-vous. Veuillez réessayer.", "error");
-      }
+      handleApiError(error, "Erreur lors de la création du rendez-vous");
     } finally {
       /*setFormData({
            nom: "",
@@ -596,7 +600,7 @@ const FormulaireRendezVous = () => {
             <TraitHorizontal></TraitHorizontal>
             <FormRow>
               <FormGroup>
-                <Label htmlFor="jour">Date</Label>
+                <Label required htmlFor="jour">Date</Label>
                                  <Input
                    id="jour"
                    name="jour"
@@ -614,7 +618,7 @@ const FormulaireRendezVous = () => {
                  <span style={{ color: '#3498db', fontSize: '12px', marginTop: '4px', fontStyle: 'italic' }}>Date minimale : aujourd'hui</span>
               </FormGroup>
               <FormGroup>
-                <Label htmlFor="heure">Heure</Label>
+                <Label required htmlFor="heure">Heure</Label>
                                  <Input
                    id="heure"
                    name="heure"
@@ -638,7 +642,7 @@ const FormulaireRendezVous = () => {
             <FormRow>
 
               <FormGroupvisible >
-              <Label htmlFor="serviceMedical">Service médical *</Label>
+              <Label required htmlFor="serviceMedical">Service médical</Label>
                 <Select id="servicemedical" name="serviceMedical" value={formData.serviceMedical} onChange={handleChange} >
                   <option value="">Sélectionner un service</option>
                   <option value="MEDECINE_GENERALE">Médecine Générale</option>
@@ -664,7 +668,7 @@ const FormulaireRendezVous = () => {
                 </Select>
               </FormGroupvisible>
               <FormGroup>
-                <Label htmlFor="medecin">Medecin</Label>
+                <Label required htmlFor="medecin">Medecin</Label>
                 <Select 
                   id="medecin" 
                   name="medecinId" 

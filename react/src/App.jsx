@@ -18,8 +18,6 @@ import { NotificationProvider } from './composants/notification'
 import { LoadingProvider } from './composants/LoadingProvider'
 import { ConfirmationProvider } from './composants/ConfirmationProvider'
 import GlobalNotificationHandler from './composants/GlobalNotificationHandler'
-
-
 function App() {
   return (
     <NotificationProvider>

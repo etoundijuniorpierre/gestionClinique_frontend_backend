@@ -5,6 +5,7 @@ import { API_BASE } from '../config/apiconfig';
 import '../../styles/Zonedaffichage.css';
 import '../../styles/buttons.css';
 import '../../styles/dossiermedical.css';
+import { handleApiError } from '../../utils/errorHandler';
 
 
 
@@ -57,10 +58,8 @@ const DossierMedical = () => {
                 }
                 setLoading(false);
             } catch (err) {
-                console.error('Erreur lors du chargement du dossier médical:', err);
-                console.error('Détails de l\'erreur:', err.response?.data || err.message);
                 setError("Erreur lors du chargement du dossier médical");
-                window.showNotification('Erreur lors du chargement du dossier médical', 'error');
+                handleApiError(err, "Erreur lors du chargement du dossier médical");
                 setLoading(false);
             }
         };
@@ -83,8 +82,7 @@ const DossierMedical = () => {
                 window.showNotification('Détails de la consultation chargés avec succès', 'success');
             }
         } catch (err) {
-            console.error('Erreur lors du chargement des détails de la consultation:', err);
-            window.showNotification('Erreur lors du chargement des détails de la consultation', 'error');
+            handleApiError(err, "Erreur lors du chargement des détails de la consultation");
         } finally {
             setConsultationLoading(false);
         }

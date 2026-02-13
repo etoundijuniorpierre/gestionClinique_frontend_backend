@@ -8,6 +8,7 @@ import Barrehorizontal1 from '../barrehorizontal1';
 import imgprofil from '../../assets/photoDoc.png';
 import { ConfirmationModal } from '../shared/UnifiedModal';
 import '../../styles/add-buttons.css'
+import { handleApiError } from '../../utils/errorHandler';
 
 const SousDiv1Style = Styled.div`
   width: 99%;
@@ -302,11 +303,8 @@ const ModifierRendezVous = () => {
           }
         }
       } catch (error) {
-        console.error('Erreur lors de la récupération des médecins disponibles:', error);
+        handleApiError(error, "Erreur lors de la récupération des médecins disponibles");
         setMedecins([]);
-        if (window.showNotification) {
-          window.showNotification("Erreur lors de la récupération des médecins disponibles", "error");
-        }
       }
     };
     fetchMedecins();
@@ -535,18 +533,7 @@ const ModifierRendezVous = () => {
       // Rediriger vers la vue détaillée
       navigate(`/secretaire/rendezvous/viewrendezvous/${id}`);
     } catch (error) {
-      console.error('Erreur lors de la modification du rendez-vous:', error);
-      
-      let errorMessage = "Erreur lors de la modification du rendez-vous";
-      if (error.response?.status === 409) {
-        errorMessage = "Conflit de planning : ce créneau est déjà pris";
-      } else if (error.response?.data?.message) {
-        errorMessage = error.response.data.message;
-      }
-      
-      if (window.showNotification) {
-        window.showNotification(errorMessage, "error");
-      }
+      handleApiError(error, "Erreur lors de la modification du rendez-vous");
     } finally {
       setIsSubmitting(false);
     }

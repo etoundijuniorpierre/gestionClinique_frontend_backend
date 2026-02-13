@@ -7,11 +7,11 @@ import org.mapstruct.*;
 
 import java.util.List;
 
-@Mapper(componentModel = "spring",
-        nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE,
-        uses = {RoleMapper.class})
+@Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE, uses = {
+        RoleMapper.class })
 public interface UtilisateurMapper {
 
+    @Mapping(target = "username", source = "username")
     @Mapping(target = "photoProfil", ignore = true)
     @Mapping(target = "serviceMedical", source = "serviceMedicalName")
     @Mapping(target = "id", ignore = true)
@@ -20,6 +20,13 @@ public interface UtilisateurMapper {
     @Mapping(target = "lastLoginDate", ignore = true)
     @Mapping(target = "lastLogoutDate", ignore = true)
     @Mapping(target = "statusConnect", ignore = true)
+    @Mapping(target = "rendezVous", ignore = true)
+    @Mapping(target = "consultations", ignore = true)
+    @Mapping(target = "prescriptions", ignore = true)
+    @Mapping(target = "historiqueActions", ignore = true)
+    @Mapping(target = "notifications", ignore = true)
+    @Mapping(target = "age", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     Utilisateur toEntity(UtilisateurRequestDto dto);
 
     @Mapping(target = "lastLoginDate", source = "lastLoginDate")
@@ -37,5 +44,16 @@ public interface UtilisateurMapper {
     @Mapping(target = "password", ignore = true)
     @Mapping(target = "creationDate", ignore = true)
     @Mapping(target = "modificationDate", ignore = true)
+    @Mapping(target = "age", ignore = true)
+    @Mapping(target = "photoProfil", ignore = true)
+    @Mapping(target = "lastLoginDate", ignore = true)
+    @Mapping(target = "lastLogoutDate", ignore = true)
+    @Mapping(target = "statusConnect", ignore = true)
+    @Mapping(target = "rendezVous", ignore = true)
+    @Mapping(target = "consultations", ignore = true)
+    @Mapping(target = "prescriptions", ignore = true)
+    @Mapping(target = "historiqueActions", ignore = true)
+    @Mapping(target = "notifications", ignore = true)
+    @Mapping(target = "authorities", ignore = true)
     void updateEntityFromDto(UtilisateurRequestDto dto, @MappingTarget Utilisateur utilisateur);
 }

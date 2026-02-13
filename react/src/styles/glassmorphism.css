@@ -32,25 +32,6 @@
   box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
 }
 
-/* ===== DARK MODE GLASS ===== */
-
-[data-theme="dark"] .glass-card {
-  background: rgba(0, 0, 0, 0.3);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
-}
-
-[data-theme="dark"] .glass-card-strong {
-  background: rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
-}
-
-[data-theme="dark"] .glass-card-subtle {
-  background: rgba(0, 0, 0, 0.2);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 4px 16px 0 rgba(0, 0, 0, 0.2);
-}
 
 /* ===== COLORED GLASS ===== */
 
@@ -161,13 +142,6 @@
   color: rgba(0, 0, 0, 0.4);
 }
 
-[data-theme="dark"] .glass-input {
-  color: var(--neutral-50);
-}
-
-[data-theme="dark"] .glass-input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
-}
 
 .glass-navbar {
   background: rgba(255, 255, 255, 0.8);
@@ -177,10 +151,6 @@
   box-shadow: 0 4px 16px 0 rgba(31, 38, 135, 0.1);
 }
 
-[data-theme="dark"] .glass-navbar {
-  background: rgba(0, 0, 0, 0.7);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
 
 .glass-sidebar {
   background: rgba(255, 255, 255, 0.6);
@@ -190,10 +160,6 @@
   box-shadow: 4px 0 16px 0 rgba(31, 38, 135, 0.1);
 }
 
-[data-theme="dark"] .glass-sidebar {
-  background: rgba(0, 0, 0, 0.5);
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
-}
 
 .glass-modal {
   background: rgba(255, 255, 255, 0.95);
@@ -204,10 +170,6 @@
   box-shadow: 0 20px 60px 0 rgba(31, 38, 135, 0.3);
 }
 
-[data-theme="dark"] .glass-modal {
-  background: rgba(0, 0, 0, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
 
 .glass-tooltip {
   background: rgba(0, 0, 0, 0.9);
@@ -271,9 +233,6 @@
   box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.25);
 }
 
-[data-theme="dark"] .glass-hover:hover {
-  background: rgba(0, 0, 0, 0.4);
-}
 
 /* ===== FROSTED BACKGROUNDS ===== */
 

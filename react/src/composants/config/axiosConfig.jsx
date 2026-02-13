@@ -3,7 +3,7 @@ import { API_BASE } from './apiconfig';
 
 // Configuration de base d'Axios
 const axiosInstance = axios.create({
-  baseURL: API_BASE,
+  baseURL: API_BASE.endsWith('/') ? API_BASE : `${API_BASE}/`,
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -11,9 +11,12 @@ const axiosInstance = axios.create({
   }
 });
 
-// Intercepteur pour ajouter automatiquement le token aux requêtes
+// Intercepteur pour nettoyer les URLs (enlever le leading slash pour éviter de casser le baseURL)
 axiosInstance.interceptors.request.use(
   (config) => {
+    if (config.url && config.url.startsWith('/')) {
+      config.url = config.url.substring(1);
+    }
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
