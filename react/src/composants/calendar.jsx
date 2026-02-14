@@ -45,8 +45,8 @@ export default function Calendrier() {
     { title: 'Conference', start: '2021-03-02' },
     { title: '10:30a Meeting', start: '2021-03-03T10:30:00' },
     { title: '12p Lunch', start: '2021-03-03T12:00:00' },
-    { title: 'Birthday Party', start: '2025-08-04T10:30:00' },
-    { title: 'Long Event', start: '2025-08-05', end: '2025-08-07' },
+    { title: 'Birthday Party', start: '2024-08-04T10:30:00' },
+    { title: 'Long Event', start: '2024-08-05', end: '2024-08-07' },
     { title: 'Repeating Event', start: '2021-03-09T16:00:00' },
     { title: 'Click for Google', url: 'http://google.com/', start: '2021-03-28' }
   ]

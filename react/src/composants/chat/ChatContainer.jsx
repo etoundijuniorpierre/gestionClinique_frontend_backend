@@ -538,7 +538,7 @@ const ChatContainer = () => {
             <ul style={{ textAlign: 'left', margin: '10px 0' }}>
               <li>Vous êtes bien connecté à l'application</li>
               <li>Votre compte a un rôle autorisé (ADMIN, MEDECIN, SECRETAIRE)</li>
-              <li>Le serveur backend est démarré sur le port 2025</li>
+              <li>Le serveur backend est déployé sur Render</li>
               <li>Votre session n'a pas expiré</li>
             </ul>
           </div>

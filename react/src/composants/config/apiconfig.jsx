@@ -1,4 +1,4 @@
-export const API_BASE = 'http://localhost:2025/Api/V1/clinique';
+export const API_BASE = 'https://gestionclinique-backend.onrender.com/Api/V1/clinique';
 
 export const STATS_ENDPOINTS = {
     DAILY: 'stats/daily',
