@@ -8,22 +8,18 @@ class UserPhotoService {
             return imgprofilDefault;
         }
 
-        // Si l'utilisateur a une photo de profil, utiliser l'API
         if (photoProfil) {
-            return `${API_BASE}/utilisateurs/${userId}/photo`;
+            return photoProfil;
         }
 
-        // Sinon, retourner l'image par défaut
         return imgprofilDefault;
     }
 
-   
-    static async getUserPhotoBlob(userId, photoProfil = null) {
+    static async getUserPhoto(userId, photoProfil = null) {
         if (!userId) {
             return imgprofilDefault;
         }
 
-        // Si pas de photo de profil, retourner l'image par défaut
         if (!photoProfil) {
             return imgprofilDefault;
         }
@@ -37,13 +33,13 @@ class UserPhotoService {
             const response = await fetch(`${API_BASE}/utilisateurs/${userId}/photo`, {
                 method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
             if (response.ok) {
-                const blob = await response.blob();
-                return URL.createObjectURL(blob);
+                const dataUri = await response.text();
+                return dataUri;
             } else {
                 return imgprofilDefault;
             }
@@ -52,30 +48,28 @@ class UserPhotoService {
             return imgprofilDefault;
         }
     }
-
 
     static async getUserPhotoWithFallback(userId, photoProfil = null) {
         if (!userId) {
             return imgprofilDefault;
         }
 
-        // Si pas de photo de profil, retourner l'image par défaut
         if (!photoProfil) {
             return imgprofilDefault;
         }
 
         try {
-            // Vérifier si la photo existe en faisant une requête HEAD
             const token = localStorage.getItem('token');
             const response = await fetch(`${API_BASE}/utilisateurs/${userId}/photo`, {
-                method: 'HEAD',
+                method: 'GET',
                 headers: {
-                    'Authorization': `Bearer ${token}`,
+                    'Authorization': `Bearer ${token}`
                 }
             });
 
             if (response.ok) {
-                return `${API_BASE}/utilisateurs/${userId}/photo`;
+                const dataUri = await response.text();
+                return dataUri;
             } else {
                 return imgprofilDefault;
             }
@@ -84,7 +78,6 @@ class UserPhotoService {
             return imgprofilDefault;
         }
     }
-
 
     static async getUsersPhotos(users) {
         if (!Array.isArray(users)) {
@@ -97,20 +90,17 @@ class UserPhotoService {
         }));
     }
 
-
     static handleImageError(event, fallbackSrc = imgprofilDefault) {
         event.target.src = fallbackSrc;
-        event.target.onerror = null; // Éviter les boucles infinies
+        event.target.onerror = null;
     }
 
- 
     static revokeBlobUrl(blobUrl) {
         if (blobUrl && blobUrl.startsWith('blob:')) {
             URL.revokeObjectURL(blobUrl);
         }
     }
 
- 
     static revokeBlobUrls(blobUrls) {
         if (Array.isArray(blobUrls)) {
             blobUrls.forEach(url => this.revokeBlobUrl(url));

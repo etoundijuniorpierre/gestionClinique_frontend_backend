@@ -11,12 +11,11 @@ import com.example.GestionClinique.repository.RoleRepository;
 import com.example.GestionClinique.repository.UtilisateurRepository;
 import com.example.GestionClinique.service.HistoriqueActionService;
 import com.example.GestionClinique.service.UtilisateurService;
-import com.example.GestionClinique.service.photoService.FileStorageServiceImpl;
+import com.example.GestionClinique.service.photoService.DatabasePhotoService;
 import jakarta.annotation.PostConstruct;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
-import org.springframework.core.io.Resource;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,14 +35,13 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     private final UtilisateurRepository utilisateurRepository;
     private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
-    private final RendezVousRepository rendezVousRepository;
-    private final FileStorageServiceImpl fileStorageService;
+    private final DatabasePhotoService databasePhotoService;
     private final HistoriqueActionService historiqueActionService;
     private final LoggingAspect loggingAspect;
+    private final RendezVousRepository rendezVousRepository;
 
     @PostConstruct
     public void init() {
-        fileStorageService.init();
     }
 
     @Transactional
@@ -55,7 +53,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         if (findUtilisateurByUsername(utilisateur.getUsername()) != null) {
             throw new IllegalArgumentException("A user with this username already exists.");
         }
-        // Vérifier l'email uniquement s'il est fourni
         if (utilisateur.getEmail() != null && !utilisateur.getEmail().isBlank()) {
             if (findUtilisateurByEmail(utilisateur.getEmail()) != null) {
                 throw new IllegalArgumentException("A user with this email address already exists.");
@@ -68,7 +65,6 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             throw new IllegalArgumentException("Le mot de passe doit contenir au moins 8 caractères.");
         }
         utilisateur.setPassword(passwordEncoder.encode(utilisateur.getPassword()));
-        // serviceMedical est déjà null si non fourni, pas besoin de le réinitialiser
         if (utilisateur.getActif() == null) {
             utilisateur.setActif(true);
         }
@@ -84,9 +80,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             utilisateur.setServiceMedical(utilisateur.getServiceMedical());
         }
 
-        // Calculer l'âge à partir de la date de naissance
         utilisateur.setAge((long) Period.between(utilisateur.getDateNaissance(), LocalDate.now()).getYears());
-
         utilisateur.setRole(role);
         Utilisateur savedUser = utilisateurRepository.save(utilisateur);
 
@@ -102,33 +96,21 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     @Override
     @Transactional
     public Utilisateur updatePhotoProfil(Long userId, MultipartFile photoProfil) {
-        Utilisateur utilisateur = utilisateurRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
-
-        if (photoProfil != null && !photoProfil.isEmpty()) {
-            if (utilisateur.getPhotoProfil() != null) {
-                fileStorageService.delete(utilisateur.getPhotoProfil());
-            }
-            String newPhotoPath = fileStorageService.save(photoProfil, userId);
-            utilisateurRepository.updatePhotoProfil(userId, newPhotoPath);
-
+        try {
+            return databasePhotoService.savePhotoProfil(userId, photoProfil);
+        } catch (Exception e) {
             historiqueActionService.enregistrerAction(
-                    String.format("Mise à jour de la photo de profil de l'utilisateur ID: %d", userId),
+                    String.format("Erreur lors de la mise à jour de la photo de profil de l'utilisateur ID: %d - %s", 
+                            userId, e.getMessage()),
                     loggingAspect.currentUserId());
+            throw e;
         }
-        return utilisateurRepository.findById(userId).orElse(null);
     }
 
     @Transactional
     @Override
-    public Resource getPhotoProfil(Long userId) {
-        Utilisateur utilisateur = utilisateurRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur non trouvé"));
-
-        if (utilisateur.getPhotoProfil() == null) {
-            throw new RuntimeException("Aucune photo de profil pour cet utilisateur");
-        }
-        return fileStorageService.load(utilisateur.getPhotoProfil());
+    public String getPhotoProfil(Long userId) {
+        return databasePhotoService.getPhotoProfil(userId);
     }
 
     @Override

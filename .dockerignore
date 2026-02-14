@@ -1,0 +1,75 @@
+# Git
+.git
+.gitignore
+
+# Documentation (sauf README principal et README-KOYEB)
+*.md
+!README.md
+!README-KOYEB.md
+docs/
+documentation/
+
+# IDE et éditeurs
+.idea/
+.vscode/
+*.iml
+*.swp
+*.swo
+.cursor/
+.agents/
+
+# Logs et erreurs
+*.log
+*.log.*
+hs_err_pid*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Dependencies et builds
+node_modules/
+target/
+dist/
+build/
+
+# Environment
+.env
+.env.local
+.env.*.local
+.env
+
+# Uploads (should be mounted as volume)
+**/uploads/
+springBoot/src/main/uploads/
+
+# Test coverage
+coverage/
+.nyc_output/
+**/test/
+**/tests/
+
+# Temporary files
+*.tmp
+*.temp
+*.cache
+
+# Scripts de nettoyage
+cleanup*.ps1
+cleanup*.bat
+start-docker.bat
+generate-jwt-secret.ps1
+JWT_SECRET.txt
+
+# Base de données locale (inutile avec Neon)
+database.sql
+
+# Fichiers de build Maven
+mvnw*
+.mvn/
+
+# Fichiers Docker locaux
+docker-compose.yml

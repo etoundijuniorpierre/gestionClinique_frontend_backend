@@ -320,15 +320,11 @@ function Barrehorizontal1({ titrepage, imgprofil1, nomprofil, children, notifica
             });
 
             if (response.status === 200) {
-                // La réponse contient les données utilisateur mises à jour
                 const photoUrl = response.data?.photoProfil || response.data?.photo_profil;
                 if (response.data && photoUrl) {
-                    // Construire l'URL complète de la photo
-                    const fullPhotoUrl = `${API_BASE}/utilisateurs/${userId}/photo`;
-
-                    // Mettre à jour la photo dans le localStorage et l'état local
-                    localStorage.setItem('photoUrl', fullPhotoUrl);
-                    setCurrentPhotoUrl(fullPhotoUrl);
+                    // Utiliser directement le data URI du backend
+                    localStorage.setItem('photoUrl', photoUrl);
+                    setCurrentPhotoUrl(photoUrl);
 
                     if (window.showNotification) {
                         window.showNotification('Photo de profil mise à jour avec succès !', 'success');

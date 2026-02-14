@@ -19,7 +19,7 @@ public interface UtilisateurService {
 
     Utilisateur updatePhotoProfil(Long userId, MultipartFile photoProfil);
 
-    Resource getPhotoProfil(Long userId);
+    String getPhotoProfil(Long userId);
 
     Utilisateur findUtilisateurById(Long id);
 

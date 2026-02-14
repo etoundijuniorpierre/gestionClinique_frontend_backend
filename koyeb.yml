@@ -1,0 +1,41 @@
+name: gestion-clinique
+services:
+- name: backend
+  type: docker
+  dockerfile: springBoot/Dockerfile
+  env:
+  - key: SPRING_PROFILES_ACTIVE
+    value: koyeb
+  - key: SPRING_DATASOURCE_URL
+    value: jdbc:postgresql://ep-bitter-waterfall-aif4chkq-pooler.c-4.us-east-1.aws.neon.tech/clinique?user=neondb_owner&password=npg_I5YSvgBqCNb7&sslmode=require&channelBinding=require
+  - key: SPRING_DATASOURCE_USERNAME
+    value: neondb_owner
+  - key: SPRING_DATASOURCE_PASSWORD
+    value: npg_I5YSvgBqCNb7
+  - key: JWT_SECRET
+    value: VCZtezNVbZ4f/Vyo+XTC02AyT9B83tITwXdM87YromU=
+  ports:
+  - port: 2025
+    protocol: tcp
+  health_check:
+    http:
+      path: /actuator/health
+      port: 2025
+
+- name: frontend
+  type: docker
+  dockerfile: react/Dockerfile
+  ports:
+  - port: 80
+    protocol: http
+  health_check:
+    http:
+      path: /
+      port: 80
+  dependencies:
+  - backend
+
+routes:
+- path: /
+  service: frontend
+  port: 80

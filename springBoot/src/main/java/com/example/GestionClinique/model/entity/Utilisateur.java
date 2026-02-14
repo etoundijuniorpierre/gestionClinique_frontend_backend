@@ -35,7 +35,7 @@ public class Utilisateur extends InfoPersonnel {
     @JoinColumn(name = "role_id", nullable = false)
     private Role role;
 
-    @Column
+    @Column(columnDefinition = "TEXT")
     private String photoProfil;
 
     public Collection<? extends GrantedAuthority> getAuthorities() {
