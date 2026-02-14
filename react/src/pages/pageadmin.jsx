@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 import Barrelatteral from '../composants/barrelatteral';
 import Eltmenu from '../composants/eltmenu'
 import imgutilisateur from '@assets/IconUtilisateursblack.png'
-import imgpatient from '@assets/IconPatient.png'
+import imgpatient from '@assets/iconPatient.png'
 import imgdashboard from '@assets/iconutilisateurdashboardblanc.svg'
 import iconEnvelope from '@assets/icon-envelope.svg'
 import iconChat from '@assets/icon-chat.svg'

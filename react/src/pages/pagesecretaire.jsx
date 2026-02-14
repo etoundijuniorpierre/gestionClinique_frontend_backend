@@ -8,7 +8,7 @@ import Barrelatteral from '../composants/barrelatteral';
 import Eltmenu from '../composants/eltmenu'
 //import mail from '../assets/mail.png'
 import imgrendezvous from '@assets/IconRendezvous.png'
-import imgpatient from '@assets/IconPatient.png'
+import imgpatient from '@assets/iconPatient.png'
 import imgcalendrier from '@assets/IconCalendrier.png'
 import iconEnvelope from '@assets/icon-envelope.svg'
 import iconChat from '@assets/icon-chat.svg'
