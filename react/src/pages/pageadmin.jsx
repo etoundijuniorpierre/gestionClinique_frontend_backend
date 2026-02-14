@@ -3,11 +3,11 @@ import Styled from 'styled-components'
 import React, { useState, useEffect } from 'react';
 import Barrelatteral from '../composants/barrelatteral';
 import Eltmenu from '../composants/eltmenu'
-import imgutilisateur from '../assets/IconUtilisateursblack.png'
-import imgpatient from '../assets/IconPatient.png'
-import imgdashboard from '../assets/iconutilisateurdashboardblanc.svg'
-import iconEnvelope from '../assets/icon-envelope.svg'
-import iconChat from '../assets/icon-chat.svg'
+import imgutilisateur from '@assets/IconUtilisateursblack.png'
+import imgpatient from '@assets/IconPatient.png'
+import imgdashboard from '@assets/iconutilisateurdashboardblanc.svg'
+import iconEnvelope from '@assets/icon-envelope.svg'
+import iconChat from '@assets/icon-chat.svg'
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const PageStyle = Styled.div`

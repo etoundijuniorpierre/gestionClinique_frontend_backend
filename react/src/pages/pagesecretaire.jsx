@@ -7,11 +7,11 @@ import Barrelatteral from '../composants/barrelatteral';
 //import Patient from '../composants/patients';
 import Eltmenu from '../composants/eltmenu'
 //import mail from '../assets/mail.png'
-import imgrendezvous from '../assets/IconRendezvous.png'
-import imgpatient from '../assets/IconPatient.png'
-import imgcalendrier from '../assets/IconCalendrier.png'
-import iconEnvelope from '../assets/icon-envelope.svg'
-import iconChat from '../assets/icon-chat.svg'
+import imgrendezvous from '@assets/IconRendezvous.png'
+import imgpatient from '@assets/IconPatient.png'
+import imgcalendrier from '@assets/IconCalendrier.png'
+import iconEnvelope from '@assets/icon-envelope.svg'
+import iconChat from '@assets/icon-chat.svg'
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const PageStyle = Styled.div`
