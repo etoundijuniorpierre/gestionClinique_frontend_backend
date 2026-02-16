@@ -11,4 +11,5 @@ public class MessageResponseDto extends BaseResponseDto {
     private boolean lu;
     private UtilisateurResponseDto expediteur;
     private Long conversationId;
+    private String type;
 }

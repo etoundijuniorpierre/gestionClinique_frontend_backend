@@ -3,6 +3,8 @@ package com.example.GestionClinique.service.serviceImpl;
 import com.example.GestionClinique.dto.RequestDto.messageRequestDto.ConversationRequestDto;
 import com.example.GestionClinique.dto.RequestDto.messageRequestDto.GroupeRequestDto;
 import com.example.GestionClinique.dto.RequestDto.messageRequestDto.MessageRequestDto;
+import com.example.GestionClinique.dto.ResponseDto.messageResponseDto.MessageResponseDto;
+import com.example.GestionClinique.mapper.MessageMapper;
 import com.example.GestionClinique.model.entity.*;
 import com.example.GestionClinique.model.entity.enumElem.Action;
 import com.example.GestionClinique.model.entity.enumElem.TypeConversation;
@@ -13,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,6 +34,8 @@ public class ChatService {
     private final GroupeRepository groupeRepository;
     private final UtilisateurRepository utilisateurRepository;
     private final NotificationService notificationService;
+    private final SimpMessagingTemplate messagingTemplate;
+    private final MessageMapper messageMapper;
 
     @Transactional
     public Message sendMessage(MessageRequestDto messageDto, Long senderId) {
@@ -202,5 +207,51 @@ public class ChatService {
 
     public Optional<Groupe> findById(Long groupeId) {
         return groupeRepository.findById(groupeId);
+    }
+
+    @Transactional
+    public Message sendMessageWebSocket(MessageRequestDto messageDto, Long senderId) {
+        Message savedMessage = sendMessage(messageDto, senderId);
+        
+        try {
+            MessageResponseDto messageResponse = messageMapper.toDto(savedMessage);
+            messagingTemplate.convertAndSend("/topic/conversation." + savedMessage.getConversation().getId(), messageResponse);
+        } catch (Exception e) {
+            System.err.println("Erreur diffusion WebSocket: " + e.getMessage());
+        }
+        
+        return savedMessage;
+    }
+
+    @Transactional
+    public Message updateMessageWebSocket(Long messageId, String newContent, Long userId) {
+        Message updatedMessage = updateMessage(messageId, newContent, userId);
+        
+        try {
+            MessageResponseDto messageResponse = messageMapper.toDto(updatedMessage);
+            messagingTemplate.convertAndSend("/topic/conversation." + updatedMessage.getConversation().getId(), messageResponse);
+        } catch (Exception e) {
+            System.err.println("Erreur diffusion WebSocket mise à jour: " + e.getMessage());
+        }
+        
+        return updatedMessage;
+    }
+
+    @Transactional
+    public void deleteMessageWebSocket(Long messageId, Long userId) {
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new EntityNotFoundException("Message non trouvé avec l'ID: " + messageId));
+        
+        deleteMessage(messageId, userId);
+        
+        try {
+            MessageResponseDto response = new MessageResponseDto();
+            response.setId(messageId);
+            response.setConversationId(message.getConversation().getId());
+            response.setType("MESSAGE_DELETED");
+            messagingTemplate.convertAndSend("/topic/conversation." + message.getConversation().getId(), response);
+        } catch (Exception e) {
+            System.err.println("Erreur diffusion WebSocket suppression: " + e.getMessage());
+        }
     }
 }

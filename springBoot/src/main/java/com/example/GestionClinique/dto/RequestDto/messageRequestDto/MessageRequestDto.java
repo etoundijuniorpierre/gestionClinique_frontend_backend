@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 public class MessageRequestDto {
+    private Long id;
     @NotBlank
     private String contenu;
     private boolean lu;
