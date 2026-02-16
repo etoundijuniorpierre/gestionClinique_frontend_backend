@@ -43,7 +43,6 @@ const ConversationItem = styled.div`
 
   &:hover {
     background-color: #f8fafc;
-    transform: translateX(2px);
   }
 
   ${props => props.selected && `

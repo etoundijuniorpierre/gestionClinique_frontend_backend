@@ -55,6 +55,7 @@ const Tab = styled.button`
     background: #f1f3f4;
     color: ${props => props.active ? '#1e3a8a' : '#374151'};
     transform: none;
+    border-bottom: 2px solid ${props => props.active ? '#1e40af' : 'transparent'};
   }
   
   &:focus {
@@ -62,11 +63,13 @@ const Tab = styled.button`
     background: #f1f3f4;
     color: ${props => props.active ? '#1e3a8a' : '#374151'};
     box-shadow: inset 0 0 0 2px rgba(30, 64, 175, 0.1);
+    border-bottom: 2px solid ${props => props.active ? '#1e40af' : 'transparent'};
   }
   
   &:active {
     background: #e5e7eb;
     transform: none;
+    border-bottom: 2px solid ${props => props.active ? '#1e40af' : 'transparent'};
   }
   
   &:first-child {
