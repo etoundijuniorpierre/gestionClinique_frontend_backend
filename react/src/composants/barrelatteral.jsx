@@ -148,38 +148,22 @@ const Button = Styled.button`
         font-size: 13px;
     }
     
-    &::before {
-        message: '';
-        position: absolute;
-        top: 0;
-        left: -100%;
-        width: 100%;
-        height: 100%;
-        background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-        transition: left 0.6s ease;
-    }
-    
     &:hover {
         background: linear-gradient(135deg, rgba(239, 68, 68, 0.95) 0%, rgba(220, 38, 38, 0.95) 100%);
         border-color: rgba(255, 255, 255, 0.3);
-        transform: translateY(-6px) scale(1.05);
         box-shadow: 
             0 20px 40px rgba(239, 68, 68, 0.4),
             0 8px 16px rgba(0, 0, 0, 0.15),
             inset 0 1px 0 rgba(255, 255, 255, 0.3);
         
-        &::before {
-            left: 100%;
-        }
-        
         ${Imgsvg} {
-            transform: translateX(8px) rotate(-15deg) scale(1.2);
+            transform: scale(1.1);
             filter: brightness(0) invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
         }
     }
     
     &:active {
-        transform: translateY(-2px) scale(1.02);
+        transform: scale(0.98);
         box-shadow: 
             0 12px 24px rgba(239, 68, 68, 0.3),
             0 4px 8px rgba(0, 0, 0, 0.1),
@@ -217,42 +201,12 @@ const LogoutContainer = Styled.div`
     z-index: 2;
     
     &::after {
-        message: '';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        width: 0;
-        height: 0;
-        background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 0%, transparent 70%);
-        border-radius: 50%;
-        transform: translate(-50%, -50%);
-        transition: all 0.6s ease;
-        z-index: 1;
-    }
-    
-    ${Button}:hover &::after {
-        width: 200px;
-        height: 200px;
+        display: none;
     }
 `
 
 const PulseEffect = Styled.div`
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 100%;
-    height: 100%;
-    border-radius: 20px;
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.1) 0%, rgba(220, 38, 38, 0.1) 100%);
-    transform: translate(-50%, -50%) scale(0);
-    transition: transform 0.6s ease;
-    pointer-events: none;
-    z-index: 1;
-    
-    ${Button}:hover & {
-        transform: translate(-50%, -50%) scale(1.2);
-        opacity: 0;
-    }
+    display: none;
 `
 
 function Barrelatteral({ children }) {
@@ -287,7 +241,6 @@ function Barrelatteral({ children }) {
             <Image src={logo} />
             <MenuStyle>{children}</MenuStyle>
             <Button onClick={handleLogout}>
-                <PulseEffect />
                 <LogoutContainer>
                     <Imgsvg src={logout} />
                     <LogoutText>Déconnexion</LogoutText>
