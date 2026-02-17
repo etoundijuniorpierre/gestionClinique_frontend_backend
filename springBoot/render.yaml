@@ -15,7 +15,7 @@ services:
         value: prod
     
     # Configuration pour éviter l'endormissement
-    autoDeploy: true
+    autoDeploy: true  # ✅ DÉPLOIEMENT AUTOMATIQUE À CHAQUE PUSH
     
     # Health check avancé
     healthCheck:
@@ -24,6 +24,9 @@ services:
       timeoutSeconds: 10
       gracePeriodSeconds: 60
       
+    # Branch de déploiement
+    branch: prod  # ✅ BRANCH PROD POUR DÉPLOIEMENT AUTO
+    
     # Scaling (si nécessaire)
     scaling:
       minInstances: 1
@@ -33,3 +36,7 @@ services:
     resources:
       memory: 512Mi
       cpu: 0.25
+
+# Configuration pour le déploiement automatique
+buildCommand: "docker build -t gestion-clinique-backend ."
+startCommand: "docker run -p 2025:2025 gestion-clinique-backend"

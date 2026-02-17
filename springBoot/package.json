@@ -1,0 +1,34 @@
+{
+  "name": "gestion-clinique-backend",
+  "version": "1.0.0",
+  "description": "Backend Spring Boot pour Gestion Clinique",
+  "scripts": {
+    "dev": "mvn spring-boot:run",
+    "build": "mvn clean package -DskipTests",
+    "docker-build": "docker build -t gestion-clinique-backend .",
+    "docker-run": "docker run -p 2025:2025 gestion-clinique-backend",
+    "deploy": "node deploy-webhook.js",
+    "post-commit": "npm run deploy",
+    "pre-push": "npm run build && npm run deploy"
+  },
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
+  "devDependencies": {
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3"
+  },
+  "husky": {
+    "hooks": {
+      "pre-push": "npm run build && npm run deploy",
+      "post-commit": "npm run deploy"
+    }
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/TON_USERNAME/gestion-clinique-backend.git"
+  },
+  "keywords": ["spring-boot", "clinic", "medical", "render"],
+  "author": "Your Name",
+  "license": "MIT"
+}

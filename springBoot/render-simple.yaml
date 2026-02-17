@@ -1,0 +1,23 @@
+services:
+  - type: web
+    name: gestion-clinique-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    
+    # Variables d'environnement
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+    
+    # ✅ DÉPLOIEMENT AUTOMATIQUE SEULEMENT
+    autoDeploy: true
+    branch: prod
+    
+    # Health check simple
+    healthCheckPath: /actuator/health
+    
+    # Ressources optimisées
+    resources:
+      memory: 512Mi
+      cpu: 0.25

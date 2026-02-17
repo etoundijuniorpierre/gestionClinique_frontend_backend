@@ -12,6 +12,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ServiceMedicalResponseDto extends BaseResponseDto{
     private String nomService;
+    private String serviceMedicalName;
     private UtilisateurResponseDto medecinResponsable;
     private List<UtilisateurResponseDto> medecinInfos;
 }

@@ -8,6 +8,10 @@ export default defineConfig({
   define: {
     global: 'globalThis',
     'process.env': {},
+    // ✅ Configuration pour Render
+    'process.env.REACT_APP_API_BASE': JSON.stringify(
+      process.env.REACT_APP_API_BASE || 'https://gestion-clinique-backend.onrender.com'
+    )
   },
   resolve: {
     alias: {
@@ -23,6 +27,19 @@ export default defineConfig({
       '@pages': path.resolve(__dirname, './src/pages'),
       '@contexts': path.resolve(__dirname, './src/contexts'),
       '@utils': path.resolve(__dirname, './src/utils'),
+    }
+  },
+  // ✅ Configuration build pour Render
+  build: {
+    outDir: 'build',
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          router: ['react-router-dom']
+        }
+      }
     }
   },
   optimizeDeps: {

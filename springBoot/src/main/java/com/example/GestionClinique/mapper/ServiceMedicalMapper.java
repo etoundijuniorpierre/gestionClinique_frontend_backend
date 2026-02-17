@@ -2,6 +2,7 @@ package com.example.GestionClinique.mapper;
 
 import com.example.GestionClinique.dto.RequestDto.ServiceMedicalRequestDto;
 import com.example.GestionClinique.dto.ResponseDto.ServiceMedicalResponseDto;
+import com.example.GestionClinique.dto.ResponseDto.UtilisateurResponseDto;
 import com.example.GestionClinique.model.entity.ServiceMedical;
 import com.example.GestionClinique.model.entity.Utilisateur;
 import com.example.GestionClinique.repository.UtilisateurRepository;
@@ -10,6 +11,7 @@ import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -27,8 +29,9 @@ public abstract class ServiceMedicalMapper {
     public abstract ServiceMedical toEntity(ServiceMedicalRequestDto dto);
 
     @Mapping(target = "medecinResponsable", source = "medecinResponsable")
+    @Mapping(target = "medecinResponsable.serviceMedicalName", source = "nomService")
     @Mapping(target = "medecinInfos", source = "medecins")
-    @Mapping(target = "serviceMedicalName", source = "medecinResponsable.nomServiceMedicalResponsable")
+    @Mapping(target = "serviceMedicalName", source = "nomService")
     public abstract ServiceMedicalResponseDto toDto(ServiceMedical entity);
 
     public abstract List<ServiceMedicalResponseDto> toDtoList(List<ServiceMedical> entities);
@@ -41,7 +44,9 @@ public abstract class ServiceMedicalMapper {
     public abstract ServiceMedical updateEntityFromDto(ServiceMedicalRequestDto dto, @MappingTarget ServiceMedical entity);
 
     protected Utilisateur mapMedecinResponsableIdToUtilisateur(Long medecinId) {
-        if (medecinId == null) return null;
+        if (medecinId == null) {
+            return null;
+        }
         return utilisateurRepository.findById(medecinId).orElse(null);
     }
 

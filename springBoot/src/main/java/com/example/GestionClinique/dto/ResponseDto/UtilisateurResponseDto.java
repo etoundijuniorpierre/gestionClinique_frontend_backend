@@ -1,5 +1,6 @@
 package com.example.GestionClinique.dto.ResponseDto;
 
+import com.example.GestionClinique.model.entity.Role;
 import com.example.GestionClinique.model.entity.enumElem.ServiceMedical;
 import com.example.GestionClinique.model.entity.enumElem.StatusConnect;
 import lombok.*;
