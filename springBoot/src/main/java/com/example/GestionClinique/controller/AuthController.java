@@ -3,7 +3,9 @@ package com.example.GestionClinique.controller;
 import com.example.GestionClinique.configuration.security.jwtConfig.JwtUtil;
 import com.example.GestionClinique.dto.dtoConnexion.LoginRequest;
 import com.example.GestionClinique.dto.dtoConnexion.LoginResponse;
+import com.example.GestionClinique.model.entity.enumElem.StatusConnect;
 import com.example.GestionClinique.service.HistoriqueActionService;
+import com.example.GestionClinique.service.UtilisateurService;
 import com.example.GestionClinique.service.authService.MonUserDetailsCustom;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,6 +33,7 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
     private final JwtUtil jwtUtil;
     private final HistoriqueActionService historiqueActionService;
+    private final UtilisateurService utilisateurService;
 
     @PostMapping(path = API_NAME
             + "/login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
@@ -49,10 +52,21 @@ public class AuthController {
                         .body("Authentication failed: UserDetails is null.");
             }
 
+            boolean isAlreadyConnected = utilisateurService.findUsersWithStatusConnectedByOrderLastConnected()
+                    .stream()
+                    .anyMatch(user -> user.getId().equals(userDetails.getId()));
+
+            if (isAlreadyConnected) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Cet utilisateur est déjà connecté sur une autre session.");
+            }
+
             String jwt = jwtUtil.generateToken(userDetails);
             String photoUrl = userDetails.getPhotoProfilPath() != null
                     ? "/api/utilisateurs/" + userDetails.getId() + "/photo"
                     : null;
+
+            utilisateurService.updateUserConnectStatus(userDetails.getId(), StatusConnect.CONNECTE);
 
             historiqueActionService.enregistrerAction(
                     "Connexion avec le nom d'utilisateur : " + loginRequest.getUsername(),

@@ -175,6 +175,8 @@ function PageLogin() {
         setError('Utilisateur non trouvé');
       } else if (error.response?.status === 403) {
         setError('Compte désactivé. Contactez l\'administrateur.');
+      } else if (error.response?.status === 409) {
+        setError('Cet utilisateur est déjà connecté sur une autre session.');
       } else if (error.code === 'NETWORK_ERROR' || error.code === 'ERR_NETWORK' || !error.response) {
         setError('Erreur de connexion au serveur. Vérifiez que le backend est lancé.');
       } else {

@@ -17,6 +17,7 @@ const Barrehorizontal1Style = Styled.div`
 const DivStyle = Styled.div`
     display: flex;
     align-items: center;
+    justify-content: flex-end;
     gap: 15px;
     height: 70px;
 `
@@ -113,7 +114,7 @@ const NomDocStyle = Styled.p`
     padding: 8px 16px;
     margin: 0;
     white-space: nowrap;
-    color: #1e293b;
+    color: #374151;
     display: flex;
     align-items: center;
     background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
