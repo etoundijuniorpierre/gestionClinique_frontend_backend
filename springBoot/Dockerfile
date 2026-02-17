@@ -38,9 +38,5 @@ HEALTHCHECK --interval=30s --timeout=3s --start-period=60s --retries=5 \
     CMD wget --quiet --tries=1 --spider http://localhost:2025/actuator/health || exit 1
 
 # Run application with optimized JVM settings
-ENTRYPOINT ["java", \
-    "-XX:+UseContainerSupport", \
-    "-XX:MaxRAMPercentage=75.0", \
-    "-Djava.security.egd=file:/dev/./urandom", \
-    "-jar", \
-    "app.jar"]
+# On utilise sh -c pour permettre l'expansion de la variable JAVA_OPTS
+ENTRYPOINT ["sh", "-c", "java ${JAVA_OPTS} -jar app.jar"]
