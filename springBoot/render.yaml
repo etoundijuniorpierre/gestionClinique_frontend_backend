@@ -1,0 +1,35 @@
+services:
+  # Service Web Spring Boot
+  - type: web
+    name: gestion-clinique-backend
+    env: docker
+    dockerfilePath: ./Dockerfile
+    plan: free
+    healthCheckPath: /actuator/health
+    
+    # Variables d'environnement
+    envVars:
+      - key: JAVA_OPTS
+        value: "-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -Djava.security.egd=file:/dev/./urandom"
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+    
+    # Configuration pour éviter l'endormissement
+    autoDeploy: true
+    
+    # Health check avancé
+    healthCheck:
+      path: /actuator/health
+      intervalSeconds: 30
+      timeoutSeconds: 10
+      gracePeriodSeconds: 60
+      
+    # Scaling (si nécessaire)
+    scaling:
+      minInstances: 1
+      maxInstances: 1
+      
+    # Ressources
+    resources:
+      memory: 512Mi
+      cpu: 0.25

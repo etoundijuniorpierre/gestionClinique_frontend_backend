@@ -10,6 +10,7 @@ import '../../styles/add-buttons.css'
 import { useLoading } from '../LoadingProvider';
 import { useConfirmation } from '../ConfirmationProvider';
 import { handleApiError } from '../../utils/errorHandler';
+import serviceMedicalService from '../../services/serviceMedicalService';
 
 
 const SousDiv1Style = Styled.div`
@@ -187,6 +188,33 @@ const FormulaireUtilisateur = () => {
     nomutilisateur()
   }, [idUser]);
 
+  // Charger les services médicaux pour le select
+  useEffect(() => {
+    const loadServicesMedicaux = async () => {
+      try {
+        const services = await serviceMedicalService.getAllServicesMedicauxForSelect();
+        setServicesMedicaux(services);
+      } catch (error) {
+        console.error('Erreur lors du chargement des services médicaux:', error);
+      }
+    };
+
+    loadServicesMedicaux();
+  }, []);
+
+  // Mettre à jour le nom du service quand l'ID change
+  useEffect(() => {
+    if (formData.serviceMedicalId && servicesMedicaux.length > 0) {
+      const selectedService = servicesMedicaux.find(service => service.id === formData.serviceMedicalId);
+      if (selectedService) {
+        setFormData(prev => ({
+          ...prev,
+          serviceMedicalName: selectedService.nomService
+        }));
+      }
+    }
+  }, [formData.serviceMedicalId, servicesMedicaux]);
+
 
   // Mapping des rôles avec leurs IDs
   const roleMapping = {
@@ -200,18 +228,21 @@ const FormulaireUtilisateur = () => {
     username: "",
     nom: "",
     prenom: "",
-    email: "",
     dateNaissance: "",
+    email: "",
     telephone: "",
     adresse: "",
     genre: "HOMME",
     password: "",
+    serviceMedicalId: "",
     serviceMedicalName: "",
     actif: true,
     role: ""
 
   });
-  const [isVisible, setisVisible] = useState(false)
+
+  const [servicesMedicaux, setServicesMedicaux] = useState([]);
+  const [isVisible, setIsVisible] = useState(false)
   const [telephoneError, setTelephoneError] = useState("")
   const [telephoneValid, setTelephoneValid] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
@@ -280,7 +311,7 @@ const FormulaireUtilisateur = () => {
     }
 
     // Validation du service médical pour les médecins
-    if (formData.role === "MEDECIN" && !formData.serviceMedicalName) {
+    if (formData.role === "MEDECIN" && !formData.serviceMedicalId) {
       window.showNotification('Le champ "Service médical" est obligatoire pour un médecin', 'error');
       return;
     }
@@ -330,7 +361,8 @@ const FormulaireUtilisateur = () => {
     };
 
     // Ajouter le service médical si c'est un médecin
-    if (formData.role === "MEDECIN" && formData.serviceMedicalName) {
+    if (formData.role === "MEDECIN" && formData.serviceMedicalId) {
+      dataToSend.serviceMedicalId = formData.serviceMedicalId;
       dataToSend.serviceMedicalName = formData.serviceMedicalName;
     }
 
@@ -471,19 +503,13 @@ const FormulaireUtilisateur = () => {
             </FormGroup>
             <FormGroupvisible $formgroupdisplay={isVisible ? "flex" : "none"}>
               <Label required={isVisible} htmlFor="servicemedical">Service médical</Label>
-              <Select id="servicemedical" name="serviceMedicalName" value={formData.serviceMedicalName} onChange={handleChange} >
+              <Select id="servicemedical" name="serviceMedicalId" value={formData.serviceMedicalId} onChange={handleChange} >
                 <option value="">Sélectionnez un service</option>
-                <option value="CARDIOLOGIE">CARDIOLOGIE</option>
-                <option value="MEDECINE_GENERALE">MEDECINE_GENERALE</option>
-                <option value="PEDIATRIE">PEDIATRIE</option>
-                <option value="GYNECOLOGIE">GYNECOLOGIE</option>
-                <option value="DERMATOLOGIE">DERMATOLOGIE</option>
-                <option value="OPHTAMOLOGIE">OPHTAMOLOGIE</option>
-                <option value="ORTHOPEDIE">ORTHOPEDIE</option>
-                <option value="RADIOLOGIE">RADIOLOGIE</option>
-                <option value="LABORATOIRE_ANALYSES">LABORATOIRE_ANALYSES</option>
-                <option value="URGENCES">URGENCES</option>
-                <option value="KINESITHERAPIE">KINESITHERAPIE</option>
+                {servicesMedicaux.map(service => (
+                  <option key={service.id} value={service.id}>
+                    {service.nomService}
+                  </option>
+                ))}
               </Select>
             </FormGroupvisible>
           </FormRow>

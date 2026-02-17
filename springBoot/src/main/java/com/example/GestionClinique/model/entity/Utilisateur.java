@@ -59,6 +59,12 @@ public class Utilisateur extends InfoPersonnel {
     @Column(nullable = false)
     private StatusConnect statusConnect = StatusConnect.DECONNECTE;
 
+    @Column(name = "responsable_service_medical")
+    private Boolean responsableServiceMedical = false;
+
+    @Column(name = "nom_service_medical_responsable")
+    private String nomServiceMedicalResponsable;
+
     @OneToMany(mappedBy = "medecin", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<RendezVous> rendezVous = new ArrayList<>();
 

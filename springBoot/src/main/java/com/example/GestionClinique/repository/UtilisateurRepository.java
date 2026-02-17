@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -15,61 +16,54 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+@Repository
 public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> {
-        Optional<Utilisateur> findByEmail(String email);
+    Optional<Utilisateur> findByUsername(String username);
 
-        Optional<Utilisateur> findByUsername(String username);
+    Optional<Utilisateur> findByEmail(String email);
 
-        List<Utilisateur> findByRole_RoleType(RoleType roleType);
+    List<Utilisateur> findByNom(String nom);
 
-        List<Utilisateur> findByNom(String nom);
+    List<Utilisateur> findByStatusConnect(StatusConnect status);
 
-        List<Utilisateur> findByStatusConnect(StatusConnect status);
+    List<Utilisateur> findByResponsableServiceMedicalTrue();
 
-        @Query("SELECT u FROM Utilisateur u WHERE " +
-                        "LOWER(u.nom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-                        "LOWER(u.prenom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-                        "LOWER(u.email) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-                        "LOWER(u.telephone) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-                        "UPPER(u.role) = UPPER(:searchTerm) OR " +
-                        "LOWER(u.serviceMedical) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
-        List<Utilisateur> searchByTerm(@Param("searchTerm") String searchTerm);
+    List<Utilisateur> findUtilisateurByRole_RoleType(RoleType roleType);
 
-        List<Utilisateur> findByStatusConnectOrderByLastLoginDateDesc(StatusConnect status);
+    List<Utilisateur> findByRole_RoleType(RoleType roleType);
 
-        List<Utilisateur> findByStatusConnectOrderByLastLogoutDateDesc(StatusConnect status);
+    @Query("SELECT u FROM Utilisateur u WHERE " +
+                    "LOWER(u.nom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+                    "LOWER(u.prenom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+                    "LOWER(u.username) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+                    "LOWER(u.serviceMedical) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+    List<Utilisateur> searchByTerm(@Param("searchTerm") String searchTerm);
 
-        List<Utilisateur> findByServiceMedical(ServiceMedical serviceMedical);
+    List<Utilisateur> findByStatusConnectOrderByLastLoginDateDesc(StatusConnect status);
 
-        @Query("SELECT u FROM Utilisateur u WHERE " +
-                        "u.serviceMedical = :serviceMedical " +
-                        "AND u.role.roleType = com.example.GestionClinique.model.entity.enumElem.RoleType.MEDECIN " +
-                        "AND NOT EXISTS (SELECT r FROM RendezVous r " +
-                        "WHERE r.medecin = u AND r.statut = com.example.GestionClinique.model.entity.enumElem.StatutRDV.CONFIRME "
-                        +
-                        "AND r.jour = :date AND r.heure = :heure)")
-        List<Utilisateur> findMedecinsByServiceMedicalWithoutRendezVousAt(
-                        @Param("serviceMedical") ServiceMedical serviceMedical,
-                        @Param("date") LocalDate date,
-                        @Param("heure") LocalTime heure);
+    List<Utilisateur> findByStatusConnectOrderByLastLogoutDateDesc(StatusConnect status);
 
-        @Modifying
-        @Query("UPDATE Utilisateur u SET u.photoProfil = :photoPath WHERE u.id = :id")
-        void updatePhotoProfil(@Param("id") Long id, @Param("photoPath") String photoPath);
+    List<Utilisateur> findByServiceMedical(ServiceMedical serviceMedical);
 
-        @Modifying
-        @Query("UPDATE Utilisateur u SET u.actif = :isActive WHERE u.id = :id")
-        void updateActifStatus(@Param("id") Long id, @Param("isActive") boolean isActive);
+    List<Utilisateur> findMedecinsByServiceMedicalWithoutRendezVousAt(ServiceMedical serviceMedical, LocalDate date, LocalTime heure);
 
-        @Modifying
-        @Query("UPDATE Utilisateur u SET u.statusConnect = :status, u.lastLoginDate = :loginDate WHERE u.id = :id")
-        void updateLogin(@Param("id") Long id,
-                        @Param("status") StatusConnect status,
-                        @Param("loginDate") LocalDateTime loginDate);
+    @Modifying
+    @Query("UPDATE Utilisateur u SET u.actif = :isActive WHERE u.id = :id")
+    void updateActifStatus(@Param("id") Long id, @Param("isActive") boolean isActive);
 
-        @Modifying
-        @Query("UPDATE Utilisateur u SET u.statusConnect = :status, u.lastLogoutDate = :logoutDate WHERE u.id = :id")
-        void updateLogout(@Param("id") Long id,
-                        @Param("status") StatusConnect status,
-                        @Param("logoutDate") LocalDateTime logoutDate);
+    @Modifying
+    @Query("UPDATE Utilisateur u SET u.statusConnect = :status, u.lastLoginDate = :loginDate WHERE u.id = :id")
+    void updateLogin(@Param("id") Long id,
+                    @Param("status") StatusConnect status,
+                    @Param("loginDate") LocalDateTime loginDate);
+
+    @Modifying
+    @Query("UPDATE Utilisateur u SET u.statusConnect = :status, u.lastLogoutDate = :logoutDate WHERE u.id = :id")
+    void updateLogout(@Param("id") Long id,
+                    @Param("status") StatusConnect status,
+                    @Param("logoutDate") LocalDateTime logoutDate);
+
+    @Modifying
+    @Query("UPDATE Utilisateur u SET u.photoProfil = :photoPath WHERE u.id = :id")
+    void updatePhotoProfil(@Param("id") Long id, @Param("photoPath") String photoPath);
 }

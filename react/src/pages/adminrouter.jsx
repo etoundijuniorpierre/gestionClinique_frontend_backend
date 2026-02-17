@@ -11,6 +11,7 @@ import DetailsPatient from "../composants/administrateur/afficherdetailpatient";
 import ModifierPatient from "../composants/administrateur/modifierpatient";
 import Dashboard from "../composants/administrateur/dashboard";
 import ChatPage from "./chatpage";
+import PageServiceMedical from "./pageservicemedical";
 
 const Adminroute = () => {
     return (
@@ -36,6 +37,9 @@ const Adminroute = () => {
 
                 {/* Route chat */}
                 <Route path="chat" element={<ChatPage />} />
+
+                {/* Routes services médicaux */}
+                <Route path="services-medicaux/*" element={<PageServiceMedical />} />
 
                 {/* Redirection par défaut */}
                 <Route path="*" element={<Navigate to="dashboard" replace />} />

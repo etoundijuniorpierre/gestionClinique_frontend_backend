@@ -18,4 +18,7 @@ public class UtilisateurRequestDto extends InfoPersonnelRequestDto {
 
     @NotNull(message = "Le rôle est obligatoire")
     private RoleRequestDto role;
+
+    private Boolean responsableServiceMedical = false;
+    private String nomServiceMedicalResponsable;
 }

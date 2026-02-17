@@ -15,5 +15,7 @@ public class InfoPersonnelResponseDto extends BaseResponseDto {
         private String email;
         private String telephone;
         private String adresse;
-        private String genre;
+        private String genre;                
+        private Boolean responsableServiceMedical = false;
+        private String nomServiceMedicalResponsable;
 }

@@ -8,6 +8,7 @@ import imgpatient from '@assets/iconPatient.png'
 import imgdashboard from '@assets/iconutilisateurdashboardblanc.svg'
 import iconEnvelope from '@assets/icon-envelope.svg'
 import iconChat from '@assets/icon-chat.svg'
+import iconConsultation from '@assets/IconConsultation.png'
 import { Link, Outlet, useLocation } from 'react-router-dom';
 
 const PageStyle = Styled.div`
@@ -109,6 +110,13 @@ function PageAdmin(){
                     onClick={() => changerContenu('patient')}
                 >
                     <Eltmenu nommenu='Patients' img={imgpatient} active={contenuActif === 'patient'} />
+                </Link>
+                <Link 
+                    to="/admin/services-medicaux" 
+                    className={contenuActif === 'services-medicaux' ? 'eltmenu' : 'lienadmin'} 
+                    onClick={() => changerContenu('services-medicaux')}
+                >
+                    <Eltmenu nommenu='Services Médicaux' img={iconConsultation} active={contenuActif === 'services-medicaux'} />
                 </Link>
                 <Link 
                     to="/admin/chat" 

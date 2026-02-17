@@ -10,6 +10,7 @@ import '../../styles/add-buttons.css'
 import { useLoading } from '../LoadingProvider';
 import { useConfirmation } from '../ConfirmationProvider';
 import { handleApiError } from '../../utils/errorHandler';
+import serviceMedicalService from '../../services/serviceMedicalService';
 
 
 const SousDiv1Style = Styled.div`
@@ -197,9 +198,24 @@ const ModifierUtilisateur = () => {
     nomutilisateur()
   }, [idUser]);
 
+  // Charger les services médicaux pour le select
+  useEffect(() => {
+    const loadServicesMedicaux = async () => {
+      try {
+        const services = await serviceMedicalService.getAllServicesMedicauxForSelect();
+        setServicesMedicaux(services);
+      } catch (error) {
+        console.error('Erreur lors du chargement des services médicaux:', error);
+      }
+    };
+
+    loadServicesMedicaux();
+  }, []);
+
   const [isVisiblerole, setisVisiblerole] = useState(false)
   const [formData, setFormData] = useState({});
   const [erreur, setErreur] = useState(null);
+  const [servicesMedicaux, setServicesMedicaux] = useState([]);
 
 
   const { id } = useParams();
@@ -295,7 +311,8 @@ const ModifierUtilisateur = () => {
         id: roleMapping[selectedRoleType],
         roleType: selectedRoleType
       },
-      // Réinitialiser serviceMedicalName si ce n'est pas un médecin
+      // Réinitialiser serviceMedicalId et serviceMedicalName si ce n'est pas un médecin
+      serviceMedicalId: isMedecin ? prev.serviceMedicalId : "",
       serviceMedicalName: isMedecin ? prev.serviceMedicalName : ""
     }));
   };
@@ -480,20 +497,14 @@ const ModifierUtilisateur = () => {
                 </Select>
               </FormGroup>
               <FormGroupvisible $formgroupdisplay={isVisiblerole ? "flex" : "none"}>
-                <Label htmlFor="serviceMedicalName">Service médical</Label>
-                <Select id="serviceMedicalName" name="serviceMedicalName" value={formData.serviceMedicalName || ""} onChange={handleChange} >
+                <Label htmlFor="serviceMedicalId">Service médical</Label>
+                <Select id="serviceMedicalId" name="serviceMedicalId" value={formData.serviceMedicalId || ""} onChange={handleChange} >
                   <option value="">Sélectionnez un service</option>
-                  <option value="CARDIOLOGIE">CARDIOLOGIE</option>
-                  <option value="MEDECINE_GENERALE">MEDECINE_GENERALE</option>
-                  <option value="PEDIATRIE">PEDIATRIE</option>
-                  <option value="GYNECOLOGIE">GYNECOLOGIE</option>
-                  <option value="DERMATOLOGIE">DERMATOLOGIE</option>
-                  <option value="OPHTAMOLOGIE">OPHTAMOLOGIE</option>
-                  <option value="ORTHOPEDIE">ORTHOPEDIE</option>
-                  <option value="RADIOLOGIE">RADIOLOGIE</option>
-                  <option value="LABORATOIRE_ANALYSES">LABORATOIRE_ANALYSES</option>
-                  <option value="URGENCES">URGENCES</option>
-                  <option value="KINESITHERAPIE">KINESITHERAPIE</option>
+                  {servicesMedicaux.map(service => (
+                    <option key={service.id} value={service.id}>
+                      {service.nomService}
+                    </option>
+                  ))}
                 </Select>
               </FormGroupvisible>
             </FormRow>
