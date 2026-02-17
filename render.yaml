@@ -25,9 +25,8 @@ services:
   # --------------------------------------------------------------------------
   # FRONTEND : Static Site (Le plus rapide et gratuit)
   # --------------------------------------------------------------------------
-  - type: web
+  - type: static
     name: gestion-clinique-frontend
-    env: static
     plan: free
     buildCommand: "cd react && npm install && npm run build"
     publishPath: "react/build"
