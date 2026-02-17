@@ -23,13 +23,14 @@ services:
   # --------------------------------------------------------------------------
   # FRONTEND : Static Site
   # --------------------------------------------------------------------------
-  - type: static
+  - type: web
     name: gestion-clinique-frontend
+    runtime: static
     plan: free
     branch: prod2
     rootDir: react
     buildCommand: npm install && npm run build
-    publishDir: build
+    staticPublishPath: ./build
     autoDeploy: true
     routes:
       - type: rewrite
