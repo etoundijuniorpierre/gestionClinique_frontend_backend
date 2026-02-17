@@ -26,7 +26,6 @@ services:
   - type: web
     name: gestion-clinique-frontend
     runtime: static
-    plan: free
     branch: prod2
     rootDir: react
     buildCommand: npm install && npm run build
