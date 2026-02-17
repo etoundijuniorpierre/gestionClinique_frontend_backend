@@ -33,10 +33,10 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
     List<Utilisateur> findByRole_RoleType(RoleType roleType);
 
     @Query("SELECT u FROM Utilisateur u WHERE " +
-                    "LOWER(u.nom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-                    "LOWER(u.prenom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-                    "LOWER(u.username) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
-                    "LOWER(u.serviceMedical) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
+            "LOWER(u.nom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(u.prenom) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(u.username) LIKE LOWER(CONCAT('%', :searchTerm, '%')) OR " +
+            "LOWER(u.serviceMedical) LIKE LOWER(CONCAT('%', :searchTerm, '%'))")
     List<Utilisateur> searchByTerm(@Param("searchTerm") String searchTerm);
 
     List<Utilisateur> findByStatusConnectOrderByLastLoginDateDesc(StatusConnect status);
@@ -45,7 +45,13 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
 
     List<Utilisateur> findByServiceMedical(ServiceMedical serviceMedical);
 
-    List<Utilisateur> findMedecinsByServiceMedicalWithoutRendezVousAt(ServiceMedical serviceMedical, LocalDate date, LocalTime heure);
+    @Query("SELECT u FROM Utilisateur u WHERE u.serviceMedical = :serviceMedical " +
+            "AND u.role.roleType = com.example.GestionClinique.model.entity.enumElem.RoleType.MEDECIN " +
+            "AND NOT EXISTS (SELECT r FROM RendezVous r WHERE r.medecin = u AND r.jour = :date AND r.heure = :heure)")
+    List<Utilisateur> findMedecinsByServiceMedicalWithoutRendezVousAt(
+            @Param("serviceMedical") ServiceMedical serviceMedical,
+            @Param("date") LocalDate date,
+            @Param("heure") LocalTime heure);
 
     @Modifying
     @Query("UPDATE Utilisateur u SET u.actif = :isActive WHERE u.id = :id")
@@ -54,14 +60,14 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
     @Modifying
     @Query("UPDATE Utilisateur u SET u.statusConnect = :status, u.lastLoginDate = :loginDate WHERE u.id = :id")
     void updateLogin(@Param("id") Long id,
-                    @Param("status") StatusConnect status,
-                    @Param("loginDate") LocalDateTime loginDate);
+            @Param("status") StatusConnect status,
+            @Param("loginDate") LocalDateTime loginDate);
 
     @Modifying
     @Query("UPDATE Utilisateur u SET u.statusConnect = :status, u.lastLogoutDate = :logoutDate WHERE u.id = :id")
     void updateLogout(@Param("id") Long id,
-                    @Param("status") StatusConnect status,
-                    @Param("logoutDate") LocalDateTime logoutDate);
+            @Param("status") StatusConnect status,
+            @Param("logoutDate") LocalDateTime logoutDate);
 
     @Modifying
     @Query("UPDATE Utilisateur u SET u.photoProfil = :photoPath WHERE u.id = :id")
