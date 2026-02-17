@@ -83,7 +83,6 @@ const styles = StyleSheet.create({
     marginBottom: 2
   },
   factureInfo: {
-    alignItems: "center",
     textAlign: "center",
     flexDirection: "column",
     justifyContent: "center",

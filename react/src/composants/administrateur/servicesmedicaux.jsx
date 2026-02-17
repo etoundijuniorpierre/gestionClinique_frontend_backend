@@ -9,8 +9,7 @@ import React, { useState, useEffect } from 'react';
 import Barrehorizontal1 from '../barrehorizontal1';
 import iconrecherche from '../../assets/iconrecherche.png'
 import iconsupprime from '../../assets/Iconsupprime.svg'
-import iconmodif from '../../assets/Iconmodif.svg'
-import iconajout from '../../assets/Iconajout.svg'
+import iconmodif from '../../assets/Edit 4.png'
 import { Link, useNavigate } from 'react-router-dom';
 import { useLoading } from '../LoadingProvider';
 import { useConfirmation } from '../ConfirmationProvider';
@@ -180,7 +179,7 @@ const ServicesMedicaux = () => {
                     <div className='divadd'>
                         <Link to="/admin/services-medicaux/creer">
                             <button className='bouttonajouter'>
-                                <img src={iconajout} alt="ajouter" className='iconajout' />
+                                <span style={{ marginRight: '8px', fontSize: '1.2em' }}>+</span>
                                 Ajouter un Service Médical
                             </button>
                         </Link>
