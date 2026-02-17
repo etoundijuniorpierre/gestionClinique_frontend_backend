@@ -1,8 +1,8 @@
 import '../../styles/Zonedaffichage.css'
 import '../../styles/Barrehorizontal2.css'
-import '../../styles/formulaire.css'
 import '../../styles/add-buttons.css'
 import '../../styles/action-buttons.css'
+import '../../styles/formulaire.css'  // ✅ AJOUTER IMPORT MANQUANT
 import Styled from 'styled-components'
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
