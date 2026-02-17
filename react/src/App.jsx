@@ -4,7 +4,7 @@ import {
   Routes,
 } from 'react-router-dom'
 
-
+import './utils/keepAlive.js';
 import PageLogin from "./pages/pagelogin"
 import PageAdmin from "./pages/pageadmin"
 import PageMedecin from "./pages/pagemedecin"
