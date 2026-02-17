@@ -8,6 +8,7 @@ import com.example.GestionClinique.model.entity.ServiceMedical;
 import com.example.GestionClinique.model.entity.Utilisateur;
 import com.example.GestionClinique.repository.ServiceMedicalRepository;
 import com.example.GestionClinique.repository.UtilisateurRepository;
+import com.example.GestionClinique.service.SalleService;
 import com.example.GestionClinique.service.ServiceMedicalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -26,6 +27,7 @@ public class ServiceMedicalServiceImpl implements ServiceMedicalService {
     private final ServiceMedicalRepository serviceMedicalRepository;
     private final ServiceMedicalMapper serviceMedicalMapper;
     private final UtilisateurRepository utilisateurRepository;
+    private final SalleService salleService;
 
     @Override
     public ServiceMedicalResponseDto createServiceMedical(ServiceMedicalRequestDto serviceMedicalRequestDto) {
@@ -35,17 +37,24 @@ public class ServiceMedicalServiceImpl implements ServiceMedicalService {
 
         ServiceMedical serviceMedical = serviceMedicalMapper.toEntity(serviceMedicalRequestDto);
         serviceMedical.setCreationDate(LocalDateTime.now());
-        
+
         ServiceMedical savedServiceMedical = serviceMedicalRepository.save(serviceMedical);
-        
+
         if (serviceMedicalRequestDto.getMedecinResponsableId() != null) {
-            Utilisateur medecinResponsable = utilisateurRepository.findById(serviceMedicalRequestDto.getMedecinResponsableId())
+            Utilisateur medecinResponsable = utilisateurRepository
+                    .findById(serviceMedicalRequestDto.getMedecinResponsableId())
                     .orElseThrow(() -> new ResourceNotFoundException("Médecin responsable non trouvé"));
             medecinResponsable.setResponsableServiceMedical(true);
             medecinResponsable.setNomServiceMedicalResponsable(serviceMedicalRequestDto.getNomService());
             utilisateurRepository.save(medecinResponsable);
         }
-        
+
+        com.example.GestionClinique.model.entity.enumElem.ServiceMedical serviceEnum = com.example.GestionClinique.model.entity.enumElem.ServiceMedical
+                .fromString(savedServiceMedical.getNomService());
+        if (serviceEnum != null) {
+            salleService.ensureSalleExistsForService(serviceEnum);
+        }
+
         return serviceMedicalMapper.toDto(savedServiceMedical);
     }
 
@@ -70,12 +79,13 @@ public class ServiceMedicalServiceImpl implements ServiceMedicalService {
                 .orElseThrow(() -> new ResourceNotFoundException("Service médical non trouvé avec l'ID: " + id));
 
         if (!existingServiceMedical.getNomService().equals(serviceMedicalRequestDto.getNomService()) &&
-            serviceMedicalRepository.existsByNomService(serviceMedicalRequestDto.getNomService())) {
+                serviceMedicalRepository.existsByNomService(serviceMedicalRequestDto.getNomService())) {
             throw new IllegalArgumentException("Un service médical avec ce nom existe déjà");
         }
 
-        Long oldResponsableId = existingServiceMedical.getMedecinResponsable() != null ? 
-                existingServiceMedical.getMedecinResponsable().getId() : null;
+        Long oldResponsableId = existingServiceMedical.getMedecinResponsable() != null
+                ? existingServiceMedical.getMedecinResponsable().getId()
+                : null;
         Long newResponsableId = serviceMedicalRequestDto.getMedecinResponsableId();
 
         if (oldResponsableId != null && !oldResponsableId.equals(newResponsableId)) {
@@ -97,7 +107,7 @@ public class ServiceMedicalServiceImpl implements ServiceMedicalService {
 
         serviceMedicalMapper.updateEntityFromDto(serviceMedicalRequestDto, existingServiceMedical);
         existingServiceMedical.setModificationDate(LocalDateTime.now());
-        
+
         ServiceMedical updatedServiceMedical = serviceMedicalRepository.save(existingServiceMedical);
         return serviceMedicalMapper.toDto(updatedServiceMedical);
     }
@@ -113,7 +123,7 @@ public class ServiceMedicalServiceImpl implements ServiceMedicalService {
             responsable.setNomServiceMedicalResponsable(null);
             utilisateurRepository.save(responsable);
         }
-        
+
         serviceMedicalRepository.delete(serviceMedical);
     }
 
@@ -130,15 +140,16 @@ public class ServiceMedicalServiceImpl implements ServiceMedicalService {
     @Transactional(readOnly = true)
     public List<Utilisateur> getMedecinsByServiceMedicalId(Long serviceMedicalId) {
         ServiceMedical serviceMedical = serviceMedicalRepository.findByIdWithMedecins(serviceMedicalId)
-                .orElseThrow(() -> new ResourceNotFoundException("Service médical non trouvé avec l'ID: " + serviceMedicalId));
-        
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Service médical non trouvé avec l'ID: " + serviceMedicalId));
+
         List<Utilisateur> medecins = new ArrayList<>(serviceMedical.getMedecins());
-        
-        if (serviceMedical.getMedecinResponsable() != null && 
-            !medecins.contains(serviceMedical.getMedecinResponsable())) {
+
+        if (serviceMedical.getMedecinResponsable() != null &&
+                !medecins.contains(serviceMedical.getMedecinResponsable())) {
             medecins.add(serviceMedical.getMedecinResponsable());
         }
-        
+
         return medecins;
     }
 

@@ -28,4 +28,13 @@ public enum ServiceMedical {
     ServiceMedical(double montant) {
         this.montant = montant;
     }
+
+    public static ServiceMedical fromString(String text) {
+        for (ServiceMedical b : ServiceMedical.values()) {
+            if (b.name().equalsIgnoreCase(text)) {
+                return b;
+            }
+        }
+        return null;
+    }
 }

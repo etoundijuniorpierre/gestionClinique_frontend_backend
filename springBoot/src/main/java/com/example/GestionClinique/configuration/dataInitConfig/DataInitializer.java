@@ -6,8 +6,8 @@ import com.example.GestionClinique.model.entity.Utilisateur;
 import com.example.GestionClinique.model.entity.enumElem.RoleType;
 import com.example.GestionClinique.model.entity.enumElem.ServiceMedical;
 import com.example.GestionClinique.repository.RoleRepository;
-import com.example.GestionClinique.repository.SalleRepository;
 import com.example.GestionClinique.repository.UtilisateurRepository;
+import com.example.GestionClinique.service.SalleService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,12 +29,12 @@ public class DataInitializer {
     @Transactional
     public CommandLineRunner initializeData(RoleRepository roleRepository,
             UtilisateurRepository utilisateurRepository,
-            SalleRepository salleRepository,
+            SalleService salleService,
             PasswordEncoder passwordEncoder) {
         return args -> {
             initializeRoles(roleRepository);
             initializeAdminUser(utilisateurRepository, roleRepository, passwordEncoder);
-            initializeSalles(salleRepository);
+            salleService.initializeAllSalles();
         };
     }
 
@@ -81,18 +81,5 @@ public class DataInitializer {
 
     private int calculateAge(LocalDate birthDate) {
         return Period.between(birthDate, LocalDate.now()).getYears();
-    }
-
-    private void initializeSalles(SalleRepository salleRepository) {
-        Arrays.stream(ServiceMedical.values()).forEach(serviceMedical -> {
-            if (salleRepository.findByServiceMedical(serviceMedical) == null) {
-                Salle salle = new Salle();
-                salle.setNumeroSalle("Salle-" + serviceMedical.name());
-                salle.setServiceMedical(serviceMedical);
-                salle.setStatutSalle(DISPONIBLE);
-                salleRepository.save(salle);
-                System.out.println("Created salle for service: " + serviceMedical);
-            }
-        });
     }
 }
