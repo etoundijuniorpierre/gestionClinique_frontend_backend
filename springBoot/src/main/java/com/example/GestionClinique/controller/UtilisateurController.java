@@ -10,7 +10,9 @@ import com.example.GestionClinique.model.entity.RendezVous;
 import com.example.GestionClinique.model.entity.Utilisateur;
 import com.example.GestionClinique.model.entity.enumElem.RoleType;
 import com.example.GestionClinique.model.entity.enumElem.ServiceMedical;
+import com.example.GestionClinique.model.entity.enumElem.StatusConnect;
 import com.example.GestionClinique.service.UtilisateurService;
+import com.example.GestionClinique.service.authService.UserDetailsServiceImpl;
 import com.example.GestionClinique.service.photoService.FileStorageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -25,13 +27,17 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.example.GestionClinique.configuration.utils.Constants.API_NAME;
 
@@ -256,5 +262,50 @@ public class UtilisateurController {
                 serviceMedical, date, heure);
 
         return ResponseEntity.ok(utilisateurMapper.toDtoList(medecins));
+    }
+
+    @PostMapping("/status/disconnect")
+    @Operation(summary = "Déconnecter l'utilisateur connecté",
+            description = "Change le status de l'utilisateur connecté vers DECONNECTE")
+    public ResponseEntity<Map<String, Object>> disconnectUser(@AuthenticationPrincipal UserDetails userDetails) {
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            System.out.println("🔴 ENDPOINT DÉDIÉ - Déconnexion forcée appelée");
+            
+            // Extraire l'ID de l'utilisateur depuis UserDetails
+            Long userId = null;
+            if (userDetails instanceof com.example.GestionClinique.service.authService.MonUserDetailsCustom) {
+                userId = ((com.example.GestionClinique.service.authService.MonUserDetailsCustom) userDetails).getId();
+            }
+            
+            if (userId == null) {
+                System.out.println("❌ Impossible d'extraire l'ID utilisateur");
+                response.put("success", false);
+                response.put("message", "ID utilisateur non trouvé");
+                return ResponseEntity.badRequest().body(response);
+            }
+            
+            System.out.println("👤 ID utilisateur: " + userId);
+            
+            // Mettre à jour le status
+            utilisateurService.updateUserConnectStatus(userId, StatusConnect.DECONNECTE);
+            
+            System.out.println("✅ Status changé vers DECONNECTE via endpoint dédié");
+            
+            response.put("success", true);
+            response.put("message", "Status changé vers DECONNECTE");
+            response.put("userId", userId);
+            
+            return ResponseEntity.ok(response);
+            
+        } catch (Exception e) {
+            System.err.println("❌ Erreur dans endpoint de déconnexion: " + e.getMessage());
+            e.printStackTrace();
+            
+            response.put("success", false);
+            response.put("message", "Erreur: " + e.getMessage());
+            return ResponseEntity.internalServerError().body(response);
+        }
     }
 }

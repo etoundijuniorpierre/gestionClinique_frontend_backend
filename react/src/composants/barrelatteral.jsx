@@ -213,23 +213,46 @@ function Barrelatteral({ children }) {
     const navigate = useNavigate();
 
     const handleLogout = async () => {
+        console.log("🔴 DÉBUT DU LOGOUT FRONTEND");
+        
         try {
             const token = localStorage.getItem('token');
+            console.log("🔑 Token trouvé:", token ? "OUI" : "NON");
+            
             if (!token) {
                 console.warn("Aucun token trouvé");
                 navigate("/");
                 return;
             }
 
-            // Appel de l'endpoint /logout géré par CustomLogoutHandler
-            await axiosInstance.post(`/Api/V1/clinique/logout`);
+            console.log("📡 Appel du backend: POST /Api/V1/clinique/logout");
+            
+            // 1. Essayer le logout standard (CustomLogoutHandler)
+            try {
+                const response = await axiosInstance.post(`/Api/V1/clinique/logout`);
+                console.log("✅ Réponse backend reçue:", response.status);
+            } catch (logoutError) {
+                console.warn("⚠️ Erreur logout standard:", logoutError.message);
+                
+                // 2. Si erreur, appeler l'endpoint dédié pour le status
+                console.log("🔄 Appel endpoint dédié pour le status");
+                try {
+                    const statusResponse = await axiosInstance.post(`/Api/V1/clinique/utilisateurs/status/disconnect`);
+                    console.log("✅ Status changé via endpoint dédié:", statusResponse.data);
+                } catch (statusError) {
+                    console.error("❌ Erreur même avec endpoint dédié:", statusError.message);
+                }
+            }
 
             // Nettoyage session locale
             localStorage.clear();
             navigate("/");
 
         } catch (error) {
-            console.error("Erreur pendant le logout :", error);
+            console.error("❌ Erreur générale pendant le logout :", error);
+            console.error("Status:", error.response?.status);
+            console.error("Data:", error.response?.data);
+            
             // Même si erreur backend, on nettoie côté frontend
             localStorage.clear();
             navigate("/");

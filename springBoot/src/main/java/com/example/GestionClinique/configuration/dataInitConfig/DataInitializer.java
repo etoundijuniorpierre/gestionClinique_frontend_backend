@@ -54,20 +54,23 @@ public class DataInitializer {
     private void initializeAdminUser(UtilisateurRepository utilisateurRepository,
             RoleRepository roleRepository,
             PasswordEncoder passwordEncoder) {
-        if (utilisateurRepository.findByUsername("admin").isEmpty()) {
+        boolean adminExists = utilisateurRepository.findByUsername("admin").isPresent();
+        if (!adminExists) {
+            System.out.println("Creating default admin user...");
+            
+            LocalDate birthDate = LocalDate.of(1990, 1, 1);
+            int age = calculateAge(birthDate);
+            
             Role adminRole = roleRepository.findFirstByRoleType(ADMIN)
                     .orElseThrow(() -> new IllegalStateException("ADMIN role not found"));
 
-            LocalDate birthDate = LocalDate.parse("2001-09-08");
-            long age = calculateAge(birthDate);
-
             Utilisateur admin = new Utilisateur();
-            admin.setNom("admin");
-            admin.setPrenom("admin");
+            admin.setNom("Admin");
+            admin.setPrenom("System");
             admin.setUsername("admin");
-            admin.setEmail("admin@gmail.com");
+            admin.setEmail("admin@clinique.com");
             admin.setDateNaissance(birthDate);
-            admin.setAge(age);
+            admin.setAge((long) age);
             admin.setTelephone("+237677850000");
             admin.setAdresse("Yaounde Mimboman Sapeur");
             admin.setGenre("Homme");
@@ -77,7 +80,18 @@ public class DataInitializer {
             admin.setStatusConnect(StatusConnect.DECONNECTE);
 
             utilisateurRepository.save(admin);
-            System.out.println("Created default admin user with age: " + age);
+            System.out.println("Created default admin user with status DECONNECTE - Age: " + age);
+        } else {
+            // Vérifier et forcer le status DECONNECTE pour l'admin existant
+            Utilisateur existingAdmin = utilisateurRepository.findByUsername("admin").orElse(null);
+            if (existingAdmin != null && existingAdmin.getStatusConnect() != StatusConnect.DECONNECTE) {
+                System.out.println("⚠️ Admin user exists but status is not DECONNECTE, fixing...");
+                existingAdmin.setStatusConnect(StatusConnect.DECONNECTE);
+                utilisateurRepository.save(existingAdmin);
+                System.out.println("Admin status forced to DECONNECTE");
+            } else if (existingAdmin != null) {
+                System.out.println("Admin user exists with correct status: " + existingAdmin.getStatusConnect());
+            }
         }
     }
 
