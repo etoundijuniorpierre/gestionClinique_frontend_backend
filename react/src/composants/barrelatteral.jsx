@@ -64,7 +64,7 @@ const BarrelatteralStyle = Styled.div`
     display: flex;
     flex-direction: column;
     align-items: center;
-    width: 20vw;
+    width: calc(20vw + 20px);
     height: 100vh;
     gap: 41px;
     padding-top: 32px;
@@ -74,7 +74,7 @@ const BarrelatteralStyle = Styled.div`
     overflow: hidden;
     
     @media (max-width: 1200px) {
-        width: 25vw;
+        width: calc(25vw + 20px);
         gap: 32px;
         padding-top: 24px;
         padding-bottom: 24px;
@@ -108,7 +108,7 @@ const Button = Styled.button`
     bottom: 25px;
     left: 15px;
     right: 15px;
-    width: calc(20vw - 30px);
+    width: calc(20vw + 20px - 30px);
     gap: 12px;
     padding: 18px;
     text-align: center;
@@ -125,7 +125,7 @@ const Button = Styled.button`
     overflow: hidden;
     
     @media (max-width: 1200px) {
-        width: calc(25vw - 30px);
+        width: calc(25vw + 20px - 30px);
         padding: 16px 24px;
         font-size: 14px;
     }

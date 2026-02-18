@@ -24,7 +24,7 @@ const PageStyle = Styled.div`
 `
 
 const DivStyle = Styled.div`
-    width: 80vw;
+    width: calc(80vw - 20px);
     height: 100vh;
     display: flex;
     flex-direction: column;
@@ -34,7 +34,7 @@ const DivStyle = Styled.div`
     overflow-y: auto;
     
     @media (max-width: 1200px) {
-        width: 75vw;
+        width: calc(75vw - 20px);
         padding-left: 24px;
         padding-top: 24px;
     }

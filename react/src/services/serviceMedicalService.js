@@ -5,7 +5,7 @@ const serviceMedicalService = {
   // Créer un service médical
   createServiceMedical: async (serviceMedicalData) => {
     try {
-      const response = await axiosInstance.post('api/services-medicaux', serviceMedicalData);
+      const response = await axiosInstance.post('services-medicaux', serviceMedicalData);
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la création du service médical:', error);
@@ -16,7 +16,7 @@ const serviceMedicalService = {
   // Récupérer tous les services médicaux (pour les select/dropdown)
   getAllServicesMedicauxForSelect: async () => {
     try {
-      const response = await axiosInstance.get('api/services-medicaux');
+      const response = await axiosInstance.get('services-medicaux');
       return response.data.map(service => ({
         id: service.id,
         nomService: service.nomService,
@@ -31,7 +31,7 @@ const serviceMedicalService = {
   // Récupérer tous les services médicaux avec IDs pour les formulaires
   getAllServicesMedicauxWithIds: async () => {
     try {
-      const response = await axiosInstance.get('api/services-medicaux');
+      const response = await axiosInstance.get('services-medicaux');
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des services médicaux:', error);
@@ -42,7 +42,7 @@ const serviceMedicalService = {
   // Récupérer tous les services médicaux
   getAllServicesMedicaux: async () => {
     try {
-      const response = await axiosInstance.get('api/services-medicaux');
+      const response = await axiosInstance.get('services-medicaux');
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des services médicaux:', error);
@@ -53,7 +53,7 @@ const serviceMedicalService = {
   // Récupérer un service médical par ID
   getServiceMedicalById: async (id) => {
     try {
-      const response = await axiosInstance.get(`api/services-medicaux/${id}`);
+      const response = await axiosInstance.get(`services-medicaux/${id}`);
       return response.data;
     } catch (error) {
       console.error(`Erreur lors de la récupération du service médical ${id}:`, error);
@@ -64,7 +64,7 @@ const serviceMedicalService = {
   // Mettre à jour un service médical
   updateServiceMedical: async (id, serviceMedicalData) => {
     try {
-      const response = await axiosInstance.put(`api/services-medicaux/${id}`, serviceMedicalData);
+      const response = await axiosInstance.put(`services-medicaux/${id}`, serviceMedicalData);
       return response.data;
     } catch (error) {
       console.error(`Erreur lors de la mise à jour du service médical ${id}:`, error);
@@ -75,7 +75,7 @@ const serviceMedicalService = {
   // Supprimer un service médical
   deleteServiceMedical: async (id) => {
     try {
-      await axiosInstance.delete(`api/services-medicaux/${id}`);
+      await axiosInstance.delete(`services-medicaux/${id}`);
       return true;
     } catch (error) {
       console.error(`Erreur lors de la suppression du service médical ${id}:`, error);
@@ -86,7 +86,7 @@ const serviceMedicalService = {
   // Récupérer les services par médecin responsable
   getServicesByMedecinResponsable: async (medecinId) => {
     try {
-      const response = await axiosInstance.get(`api/services-medicaux/medecin-responsable/${medecinId}`);
+      const response = await axiosInstance.get(`services-medicaux/medecin-responsable/${medecinId}`);
       return response.data;
     } catch (error) {
       console.error(`Erreur lors de la récupération des services du médecin ${medecinId}:`, error);
@@ -97,7 +97,7 @@ const serviceMedicalService = {
   // Récupérer les médecins d'un service médical
   getMedecinsByServiceMedicalId: async (serviceId) => {
     try {
-      const response = await axiosInstance.get(`api/services-medicaux/${serviceId}/medecins`);
+      const response = await axiosInstance.get(`services-medicaux/${serviceId}/medecins`);
       return response.data;
     } catch (error) {
       console.error(`Erreur lors de la récupération des médecins du service ${serviceId}:`, error);
@@ -108,7 +108,7 @@ const serviceMedicalService = {
   // Récupérer tous les responsables de services médicaux
   getAllResponsablesServicesMedicaux: async () => {
     try {
-      const response = await axiosInstance.get('api/services-medicaux/responsables');
+      const response = await axiosInstance.get('services-medicaux/responsables');
       return response.data;
     } catch (error) {
       console.error('Erreur lors de la récupération des responsables de services médicaux:', error);
