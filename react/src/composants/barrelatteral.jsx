@@ -225,23 +225,17 @@ function Barrelatteral({ children }) {
                 return;
             }
 
-            console.log("📡 Appel du backend: POST /Api/V1/clinique/logout");
+            console.log("📡 Appel direct de l'endpoint de déconnexion");
             
-            // 1. Essayer le logout standard (CustomLogoutHandler)
+            // Appel direct de l'endpoint dédié pour le status
             try {
-                const response = await axiosInstance.post(`/Api/V1/clinique/logout`);
-                console.log("✅ Réponse backend reçue:", response.status);
-            } catch (logoutError) {
-                console.warn("⚠️ Erreur logout standard:", logoutError.message);
-                
-                // 2. Si erreur, appeler l'endpoint dédié pour le status
-                console.log("🔄 Appel endpoint dédié pour le status");
-                try {
-                    const statusResponse = await axiosInstance.post(`/Api/V1/clinique/utilisateurs/status/disconnect`);
-                    console.log("✅ Status changé via endpoint dédié:", statusResponse.data);
-                } catch (statusError) {
-                    console.error("❌ Erreur même avec endpoint dédié:", statusError.message);
-                }
+                const statusResponse = await axiosInstance.post(`/Api/V1/clinique/utilisateurs/status/disconnect`);
+                console.log("✅ Status changé via endpoint dédié:", statusResponse.data);
+                console.log("✅ Status response:", statusResponse.status);
+            } catch (statusError) {
+                console.error("❌ Erreur endpoint dédié:", statusError.message);
+                console.error("❌ Status error:", statusError.response?.status);
+                console.error("❌ Status data:", statusError.response?.data);
             }
 
             // Nettoyage session locale

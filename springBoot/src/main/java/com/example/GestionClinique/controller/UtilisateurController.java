@@ -272,11 +272,13 @@ public class UtilisateurController {
         
         try {
             System.out.println("🔴 ENDPOINT DÉDIÉ - Déconnexion forcée appelée");
+            System.out.println("🔑 UserDetails reçu: " + (userDetails != null ? userDetails.getUsername() : "NULL"));
             
             // Extraire l'ID de l'utilisateur depuis UserDetails
             Long userId = null;
             if (userDetails instanceof com.example.GestionClinique.service.authService.MonUserDetailsCustom) {
                 userId = ((com.example.GestionClinique.service.authService.MonUserDetailsCustom) userDetails).getId();
+                System.out.println("👤 ID utilisateur extrait: " + userId);
             }
             
             if (userId == null) {
@@ -288,14 +290,24 @@ public class UtilisateurController {
             
             System.out.println("👤 ID utilisateur: " + userId);
             
+            // Vérifier le status avant changement
+            com.example.GestionClinique.model.entity.Utilisateur userBefore = utilisateurService.findUtilisateurById(userId);
+            System.out.println("📊 Status AVANT changement: " + userBefore.getStatusConnect());
+            
             // Mettre à jour le status
             utilisateurService.updateUserConnectStatus(userId, StatusConnect.DECONNECTE);
+            
+            // Vérifier le status après changement
+            com.example.GestionClinique.model.entity.Utilisateur userAfter = utilisateurService.findUtilisateurById(userId);
+            System.out.println("✅ Status APRÈS changement: " + userAfter.getStatusConnect());
             
             System.out.println("✅ Status changé vers DECONNECTE via endpoint dédié");
             
             response.put("success", true);
             response.put("message", "Status changé vers DECONNECTE");
             response.put("userId", userId);
+            response.put("statusBefore", userBefore.getStatusConnect());
+            response.put("statusAfter", userAfter.getStatusConnect());
             
             return ResponseEntity.ok(response);
             
