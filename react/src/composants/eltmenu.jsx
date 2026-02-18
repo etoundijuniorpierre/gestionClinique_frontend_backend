@@ -45,6 +45,14 @@ const EltmenuStyle= Styled.div`
     &:focus{
         outline: 2px solid #667eea;
         outline-offset: 2px;
+        background-color: #667eea;
+        color: #ffffff;
+    }
+    
+    &:focus:not(.active){
+        background-color: #667eea;
+        color: #ffffff;
+        box-shadow: 0 4px 8px rgba(102, 126, 234, 0.3);
     }
     
     &.active {

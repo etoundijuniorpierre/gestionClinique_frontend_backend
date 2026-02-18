@@ -9,7 +9,7 @@ const PageServiceMedical = () => {
     return (
         <Routes>
             <Route 
-                path="/admin/services-medicaux" 
+                path="/" 
                 element={
                     <ProtectedRoute>
                         <RoleBasedRoute requiredRole="ADMIN">
@@ -19,7 +19,7 @@ const PageServiceMedical = () => {
                 } 
             />
             <Route 
-                path="/admin/services-medicaux/creer" 
+                path="/creer" 
                 element={
                     <ProtectedRoute>
                         <RoleBasedRoute requiredRole="ADMIN">
@@ -29,7 +29,7 @@ const PageServiceMedical = () => {
                 } 
             />
             <Route 
-                path="/admin/services-medicaux/modifier/:id" 
+                path="/modifier/:id" 
                 element={
                     <ProtectedRoute>
                         <RoleBasedRoute requiredRole="ADMIN">

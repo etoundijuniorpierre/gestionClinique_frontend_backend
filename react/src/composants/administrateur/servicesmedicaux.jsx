@@ -17,6 +17,8 @@ import Pagination from '../shared/Pagination';
 import { handleApiError } from '../../utils/errorHandler';
 import serviceMedicalService from '../../services/serviceMedicalService';
 
+console.log('🏥 ServicesMedicaux component loaded');
+
 const SousDiv1Style = Styled.div`
     padding-right: 32px;
 `
@@ -76,18 +78,18 @@ const ButtonAnnulerStyle = Styled.button`
 `
 
 const ServicesMedicaux = () => {
+    console.log('🏥 ServicesMedicaux component rendering');
+    
     const [services, setServices] = useState([]);
     const [filteredServices, setFilteredServices] = useState([]);
     const [searchTerm, setSearchTerm] = useState('');
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage] = useState(10);
-    const [showDeleteModal, setShowDeleteModal] = useState(false);
-    const [serviceToDelete, setServiceToDelete] = useState(null);
+    const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
-    
+    const [error, setError] = useState(null);
+    const navigate = useNavigate();
     const { showLoading, hideLoading } = useLoading();
     const { showConfirmation } = useConfirmation();
-    const navigate = useNavigate();
 
     // Charger les services médicaux
     const loadServices = async () => {

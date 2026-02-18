@@ -76,6 +76,8 @@ function PageAdmin(){
             setContenuActif('utilisateur');
         } else if (routeSegment === 'patient') {
             setContenuActif('patient');
+        } else if (routeSegment === 'services-medicaux') {
+            setContenuActif('services-medicaux');
         } else if (routeSegment === 'chat') {
             setContenuActif('chat');
         } else {
@@ -94,6 +96,7 @@ function PageAdmin(){
                     to="/admin/dashboard" 
                     className={contenuActif === 'dashboard' ? 'eltmenu' : 'lienadmin'} 
                     onClick={() => changerContenu('dashboard')}
+                    tabIndex={0}
                 >
                     <Eltmenu nommenu='Dashboard' active={contenuActif === 'dashboard'} />
                 </Link>
@@ -101,6 +104,7 @@ function PageAdmin(){
                     to="/admin/utilisateur" 
                     className={contenuActif === 'utilisateur' ? 'eltmenu' : 'lienadmin'} 
                     onClick={() => changerContenu('utilisateur')}
+                    tabIndex={0}
                 >
                     <Eltmenu nommenu='Utilisateurs' img={imgutilisateur} active={contenuActif === 'utilisateur'} />
                 </Link>
@@ -108,6 +112,7 @@ function PageAdmin(){
                     to="/admin/patient" 
                     className={contenuActif === 'patient' ? 'eltmenu' : 'lienadmin'} 
                     onClick={() => changerContenu('patient')}
+                    tabIndex={0}
                 >
                     <Eltmenu nommenu='Patients' img={imgpatient} active={contenuActif === 'patient'} />
                 </Link>
@@ -115,6 +120,7 @@ function PageAdmin(){
                     to="/admin/services-medicaux" 
                     className={contenuActif === 'services-medicaux' ? 'eltmenu' : 'lienadmin'} 
                     onClick={() => changerContenu('services-medicaux')}
+                    tabIndex={0}
                 >
                     <Eltmenu nommenu='Services Médicaux' img={iconConsultation} active={contenuActif === 'services-medicaux'} />
                 </Link>
@@ -122,6 +128,7 @@ function PageAdmin(){
                     to="/admin/chat" 
                     className={contenuActif === 'chat' ? 'eltmenu' : 'lienadmin'} 
                     onClick={() => changerContenu('chat')}
+                    tabIndex={0}
                 >
                     <Eltmenu nommenu='Chat' img={iconChat} active={contenuActif === 'chat'} />
                 </Link>
