@@ -82,6 +82,7 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
         utilisateur.setAge((long) Period.between(utilisateur.getDateNaissance(), LocalDate.now()).getYears());
         utilisateur.setRole(role);
+        utilisateur.setStatusConnect(StatusConnect.DECONNECTE);
         Utilisateur savedUser = utilisateurRepository.save(utilisateur);
 
         historiqueActionService.enregistrerAction(

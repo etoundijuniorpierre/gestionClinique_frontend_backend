@@ -5,6 +5,7 @@ import com.example.GestionClinique.model.entity.Salle;
 import com.example.GestionClinique.model.entity.Utilisateur;
 import com.example.GestionClinique.model.entity.enumElem.RoleType;
 import com.example.GestionClinique.model.entity.enumElem.ServiceMedical;
+import com.example.GestionClinique.model.entity.enumElem.StatusConnect;
 import com.example.GestionClinique.repository.RoleRepository;
 import com.example.GestionClinique.repository.UtilisateurRepository;
 import com.example.GestionClinique.service.SalleService;
@@ -73,6 +74,7 @@ public class DataInitializer {
             admin.setPassword(passwordEncoder.encode("administrateur"));
             admin.setActif(true);
             admin.setRole(adminRole);
+            admin.setStatusConnect(StatusConnect.DECONNECTE);
 
             utilisateurRepository.save(admin);
             System.out.println("Created default admin user with age: " + age);
