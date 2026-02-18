@@ -51,8 +51,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
                 true,
                 utilisateur.getAuthorities());
 
-        utilisateurService.updateUserConnectStatus(utilisateur.getId(), StatusConnect.CONNECTE);
-
         return userDetails;
     }
 }
