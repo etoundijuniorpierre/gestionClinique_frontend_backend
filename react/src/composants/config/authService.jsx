@@ -42,7 +42,7 @@ class AuthService {
       if (token) {
         // Tenter d'appeler /logout même si le token est expiré
         // Le backend changera le status via JwtAuthenticationFilter
-        await axiosInstance.post('/Api/V1/clinique/utilisateurs/status/disconnect', {}, {
+        await axiosInstance.post('/utilisateurs/status/disconnect', {}, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -101,7 +101,7 @@ class AuthService {
       }
 
       // Appel /logout (CustomLogoutHandler met à jour StatusConnect)
-      await axiosInstance.post('/Api/V1/clinique/utilisateurs/status/disconnect', {}, {
+      await axiosInstance.post('/utilisateurs/status/disconnect', {}, {
         headers: {
           Authorization: `Bearer ${token}`
         }

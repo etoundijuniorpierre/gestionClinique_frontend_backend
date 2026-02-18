@@ -229,7 +229,7 @@ function Barrelatteral({ children }) {
             
             // Appel direct de l'endpoint dédié pour le status
             try {
-                const statusResponse = await axiosInstance.post(`/Api/V1/clinique/utilisateurs/status/disconnect`);
+                const statusResponse = await axiosInstance.post(`/utilisateurs/status/disconnect`);
                 console.log("✅ Status changé via endpoint dédié:", statusResponse.data);
                 console.log("✅ Status response:", statusResponse.status);
             } catch (statusError) {
