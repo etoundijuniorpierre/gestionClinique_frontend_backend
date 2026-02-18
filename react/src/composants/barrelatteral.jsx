@@ -222,7 +222,7 @@ function Barrelatteral({ children }) {
             }
 
             // Appel de l'endpoint /logout géré par CustomLogoutHandler
-            await axiosInstance.post(`/logout`);
+            await axiosInstance.post(`/Api/V1/clinique/logout`);
 
             // Nettoyage session locale
             localStorage.clear();

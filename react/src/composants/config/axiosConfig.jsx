@@ -64,7 +64,7 @@ axiosInstance.interceptors.response.use(
             if (token) {
               // Tenter d'appeler /logout même si le token est expiré
               // Le backend changera le status via JwtAuthenticationFilter
-              await axiosInstance.post('/logout', {}, {
+              await axiosInstance.post('/Api/V1/clinique/logout', {}, {
                 headers: {
                   Authorization: `Bearer ${token}`
                 }
