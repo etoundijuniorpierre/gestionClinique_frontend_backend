@@ -124,7 +124,12 @@ const ServicesMedicaux = () => {
     const indexOfLastItem = currentPage * itemsPerPage;
     const indexOfFirstItem = indexOfLastItem - itemsPerPage;
     const currentItems = filteredServices.slice(indexOfFirstItem, indexOfLastItem);
-    const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
+    const calculatedTotalPages = Math.ceil(filteredServices.length / itemsPerPage);
+    
+    // Mettre à jour le state totalPages
+    useEffect(() => {
+        setTotalPages(calculatedTotalPages);
+    }, [calculatedTotalPages]);
 
     const handlePageChange = (pageNumber) => {
         setCurrentPage(pageNumber);
