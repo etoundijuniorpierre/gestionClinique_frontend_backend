@@ -28,22 +28,49 @@ public class CustomLogoutHandler implements LogoutHandler {
 
     @Override
     public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
+        System.out.println(" DÉCONNEXION DÉTECTÉE - CustomLogoutHandler appelé");
+        
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
 
+        System.out.println(" AuthHeader: " + (authHeader != null ? "Présent" : "Absent"));
+        
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            System.out.println(" Pas de token Bearer trouvé");
             return;
         }
 
         jwt = authHeader.substring(7);
-        String userEmail = jwtUtil.extractUsername(jwt);
+        System.out.println(" Token extrait: " + jwt.substring(0, Math.min(10, jwt.length())) + "...");
+        
+        try {
+            String userEmail = jwtUtil.extractUsername(jwt);
+            System.out.println(" Email extrait du token: " + userEmail);
 
-        if (userEmail != null) {
-            Utilisateur checkUser = utilisateurService.findUtilisateurByEmail(userEmail);
-            if (checkUser != null) {
-                utilisateurService.updateUserConnectStatus(checkUser.getId(), DECONNECTE);
+            if (userEmail != null) {
+                Utilisateur checkUser = utilisateurService.findUtilisateurByEmail(userEmail);
+                System.out.println(" Utilisateur trouvé: " + (checkUser != null ? checkUser.getUsername() : "Non trouvé"));
+                
+                if (checkUser != null) {
+                    System.out.println(" Status AVANT changement: " + checkUser.getStatusConnect());
+                    utilisateurService.updateUserConnectStatus(checkUser.getId(), DECONNECTE);
+                    System.out.println(" Status changé vers: DECONNECTE");
+                    
+                    Utilisateur updatedUser = utilisateurService.findUtilisateurByEmail(userEmail);
+                    if (updatedUser != null) {
+                        System.out.println(" Status APRÈS changement: " + updatedUser.getStatusConnect());
+                    }
+                } else {
+                    System.out.println(" Utilisateur non trouvé en base");
+                }
+            } else {
+                System.out.println(" Email null extrait du token");
             }
+        } catch (Exception e) {
+            System.err.println(" Erreur lors du traitement du token: " + e.getMessage());
+            e.printStackTrace();
         }
 
+        System.out.println(" Fin du traitement de déconnexion");
     }
 }

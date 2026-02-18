@@ -281,12 +281,22 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
     @Transactional
     public Utilisateur updateUserConnectStatus(Long utilisateurId, StatusConnect statusConnect) {
+        System.out.println("🔄 updateUserConnectStatus appelé - ID: " + utilisateurId + ", Status: " + statusConnect);
+        
         if (statusConnect.equals(StatusConnect.DECONNECTE)) {
+            System.out.println("📉 Mise à jour déconnexion - ID: " + utilisateurId);
             utilisateurRepository.updateLogout(utilisateurId, statusConnect, LocalDateTime.now());
         } else if (statusConnect.equals(StatusConnect.CONNECTE)) {
+            System.out.println("📈 Mise à jour connexion - ID: " + utilisateurId);
             utilisateurRepository.updateLogin(utilisateurId, statusConnect, LocalDateTime.now());
         }
-        return utilisateurRepository.findById(utilisateurId).orElseThrow();
+        
+        Utilisateur updatedUser = utilisateurRepository.findById(utilisateurId).orElseThrow();
+        System.out.println("✅ Status après mise à jour: " + updatedUser.getStatusConnect());
+        System.out.println("📅 lastLoginDate: " + updatedUser.getLastLoginDate());
+        System.out.println("📅 lastLogoutDate: " + updatedUser.getLastLogoutDate());
+        
+        return updatedUser;
     }
 
     @Override

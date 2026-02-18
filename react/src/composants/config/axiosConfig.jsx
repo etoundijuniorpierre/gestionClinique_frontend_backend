@@ -58,6 +58,24 @@ axiosInstance.interceptors.response.use(
         
         console.log('Token expiré ou invalide détecté, déconnexion automatique...');
         
+        (async () => {
+          try {
+            const token = localStorage.getItem('token');
+            if (token) {
+              // Tenter d'appeler /logout même si le token est expiré
+              // Le backend changera le status via JwtAuthenticationFilter
+              await axiosInstance.post('/logout', {}, {
+                headers: {
+                  Authorization: `Bearer ${token}`
+                }
+              });
+            }
+          } catch (logoutError) {
+            // Ignorer les erreurs - le token est expiré, c'est normal
+            console.log('Tentative de logout backend échouée (token expiré):', logoutError.message);
+          }
+        })();
+        
         // Nettoyer la session et dispatcher un événement pour la déconnexion
         clearSession();
         window.dispatchEvent(new CustomEvent('tokenExpired', { 

@@ -58,16 +58,16 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
     void updateActifStatus(@Param("id") Long id, @Param("isActive") boolean isActive);
 
     @Modifying
-    @Query("UPDATE Utilisateur u SET u.statusConnect = :status, u.lastLoginDate = :loginDate WHERE u.id = :id")
-    void updateLogin(@Param("id") Long id,
-            @Param("status") StatusConnect status,
-            @Param("loginDate") LocalDateTime loginDate);
-
-    @Modifying
     @Query("UPDATE Utilisateur u SET u.statusConnect = :status, u.lastLogoutDate = :logoutDate WHERE u.id = :id")
     void updateLogout(@Param("id") Long id,
             @Param("status") StatusConnect status,
             @Param("logoutDate") LocalDateTime logoutDate);
+
+    @Modifying
+    @Query("UPDATE Utilisateur u SET u.statusConnect = :status, u.lastLoginDate = :loginDate WHERE u.id = :id")
+    void updateLogin(@Param("id") Long id,
+            @Param("status") StatusConnect status,
+            @Param("loginDate") LocalDateTime loginDate);
 
     @Modifying
     @Query("UPDATE Utilisateur u SET u.photoProfil = :photoPath WHERE u.id = :id")

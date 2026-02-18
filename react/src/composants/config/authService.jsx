@@ -23,6 +23,8 @@ class AuthService {
   handleTokenExpired(message, reason = 'UNKNOWN') {
     console.log('Gestion de l\'expiration du token:', { message, reason });
 
+    this.notifyBackendLogout();
+
     // Nettoyer la session immédiatement
     this.clearLocalSession();
 
@@ -31,6 +33,25 @@ class AuthService {
 
     // Rediriger vers la page de connexion
     this.redirectToLogin();
+  }
+
+  // Notifier le backend de la déconnexion (token expiré)
+  async notifyBackendLogout() {
+    try {
+      const token = localStorage.getItem('token');
+      if (token) {
+        // Tenter d'appeler /logout même si le token est expiré
+        // Le backend changera le status via JwtAuthenticationFilter
+        await axiosInstance.post('/logout', {}, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
+      }
+    } catch (error) {
+      // Ignorer les erreurs - le token est expiré, c'est normal
+      console.log('Tentative de logout backend échouée (token expiré):', error.message);
+    }
   }
 
   // Déterminer le type de notification selon la raison
