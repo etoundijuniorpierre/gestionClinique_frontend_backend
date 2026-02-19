@@ -90,15 +90,23 @@ const ServicesMedicaux = () => {
     const navigate = useNavigate();
     const { showLoading, hideLoading } = useLoading();
     const { showConfirmation } = useConfirmation();
+    
+    // Constantes
+    const itemsPerPage = 10;
 
     // Charger les services médicaux
     const loadServices = async () => {
+        console.log('🔄 loadServices called');
         try {
             showLoading();
+            console.log('📡 Calling getAllServicesMedicaux...');
             const data = await serviceMedicalService.getAllServicesMedicaux();
+            console.log('📊 Services data received:', data);
             setServices(data);
             setFilteredServices(data);
+            console.log('✅ Services loaded successfully');
         } catch (error) {
+            console.error('❌ Error loading services:', error);
             handleApiError(error, 'Erreur lors du chargement des services médicaux');
         } finally {
             hideLoading();
@@ -172,8 +180,24 @@ const ServicesMedicaux = () => {
                     </div>
                 </SousDiv1Style>
                 <SousDiv2Style>
-                    <div className='divrecherche'>
-                        <input
+                    {console.log('🎨 ServicesMedicaux rendering with services:', services.length, 'filtered:', filteredServices.length)}
+                    
+                    {loading && (
+                        <div style={{ textAlign: 'center', padding: '20px' }}>
+                            <p>Chargement des services...</p>
+                        </div>
+                    )}
+                    
+                    {!loading && error && (
+                        <div style={{ textAlign: 'center', padding: '20px', color: 'red' }}>
+                            <p>Erreur: {error}</p>
+                        </div>
+                    )}
+                    
+                    {!loading && !error && (
+                        <>
+                            <div className='divrecherche'>
+                                <input
                             type="text"
                             placeholder="Rechercher un service médical..."
                             value={searchTerm}
@@ -247,6 +271,8 @@ const ServicesMedicaux = () => {
                             totalPages={totalPages}
                             onPageChange={handlePageChange}
                         />
+                    )}
+                        </>
                     )}
                 </SousDiv2Style>
             </div>

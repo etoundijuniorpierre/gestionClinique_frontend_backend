@@ -40,7 +40,7 @@ const DivStyle = Styled.div`
     }
     
     @media (max-width: 768px) {
-        width: 100vw;
+        width: calc(100vw - 20px);
         height: auto;
         min-height: calc(100vh - 200px);
         padding-left: 16px;

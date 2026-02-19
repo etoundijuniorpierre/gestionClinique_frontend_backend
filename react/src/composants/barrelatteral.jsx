@@ -81,7 +81,7 @@ const BarrelatteralStyle = Styled.div`
     }
     
     @media (max-width: 768px) {
-        width: 100vw;
+        width: calc(100vw + 20px);
         height: auto;
         min-height: 200px;
         gap: 24px;
@@ -132,7 +132,7 @@ const Button = Styled.button`
     
     @media (max-width: 768px) {
         position: relative;
-        width: calc(100vw - 32px);
+        width: calc(100vw + 20px - 32px);
         margin: 16px;
         bottom: auto;
         left: auto;
@@ -142,7 +142,7 @@ const Button = Styled.button`
     }
     
     @media (max-width: 480px) {
-        width: calc(100vw - 24px);
+        width: calc(100vw + 20px - 24px);
         margin: 12px;
         padding: 12px 16px;
         font-size: 13px;
