@@ -290,9 +290,9 @@ public class UtilisateurServiceImpl implements UtilisateurService {
             System.out.println("📈 Mise à jour connexion - ID: " + utilisateurId);
             utilisateurRepository.updateLogin(utilisateurId, statusConnect, LocalDateTime.now());
         }
-        
+
         Utilisateur updatedUser = utilisateurRepository.findById(utilisateurId).orElseThrow();
-        System.out.println("✅ Status après mise à jour: " + updatedUser.getStatusConnect());
+        System.out.println("Status après mise à jour: " + updatedUser.getStatusConnect());
         System.out.println("📅 lastLoginDate: " + updatedUser.getLastLoginDate());
         System.out.println("📅 lastLogoutDate: " + updatedUser.getLastLogoutDate());
         

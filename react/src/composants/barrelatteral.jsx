@@ -230,8 +230,8 @@ function Barrelatteral({ children }) {
             // Appel direct de l'endpoint dédié pour le status
             try {
                 const statusResponse = await axiosInstance.post(`/utilisateurs/status/disconnect`);
-                console.log("✅ Status changé via endpoint dédié:", statusResponse.data);
-                console.log("✅ Status response:", statusResponse.status);
+                console.log("Status changé via endpoint dédié:", statusResponse.data);
+                console.log("Status response:", statusResponse.status);
             } catch (statusError) {
                 console.error("❌ Erreur endpoint dédié:", statusError.message);
                 console.error("❌ Status error:", statusError.response?.status);

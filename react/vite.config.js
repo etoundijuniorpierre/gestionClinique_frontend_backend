@@ -8,7 +8,7 @@ export default defineConfig({
   define: {
     global: 'globalThis',
     'process.env': {},
-    // ✅ Configuration pour Render
+    // Configuration pour Render
     'process.env.REACT_APP_API_BASE': JSON.stringify(
       process.env.REACT_APP_API_BASE || 'https://gestion-clinique-backend.onrender.com'
     )
@@ -29,7 +29,7 @@ export default defineConfig({
       '@utils': path.resolve(__dirname, './src/utils'),
     }
   },
-  // ✅ Configuration build pour Render
+  // Configuration build pour Render
   build: {
     outDir: 'build',
     sourcemap: false,

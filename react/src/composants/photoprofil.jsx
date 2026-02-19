@@ -480,7 +480,7 @@ function Photoprofil({ imgprofil, onPhotoUpload, onChangePassword, userId }) {
         )}
 
         {success && (
-          <SuccessMessage>✅ {success}</SuccessMessage>
+          <SuccessMessage>{success}</SuccessMessage>
         )}
       </UnifiedModal>
 
@@ -563,7 +563,7 @@ function Photoprofil({ imgprofil, onPhotoUpload, onChangePassword, userId }) {
           )}
 
           {success && (
-            <SuccessMessage>✅ {success}</SuccessMessage>
+            <SuccessMessage>{success}</SuccessMessage>
           )}
 
           <div style={{ display: 'flex', gap: '12px', marginTop: '24px' }}>

@@ -48,10 +48,10 @@ VCZtezNVbZ4f/Vyo+XTC02AyT9B83tITwXdM87YromU=
 
 ## 🛡️ Sécurité
 
-- ✅ JWT secret configuré
-- ✅ HTTPS activé
-- ✅ Headers sécurité Nginx
-- ✅ Non-root user containers
+- JWT secret configuré
+- HTTPS activé
+- Headers sécurité Nginx
+- Non-root user containers
 - ⚠️ Valider les CORS en production
 
 ## 📊 Monitoring

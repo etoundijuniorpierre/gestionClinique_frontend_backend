@@ -331,7 +331,7 @@ function PageLogin() {
                 </>
               ) : success ? (
                 <>
-                  ✅ Connexion réussie
+                  Connexion réussie
                   <img src={icon} className='icon' alt="Connexion" />
                 </>
               ) : (

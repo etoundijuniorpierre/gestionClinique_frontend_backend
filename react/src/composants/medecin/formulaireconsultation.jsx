@@ -266,7 +266,7 @@ const ConsultationSuccessModal = ({ isOpen, onClose, consultationData, prescript
             fontWeight: '600',
             fontFamily: 'Inter, sans-serif'
           }}>
-            ✅ Consultation créée avec succès !
+            Consultation créée avec succès !
           </h3>
           <button
             onClick={onClose}

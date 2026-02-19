@@ -36,7 +36,7 @@ class KeepAliveService {
             });
 
             if (healthResponse.ok) {
-                console.log('✅ Health endpoint ping successful');
+                console.log('Health endpoint ping successful');
             } else {
                 console.warn('⚠️ Health endpoint ping failed:', healthResponse.status);
             }
@@ -51,7 +51,7 @@ class KeepAliveService {
             });
 
             if (servicesResponse.ok) {
-                console.log('✅ Services endpoint ping successful');
+                console.log('Services endpoint ping successful');
             }
 
         } catch (error) {

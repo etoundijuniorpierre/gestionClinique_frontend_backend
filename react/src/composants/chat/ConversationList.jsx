@@ -279,7 +279,7 @@ const ConversationAvatarWithPhoto = ({ conversation, currentUserId, size = 40 })
             const blob = response.data;
             const url = URL.createObjectURL(blob);
             setPhotoUrl(url);
-            console.log('✅ Photo chargée pour utilisateur:', otherParticipant.id);
+            console.log('Photo chargée pour utilisateur:', otherParticipant.id);
           } else {
             console.log('❌ Erreur HTTP pour la photo:', response.status);
             setPhotoError(true);

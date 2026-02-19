@@ -205,7 +205,7 @@ const GlobalNotificationHandler = () => {
           parseInt(userId),
           handleGlobalWebSocketMessage,
           () => {
-            console.log('✅ WebSocket global connecté pour les notifications');
+            console.log('WebSocket global connecté pour les notifications');
           }
         );
       } catch (wsError) {

@@ -79,7 +79,7 @@ class NotificationService {
     // Notification native du navigateur si supportée
     this.showNativeNotification(notification);
     
-    console.log('✅ Notification ajoutée avec succès, total non lues:', this.unreadCount);
+    console.log('Notification ajoutée avec succès, total non lues:', this.unreadCount);
     
     return notification;
   }
@@ -214,7 +214,7 @@ class NotificationService {
           notifications: this.getNotifications(),
           unreadCount: this.getUnreadCount()
         });
-        console.log(`✅ Listener ${index + 1} notifié avec succès`);
+        console.log(`Listener ${index + 1} notifié avec succès`);
       } catch (error) {
         console.error(`❌ Erreur dans le listener ${index + 1}:`, error);
       }

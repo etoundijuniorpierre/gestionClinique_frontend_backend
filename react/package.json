@@ -11,7 +11,7 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
-    "deploy:render": "npm run build && echo '✅ Frontend prêt pour déploiement Render'",
+    "deploy:render": "npm run build && echo 'Frontend prêt pour déploiement Render'",
     "postbuild": "echo '🚀 Build terminé - Frontend prêt pour Render'"
   },
   "dependencies": {

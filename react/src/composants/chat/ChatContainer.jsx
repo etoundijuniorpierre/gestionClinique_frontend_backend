@@ -293,7 +293,7 @@ const ChatContainer = () => {
             handleWebSocketMessage,
             () => {
               wsConnected.current = true;
-              console.log('✅ WebSocket connecté avec succès');
+              console.log('WebSocket connecté avec succès');
             }
           );
         }
@@ -324,7 +324,7 @@ const ChatContainer = () => {
           handleWebSocketMessage,
           () => {
             wsConnected.current = true;
-            console.log('✅ WebSocket reconnecté');
+            console.log('WebSocket reconnecté');
           }
         );
       }
@@ -522,7 +522,7 @@ const ChatContainer = () => {
           }}>
             <p style={{ fontWeight: 'bold', marginBottom: '10px' }}>🔍 Diagnostic d'authentification :</p>
             <div style={{ textAlign: 'left' }}>
-              <p><strong>Token :</strong> {localStorage.getItem('jwtToken') || localStorage.getItem('token') || localStorage.getItem('accessToken') ? '✅ Présent' : '❌ Manquant'}</p>
+              <p><strong>Token :</strong> {localStorage.getItem('jwtToken') || localStorage.getItem('token') || localStorage.getItem('accessToken') ? 'Présent' : '❌ Manquant'}</p>
               <p><strong>ID utilisateur :</strong> {localStorage.getItem('id') || '❌ Manquant'}</p>
               <p><strong>Rôle :</strong> {localStorage.getItem('role') || '❌ Manquant'}</p>
               <p><strong>Rôles autorisés :</strong> ADMIN, MEDECIN, SECRETAIRE</p>

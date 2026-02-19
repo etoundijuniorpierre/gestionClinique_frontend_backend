@@ -87,7 +87,6 @@ const ServicesMedicaux = () => {
     const [totalPages, setTotalPages] = useState(1);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [mounted, setMounted] = useState(true);
     const navigate = useNavigate();
     const { showLoading, hideLoading } = useLoading();
     const { showConfirmation } = useConfirmation();
@@ -97,56 +96,25 @@ const ServicesMedicaux = () => {
 
     // Charger les services médicaux
     const loadServices = async () => {
-        if (!mounted) return; // Ne pas charger si le composant est démonté
-        
         console.log('🔄 loadServices called');
         try {
-            setLoading(true);
-            setError(null);
+            showLoading();
             console.log('📡 Calling getAllServicesMedicaux...');
             const data = await serviceMedicalService.getAllServicesMedicaux();
             console.log('📊 Services data received:', data);
-            
-            if (mounted) {
-                setServices(data);
-                setFilteredServices(data);
-                console.log('✅ Services loaded successfully');
-            }
+            setServices(data);
+            setFilteredServices(data);
+            console.log('Services loaded successfully');
         } catch (error) {
             console.error('❌ Error loading services:', error);
-            if (mounted) {
-                setError('Erreur lors du chargement des services médicaux');
-                handleApiError(error, 'Erreur lors du chargement des services médicaux');
-            }
+            handleApiError(error, 'Erreur lors du chargement des services médicaux');
         } finally {
-            if (mounted) {
-                setLoading(false);
-            }
+            hideLoading();
         }
     };
 
     useEffect(() => {
-        console.log('🚀 ServicesMedicaux mounted');
         loadServices();
-        
-        return () => {
-            console.log('🔚 ServicesMedicaux unmounted');
-            setMounted(false);
-        };
-    }, []);
-
-    // Error boundary pour capturer les erreurs
-    useEffect(() => {
-        const handleError = (event) => {
-            console.error('❌ Erreur capturée:', event.error);
-            setError('Erreur lors du chargement du composant');
-        };
-        
-        window.addEventListener('error', handleError);
-        
-        return () => {
-            window.removeEventListener('error', handleError);
-        };
     }, []);
 
     // Filtrage des services

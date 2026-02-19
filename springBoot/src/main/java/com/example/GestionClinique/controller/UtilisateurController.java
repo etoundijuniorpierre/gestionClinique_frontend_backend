@@ -299,9 +299,9 @@ public class UtilisateurController {
             
             // Vérifier le status après changement
             com.example.GestionClinique.model.entity.Utilisateur userAfter = utilisateurService.findUtilisateurById(userId);
-            System.out.println("✅ Status APRÈS changement: " + userAfter.getStatusConnect());
+            System.out.println("Status APRÈS changement: " + userAfter.getStatusConnect());
             
-            System.out.println("✅ Status changé vers DECONNECTE via endpoint dédié");
+            System.out.println("Status changé vers DECONNECTE via endpoint dédié");
             
             response.put("success", true);
             response.put("message", "Status changé vers DECONNECTE");

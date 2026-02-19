@@ -107,7 +107,7 @@ export const conversationService = {
         try {
             console.log('🔄 Tentative de récupération des conversations...');
             const response = await createAxiosInstance().get('/chat/conversations');
-            console.log('✅ Conversations récupérées avec succès:', response.data);
+            console.log('Conversations récupérées avec succès:', response.data);
             return response.data;
         } catch (error) {
             console.error('❌ Erreur lors de la récupération des conversations:', error);
@@ -156,7 +156,7 @@ export const conversationService = {
             console.log('🔄 Création de conversation avec les participants:', conversationData.participantIds);
             
             const response = await createAxiosInstance().post('/chat/conversations', conversationData);
-            console.log('✅ Conversation créée avec succès:', response.data);
+            console.log('Conversation créée avec succès:', response.data);
             return response.data;
         } catch (error) {
             console.error('❌ Erreur lors de la création de la conversation:', error);
@@ -372,7 +372,7 @@ export const connectWebSocket = (userId, onMessageReceived, onConnected) => {
             
             // Ajouter des listeners pour diagnostiquer les problèmes de connexion
             sock.onopen = () => {
-                console.log("✅ Connexion SockJS établie");
+                console.log("Connexion SockJS établie");
             };
             
             sock.onclose = (event) => {
@@ -389,7 +389,7 @@ export const connectWebSocket = (userId, onMessageReceived, onConnected) => {
             return sock;
         },
         onConnect: () => {
-            console.log("✅ Connecté au WebSocket STOMP");
+            console.log("Connecté au WebSocket STOMP");
             reconnectAttempts = 0; // Réinitialiser les tentatives de reconnexion
             
             // S'abonner aux messages privés
@@ -764,7 +764,7 @@ export const useMessages = (conversationId) => {
             // Notifier les autres écouteurs de ce message
             notifyMessageListeners(conversationId, newMessage, 'ADD');
             
-            console.log('✅ Nouveau message envoyé et ajouté localement:', newMessage);
+            console.log('Nouveau message envoyé et ajouté localement:', newMessage);
             return newMessage;
         } catch (err) {
             setError(err.message);

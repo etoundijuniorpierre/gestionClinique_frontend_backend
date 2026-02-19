@@ -26,7 +26,7 @@ async function triggerDeployment() {
             });
             
             if (response.ok) {
-                console.log('✅ Deployment triggered via webhook');
+                console.log('Deployment triggered via webhook');
                 return true;
             }
         }
@@ -42,7 +42,7 @@ async function triggerDeployment() {
             });
             
             if (apiResponse.ok) {
-                console.log('✅ Deployment triggered via API');
+                console.log('Deployment triggered via API');
                 return true;
             }
         }

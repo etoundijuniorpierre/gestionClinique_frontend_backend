@@ -12,7 +12,7 @@ echo "[$(date)] Keep-alive ping to backend..."
 response=$(curl -s -o /dev/null -w "%{http_code}" "${BACKEND_URL}${HEALTH_ENDPOINT}")
 
 if [ "$response" = "200" ]; then
-    echo "[$(date)] ✅ Backend is alive (HTTP $response)"
+    echo "[$(date)] Backend is alive (HTTP $response)"
 else
     echo "[$(date)] ❌ Backend ping failed (HTTP $response)"
 fi

@@ -370,7 +370,7 @@ function Dashboard() {
         );
     }
 
-    console.log('✅ Dashboard prêt à s\'afficher', {
+    console.log('Dashboard prêt à s\'afficher', {
         statjour,
         usersconnecte: usersconnecte.length,
         historiques: historiques.length,
